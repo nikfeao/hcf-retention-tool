@@ -309,70 +309,6 @@
       margin-top: 12px;
     }
 
-    /* ── Settings gear ── */
-    .settings-btn {
-      background: transparent;
-      border: 1px solid rgba(255,255,255,0.3);
-      border-radius: 6px;
-      color: white;
-      padding: 6px 10px;
-      cursor: pointer;
-      font-size: 16px;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      font-size: 13px;
-      transition: background 0.15s;
-    }
-    .settings-btn:hover { background: rgba(255,255,255,0.15); }
-
-    /* ── Modal ── */
-    .modal-overlay {
-      display: none;
-      position: fixed;
-      inset: 0;
-      background: rgba(0,0,0,0.45);
-      z-index: 1000;
-      align-items: center;
-      justify-content: center;
-    }
-    .modal-overlay.open { display: flex; }
-    .modal {
-      background: white;
-      border-radius: var(--radius);
-      padding: 24px;
-      width: 420px;
-      max-width: calc(100vw - 32px);
-      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-    }
-    .modal h3 { font-size: 16px; font-weight: 700; margin-bottom: 6px; }
-    .modal p { font-size: 12px; color: var(--muted); margin-bottom: 16px; line-height: 1.5; }
-    .modal-actions { display: flex; gap: 8px; justify-content: flex-end; margin-top: 16px; }
-    .btn-primary {
-      background: var(--hcf-blue);
-      color: white;
-      border: none;
-      border-radius: 6px;
-      padding: 8px 18px;
-      font-size: 13px;
-      font-weight: 600;
-      cursor: pointer;
-    }
-    .btn-primary:hover { background: #002070; }
-    .btn-secondary {
-      background: white;
-      color: var(--text);
-      border: 1px solid var(--border);
-      border-radius: 6px;
-      padding: 8px 18px;
-      font-size: 13px;
-      font-weight: 600;
-      cursor: pointer;
-    }
-    .btn-secondary:hover { background: #f9fafb; }
-    .key-status { font-size: 11px; margin-top: 6px; color: var(--green); display: none; }
-    .key-status.visible { display: block; }
-
     /* ── AI match button ── */
     .ai-btn {
       flex-shrink: 0;
@@ -557,9 +493,6 @@
     <h1>HCF Retention Comparison Tool</h1>
     <div class="sub">New A.I.N. — Internal agent tool</div>
   </div>
-  <button class="settings-btn" onclick="openSettings()" title="AI Settings">
-    ⚙ AI Settings
-  </button>
 </div>
 
 <div class="status-bar" id="statusBar">
@@ -743,23 +676,6 @@
 
 </div><!-- /main -->
 
-<!-- Settings Modal -->
-<div class="modal-overlay" id="settingsModal">
-  <div class="modal">
-    <h3>⚙ AI Settings</h3>
-    <p>Enter your Anthropic API key to enable Smart Product Matching (✨) and the Chat Assistant. Your key is stored locally in your browser and never sent anywhere except Anthropic's API.</p>
-    <div class="field">
-      <label>Anthropic API Key</label>
-      <input type="password" id="apiKeyInput" placeholder="sk-ant-..." style="font-family:monospace">
-    </div>
-    <div class="key-status" id="keyStatus">✓ API key saved</div>
-    <div class="modal-actions">
-      <button class="btn-secondary" onclick="closeSettings()">Cancel</button>
-      <button class="btn-primary" onclick="saveApiKey()">Save Key</button>
-    </div>
-  </div>
-</div>
-
 <!-- Chat Assistant Panel -->
 <div class="chat-panel collapsed" id="chatPanel">
   <div class="chat-header" onclick="toggleChat()">
@@ -774,10 +690,6 @@
     </div>
   </div>
   <div id="chatBody">
-    <div class="chat-no-key" id="chatNoKey" style="display:none">
-      No API key set. Add your Anthropic key to use the assistant.
-      <br><button onclick="openSettings()">Add API Key</button>
-    </div>
     <div class="chat-messages" id="chatMessages"></div>
     <div class="chat-input-row">
       <textarea class="chat-input" id="chatInput" placeholder="Ask anything — objections, product details, LHC rules..." rows="1" onkeydown="chatKeydown(event)"></textarea>
@@ -1248,52 +1160,17 @@ function renderResults(data) {
 }
 
 // ═══════════════════════════════════════════════════
-// AI — SETTINGS
+// AI — API KEY (injected at deploy time by GitHub Actions)
 // ═══════════════════════════════════════════════════
 function getApiKey() {
-  return localStorage.getItem('hcf_tool_api_key') || '';
+  return '__ANTHROPIC_KEY__';
 }
-
-function openSettings() {
-  const key = getApiKey();
-  const input = document.getElementById('apiKeyInput');
-  input.value = key;
-  document.getElementById('keyStatus').classList.toggle('visible', !!key);
-  document.getElementById('settingsModal').classList.add('open');
-  setTimeout(() => input.focus(), 50);
-}
-
-function closeSettings() {
-  document.getElementById('settingsModal').classList.remove('open');
-}
-
-function saveApiKey() {
-  const val = document.getElementById('apiKeyInput').value.trim();
-  if (val) {
-    localStorage.setItem('hcf_tool_api_key', val);
-    document.getElementById('keyStatus').classList.add('visible');
-    setTimeout(() => {
-      closeSettings();
-      updateChatKeyState();
-    }, 600);
-  }
-}
-
-// Close modal on backdrop click
-document.getElementById('settingsModal').addEventListener('click', function(e) {
-  if (e.target === this) closeSettings();
-});
 
 // ═══════════════════════════════════════════════════
 // AI — SMART PRODUCT MATCH
 // ═══════════════════════════════════════════════════
 async function smartMatch(fieldKey) {
   const apiKey = getApiKey();
-  if (!apiKey) {
-    openSettings();
-    return;
-  }
-
   const isHospital = fieldKey === 'compHospital';
   const inputId = isHospital ? 'compHospitalInput' : 'compExtrasInput';
   const btnId = 'ai-' + fieldKey;
@@ -1434,13 +1311,7 @@ function toggleChat() {
 }
 
 function updateChatKeyState() {
-  const hasKey = !!getApiKey();
-  document.getElementById('chatNoKey').style.display = hasKey ? 'none' : 'block';
-  const body = document.getElementById('chatBody');
-  const msgs = document.getElementById('chatMessages');
-  const inputRow = body.querySelector('.chat-input-row');
-  msgs.style.display = hasKey ? '' : 'none';
-  if (inputRow) inputRow.style.display = hasKey ? '' : 'none';
+  // Key is always present (injected at deploy), nothing to toggle
 }
 
 function getComparisonContext() {
@@ -1513,8 +1384,6 @@ function appendChatMessage(role, text) {
 
 async function sendChatMessage() {
   const apiKey = getApiKey();
-  if (!apiKey) { openSettings(); return; }
-
   const input = document.getElementById('chatInput');
   const sendBtn = document.getElementById('chatSendBtn');
   const text = input.value.trim();
