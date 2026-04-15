@@ -1,0 +1,11 @@
+{
+  "last_updated": "2026-04-15T06:00:00+10:00",
+  "sources": [
+    { "fund": "HCF", "url": "hcf.com.au", "status": "manual", "note": "Populated from PDFs" },
+    { "fund": "nib", "url": "nib.com.au", "status": "pending" },
+    { "fund": "Bupa", "url": "bupa.com.au", "status": "pending" },
+    { "fund": "Medibank", "url": "medibank.com.au", "status": "pending" },
+    { "fund": "ahm", "url": "ahm.com.au", "status": "pending" },
+    { "fund": "Australian Unity", "url": "australianunity.com.au", "status": "pending" }
+  ]
+}

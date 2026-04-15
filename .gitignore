@@ -1,0 +1,10 @@
+# Never commit the env file — it contains your GitHub token
+.env
+
+# macOS
+.DS_Store
+
+# Python
+__pycache__/
+*.pyc
+.venv/

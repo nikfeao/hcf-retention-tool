@@ -1,0 +1,38 @@
+name: Daily Product Scrape
+
+on:
+  schedule:
+    - cron: '0 20 * * *'   # 6:00am AEST (UTC+10) every day
+  workflow_dispatch:         # Allow manual trigger from GitHub Actions UI
+
+jobs:
+  scrape:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write        # Needed to commit updated data files
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install Python dependencies
+        run: pip install -r scraper/requirements.txt
+
+      - name: Install Playwright browsers
+        run: playwright install chromium --with-deps
+
+      - name: Run scraper
+        run: python scraper/scrape.py
+
+      - name: Commit updated data files
+        run: |
+          git config user.name "New A.I.N. Bot"
+          git config user.email "nikfeao@gmail.com"
+          git add data/products.json data/meta.json
+          git diff --staged --quiet && echo "No changes to commit." || git commit -m "Daily product data update $(date +%Y-%m-%d)"
+          git push

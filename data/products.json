@@ -1,0 +1,253 @@
+{
+  "_note": "Premiums are monthly base rates in AUD. 0 = not yet populated. Populate from fund PDFs before going live. Scraper updates 'current' products daily. 'off-sale' products are never deleted.",
+  "_rebate_rates_year": "2025-26",
+  "rebate_rates": {
+    "tier0": { "under65": 0.24608, "age6569": 0.28710, "age70plus": 0.32812 },
+    "tier1": { "under65": 0.16405, "age6569": 0.20507, "age70plus": 0.24608 },
+    "tier2": { "under65": 0.08202, "age6569": 0.12303, "age70plus": 0.16405 },
+    "tier3": { "under65": 0,       "age6569": 0,        "age70plus": 0       }
+  },
+  "funds": {
+    "hcf": {
+      "name": "HCF",
+      "hospital": [
+        {
+          "id": "hcf-gold-500",
+          "name": "Gold Hospital",
+          "tier": "Gold",
+          "status": "current",
+          "excess_options": [0, 500, 750],
+          "premiums": {
+            "500": { "single": 0, "couple": 0, "family": 0, "single_parent_family": 0 },
+            "750": { "single": 0, "couple": 0, "family": 0, "single_parent_family": 0 },
+            "0":   { "single": 0, "couple": 0, "family": 0, "single_parent_family": 0 }
+          },
+          "source": "hcf.com.au",
+          "last_verified": "2026-04-15"
+        },
+        {
+          "id": "hcf-silver-plus-500",
+          "name": "Silver Plus Hospital",
+          "tier": "Silver Plus",
+          "status": "current",
+          "excess_options": [500, 750],
+          "premiums": {
+            "500": { "single": 0, "couple": 0, "family": 0, "single_parent_family": 0 },
+            "750": { "single": 0, "couple": 0, "family": 0, "single_parent_family": 0 }
+          },
+          "source": "hcf.com.au",
+          "last_verified": "2026-04-15"
+        },
+        {
+          "id": "hcf-silver-500",
+          "name": "Silver Hospital",
+          "tier": "Silver",
+          "status": "current",
+          "excess_options": [500, 750],
+          "premiums": {
+            "500": { "single": 0, "couple": 0, "family": 0, "single_parent_family": 0 },
+            "750": { "single": 0, "couple": 0, "family": 0, "single_parent_family": 0 }
+          },
+          "source": "hcf.com.au",
+          "last_verified": "2026-04-15"
+        },
+        {
+          "id": "hcf-bronze-plus-500",
+          "name": "Bronze Plus Hospital",
+          "tier": "Bronze Plus",
+          "status": "current",
+          "excess_options": [500, 750],
+          "premiums": {
+            "500": { "single": 0, "couple": 0, "family": 0, "single_parent_family": 0 },
+            "750": { "single": 0, "couple": 0, "family": 0, "single_parent_family": 0 }
+          },
+          "source": "hcf.com.au",
+          "last_verified": "2026-04-15"
+        },
+        {
+          "id": "hcf-bronze-500",
+          "name": "Bronze Hospital",
+          "tier": "Bronze",
+          "status": "current",
+          "excess_options": [500, 750],
+          "premiums": {
+            "500": { "single": 0, "couple": 0, "family": 0, "single_parent_family": 0 },
+            "750": { "single": 0, "couple": 0, "family": 0, "single_parent_family": 0 }
+          },
+          "source": "hcf.com.au",
+          "last_verified": "2026-04-15"
+        },
+        {
+          "id": "hcf-basic-plus-750",
+          "name": "Basic Plus Hospital",
+          "tier": "Basic Plus",
+          "status": "current",
+          "excess_options": [750],
+          "premiums": {
+            "750": { "single": 0, "couple": 0, "family": 0, "single_parent_family": 0 }
+          },
+          "source": "hcf.com.au",
+          "last_verified": "2026-04-15"
+        },
+        {
+          "id": "hcf-basic-750",
+          "name": "Basic Hospital",
+          "tier": "Basic",
+          "status": "current",
+          "excess_options": [750],
+          "premiums": {
+            "750": { "single": 0, "couple": 0, "family": 0, "single_parent_family": 0 }
+          },
+          "source": "hcf.com.au",
+          "last_verified": "2026-04-15"
+        }
+      ],
+      "extras": [
+        {
+          "id": "hcf-top-extras",
+          "name": "Top Extras",
+          "status": "current",
+          "premiums": {
+            "single": 0, "couple": 0, "family": 0, "single_parent_family": 0
+          },
+          "limits": {
+            "general_dental": 0,
+            "major_dental": 0,
+            "optical": 0,
+            "therapies": 0
+          },
+          "source": "hcf.com.au",
+          "last_verified": "2026-04-15"
+        },
+        {
+          "id": "hcf-mid-extras",
+          "name": "Mid Extras",
+          "status": "current",
+          "premiums": {
+            "single": 0, "couple": 0, "family": 0, "single_parent_family": 0
+          },
+          "limits": {
+            "general_dental": 0,
+            "major_dental": 0,
+            "optical": 0,
+            "therapies": 0
+          },
+          "source": "hcf.com.au",
+          "last_verified": "2026-04-15"
+        },
+        {
+          "id": "hcf-basic-extras",
+          "name": "Basic Extras",
+          "status": "current",
+          "premiums": {
+            "single": 0, "couple": 0, "family": 0, "single_parent_family": 0
+          },
+          "limits": {
+            "general_dental": 0,
+            "major_dental": 0,
+            "optical": 0,
+            "therapies": 0
+          },
+          "source": "hcf.com.au",
+          "last_verified": "2026-04-15"
+        },
+        {
+          "id": "hcf-starter-extras",
+          "name": "Starter Extras",
+          "status": "current",
+          "premiums": {
+            "single": 0, "couple": 0, "family": 0, "single_parent_family": 0
+          },
+          "limits": {
+            "general_dental": 0,
+            "major_dental": 0,
+            "optical": 0,
+            "therapies": 0
+          },
+          "source": "hcf.com.au",
+          "last_verified": "2026-04-15"
+        }
+      ]
+    },
+    "nib": {
+      "name": "nib",
+      "hospital": [
+        { "id": "nib-gold-500", "name": "Gold Hospital", "tier": "Gold", "status": "current", "excess_options": [0, 500, 750], "premiums": { "500": { "single": 0, "couple": 0, "family": 0, "single_parent_family": 0 }, "750": { "single": 0, "couple": 0, "family": 0, "single_parent_family": 0 }, "0": { "single": 0, "couple": 0, "family": 0, "single_parent_family": 0 } }, "source": "nib.com.au", "last_verified": null },
+        { "id": "nib-silver-plus-500", "name": "Silver Plus Hospital", "tier": "Silver Plus", "status": "current", "excess_options": [500, 750], "premiums": { "500": { "single": 0, "couple": 0, "family": 0, "single_parent_family": 0 }, "750": { "single": 0, "couple": 0, "family": 0, "single_parent_family": 0 } }, "source": "nib.com.au", "last_verified": null },
+        { "id": "nib-silver-500", "name": "Silver Hospital", "tier": "Silver", "status": "current", "excess_options": [500, 750], "premiums": { "500": { "single": 0, "couple": 0, "family": 0, "single_parent_family": 0 }, "750": { "single": 0, "couple": 0, "family": 0, "single_parent_family": 0 } }, "source": "nib.com.au", "last_verified": null },
+        { "id": "nib-bronze-plus-500", "name": "Bronze Plus Hospital", "tier": "Bronze Plus", "status": "current", "excess_options": [500, 750], "premiums": { "500": { "single": 0, "couple": 0, "family": 0, "single_parent_family": 0 }, "750": { "single": 0, "couple": 0, "family": 0, "single_parent_family": 0 } }, "source": "nib.com.au", "last_verified": null },
+        { "id": "nib-bronze-500", "name": "Bronze Hospital", "tier": "Bronze", "status": "current", "excess_options": [500, 750], "premiums": { "500": { "single": 0, "couple": 0, "family": 0, "single_parent_family": 0 }, "750": { "single": 0, "couple": 0, "family": 0, "single_parent_family": 0 } }, "source": "nib.com.au", "last_verified": null },
+        { "id": "nib-basic-750", "name": "Basic Hospital", "tier": "Basic", "status": "current", "excess_options": [750], "premiums": { "750": { "single": 0, "couple": 0, "family": 0, "single_parent_family": 0 } }, "source": "nib.com.au", "last_verified": null }
+      ],
+      "extras": [
+        { "id": "nib-top-extras", "name": "Top Extras", "status": "current", "premiums": { "single": 0, "couple": 0, "family": 0, "single_parent_family": 0 }, "limits": { "general_dental": 0, "major_dental": 0, "optical": 0, "therapies": 0 }, "source": "nib.com.au", "last_verified": null },
+        { "id": "nib-mid-extras", "name": "Mid Extras", "status": "current", "premiums": { "single": 0, "couple": 0, "family": 0, "single_parent_family": 0 }, "limits": { "general_dental": 0, "major_dental": 0, "optical": 0, "therapies": 0 }, "source": "nib.com.au", "last_verified": null },
+        { "id": "nib-basic-extras", "name": "Basic Extras", "status": "current", "premiums": { "single": 0, "couple": 0, "family": 0, "single_parent_family": 0 }, "limits": { "general_dental": 0, "major_dental": 0, "optical": 0, "therapies": 0 }, "source": "nib.com.au", "last_verified": null }
+      ]
+    },
+    "bupa": {
+      "name": "Bupa",
+      "hospital": [
+        { "id": "bupa-gold-500", "name": "Gold Hospital", "tier": "Gold", "status": "current", "excess_options": [0, 500, 750], "premiums": { "500": { "single": 0, "couple": 0, "family": 0, "single_parent_family": 0 }, "750": { "single": 0, "couple": 0, "family": 0, "single_parent_family": 0 }, "0": { "single": 0, "couple": 0, "family": 0, "single_parent_family": 0 } }, "source": "bupa.com.au", "last_verified": null },
+        { "id": "bupa-silver-plus-500", "name": "Silver Plus Hospital", "tier": "Silver Plus", "status": "current", "excess_options": [500, 750], "premiums": { "500": { "single": 0, "couple": 0, "family": 0, "single_parent_family": 0 }, "750": { "single": 0, "couple": 0, "family": 0, "single_parent_family": 0 } }, "source": "bupa.com.au", "last_verified": null },
+        { "id": "bupa-silver-500", "name": "Silver Hospital", "tier": "Silver", "status": "current", "excess_options": [500, 750], "premiums": { "500": { "single": 0, "couple": 0, "family": 0, "single_parent_family": 0 }, "750": { "single": 0, "couple": 0, "family": 0, "single_parent_family": 0 } }, "source": "bupa.com.au", "last_verified": null },
+        { "id": "bupa-bronze-plus-500", "name": "Bronze Plus Hospital", "tier": "Bronze Plus", "status": "current", "excess_options": [500, 750], "premiums": { "500": { "single": 0, "couple": 0, "family": 0, "single_parent_family": 0 }, "750": { "single": 0, "couple": 0, "family": 0, "single_parent_family": 0 } }, "source": "bupa.com.au", "last_verified": null },
+        { "id": "bupa-bronze-500", "name": "Bronze Hospital", "tier": "Bronze", "status": "current", "excess_options": [500, 750], "premiums": { "500": { "single": 0, "couple": 0, "family": 0, "single_parent_family": 0 }, "750": { "single": 0, "couple": 0, "family": 0, "single_parent_family": 0 } }, "source": "bupa.com.au", "last_verified": null },
+        { "id": "bupa-basic-750", "name": "Basic Hospital", "tier": "Basic", "status": "current", "excess_options": [750], "premiums": { "750": { "single": 0, "couple": 0, "family": 0, "single_parent_family": 0 } }, "source": "bupa.com.au", "last_verified": null }
+      ],
+      "extras": [
+        { "id": "bupa-top-extras", "name": "Top Extras", "status": "current", "premiums": { "single": 0, "couple": 0, "family": 0, "single_parent_family": 0 }, "limits": { "general_dental": 0, "major_dental": 0, "optical": 0, "therapies": 0 }, "source": "bupa.com.au", "last_verified": null },
+        { "id": "bupa-mid-extras", "name": "Mid Extras", "status": "current", "premiums": { "single": 0, "couple": 0, "family": 0, "single_parent_family": 0 }, "limits": { "general_dental": 0, "major_dental": 0, "optical": 0, "therapies": 0 }, "source": "bupa.com.au", "last_verified": null },
+        { "id": "bupa-basic-extras", "name": "Basic Extras", "status": "current", "premiums": { "single": 0, "couple": 0, "family": 0, "single_parent_family": 0 }, "limits": { "general_dental": 0, "major_dental": 0, "optical": 0, "therapies": 0 }, "source": "bupa.com.au", "last_verified": null }
+      ]
+    },
+    "medibank": {
+      "name": "Medibank",
+      "hospital": [
+        { "id": "medibank-gold-500", "name": "Gold Hospital", "tier": "Gold", "status": "current", "excess_options": [0, 500, 750], "premiums": { "500": { "single": 0, "couple": 0, "family": 0, "single_parent_family": 0 }, "750": { "single": 0, "couple": 0, "family": 0, "single_parent_family": 0 }, "0": { "single": 0, "couple": 0, "family": 0, "single_parent_family": 0 } }, "source": "medibank.com.au", "last_verified": null },
+        { "id": "medibank-silver-plus-500", "name": "Silver Plus Hospital", "tier": "Silver Plus", "status": "current", "excess_options": [500, 750], "premiums": { "500": { "single": 0, "couple": 0, "family": 0, "single_parent_family": 0 }, "750": { "single": 0, "couple": 0, "family": 0, "single_parent_family": 0 } }, "source": "medibank.com.au", "last_verified": null },
+        { "id": "medibank-silver-500", "name": "Silver Hospital", "tier": "Silver", "status": "current", "excess_options": [500, 750], "premiums": { "500": { "single": 0, "couple": 0, "family": 0, "single_parent_family": 0 }, "750": { "single": 0, "couple": 0, "family": 0, "single_parent_family": 0 } }, "source": "medibank.com.au", "last_verified": null },
+        { "id": "medibank-bronze-plus-500", "name": "Bronze Plus Hospital", "tier": "Bronze Plus", "status": "current", "excess_options": [500, 750], "premiums": { "500": { "single": 0, "couple": 0, "family": 0, "single_parent_family": 0 }, "750": { "single": 0, "couple": 0, "family": 0, "single_parent_family": 0 } }, "source": "medibank.com.au", "last_verified": null },
+        { "id": "medibank-bronze-500", "name": "Bronze Hospital", "tier": "Bronze", "status": "current", "excess_options": [500, 750], "premiums": { "500": { "single": 0, "couple": 0, "family": 0, "single_parent_family": 0 }, "750": { "single": 0, "couple": 0, "family": 0, "single_parent_family": 0 } }, "source": "medibank.com.au", "last_verified": null },
+        { "id": "medibank-basic-750", "name": "Basic Hospital", "tier": "Basic", "status": "current", "excess_options": [750], "premiums": { "750": { "single": 0, "couple": 0, "family": 0, "single_parent_family": 0 } }, "source": "medibank.com.au", "last_verified": null }
+      ],
+      "extras": [
+        { "id": "medibank-top-extras", "name": "Top Extras", "status": "current", "premiums": { "single": 0, "couple": 0, "family": 0, "single_parent_family": 0 }, "limits": { "general_dental": 0, "major_dental": 0, "optical": 0, "therapies": 0 }, "source": "medibank.com.au", "last_verified": null },
+        { "id": "medibank-mid-extras", "name": "Mid Extras", "status": "current", "premiums": { "single": 0, "couple": 0, "family": 0, "single_parent_family": 0 }, "limits": { "general_dental": 0, "major_dental": 0, "optical": 0, "therapies": 0 }, "source": "medibank.com.au", "last_verified": null },
+        { "id": "medibank-basic-extras", "name": "Basic Extras", "status": "current", "premiums": { "single": 0, "couple": 0, "family": 0, "single_parent_family": 0 }, "limits": { "general_dental": 0, "major_dental": 0, "optical": 0, "therapies": 0 }, "source": "medibank.com.au", "last_verified": null }
+      ]
+    },
+    "ahm": {
+      "name": "ahm",
+      "hospital": [
+        { "id": "ahm-gold-500", "name": "Gold Hospital", "tier": "Gold", "status": "current", "excess_options": [0, 500, 750], "premiums": { "500": { "single": 0, "couple": 0, "family": 0, "single_parent_family": 0 }, "750": { "single": 0, "couple": 0, "family": 0, "single_parent_family": 0 }, "0": { "single": 0, "couple": 0, "family": 0, "single_parent_family": 0 } }, "source": "ahm.com.au", "last_verified": null },
+        { "id": "ahm-silver-plus-500", "name": "Silver Plus Hospital", "tier": "Silver Plus", "status": "current", "excess_options": [500, 750], "premiums": { "500": { "single": 0, "couple": 0, "family": 0, "single_parent_family": 0 }, "750": { "single": 0, "couple": 0, "family": 0, "single_parent_family": 0 } }, "source": "ahm.com.au", "last_verified": null },
+        { "id": "ahm-silver-500", "name": "Silver Hospital", "tier": "Silver", "status": "current", "excess_options": [500, 750], "premiums": { "500": { "single": 0, "couple": 0, "family": 0, "single_parent_family": 0 }, "750": { "single": 0, "couple": 0, "family": 0, "single_parent_family": 0 } }, "source": "ahm.com.au", "last_verified": null },
+        { "id": "ahm-bronze-plus-500", "name": "Bronze Plus Hospital", "tier": "Bronze Plus", "status": "current", "excess_options": [500, 750], "premiums": { "500": { "single": 0, "couple": 0, "family": 0, "single_parent_family": 0 }, "750": { "single": 0, "couple": 0, "family": 0, "single_parent_family": 0 } }, "source": "ahm.com.au", "last_verified": null },
+        { "id": "ahm-bronze-500", "name": "Bronze Hospital", "tier": "Bronze", "status": "current", "excess_options": [500, 750], "premiums": { "500": { "single": 0, "couple": 0, "family": 0, "single_parent_family": 0 }, "750": { "single": 0, "couple": 0, "family": 0, "single_parent_family": 0 } }, "source": "ahm.com.au", "last_verified": null },
+        { "id": "ahm-basic-750", "name": "Basic Hospital", "tier": "Basic", "status": "current", "excess_options": [750], "premiums": { "750": { "single": 0, "couple": 0, "family": 0, "single_parent_family": 0 } }, "source": "ahm.com.au", "last_verified": null }
+      ],
+      "extras": [
+        { "id": "ahm-top-extras", "name": "Top Extras", "status": "current", "premiums": { "single": 0, "couple": 0, "family": 0, "single_parent_family": 0 }, "limits": { "general_dental": 0, "major_dental": 0, "optical": 0, "therapies": 0 }, "source": "ahm.com.au", "last_verified": null },
+        { "id": "ahm-mid-extras", "name": "Mid Extras", "status": "current", "premiums": { "single": 0, "couple": 0, "family": 0, "single_parent_family": 0 }, "limits": { "general_dental": 0, "major_dental": 0, "optical": 0, "therapies": 0 }, "source": "ahm.com.au", "last_verified": null },
+        { "id": "ahm-basic-extras", "name": "Basic Extras", "status": "current", "premiums": { "single": 0, "couple": 0, "family": 0, "single_parent_family": 0 }, "limits": { "general_dental": 0, "major_dental": 0, "optical": 0, "therapies": 0 }, "source": "ahm.com.au", "last_verified": null }
+      ]
+    },
+    "australian_unity": {
+      "name": "Australian Unity",
+      "hospital": [
+        { "id": "au-gold-500", "name": "Gold Hospital", "tier": "Gold", "status": "current", "excess_options": [0, 500, 750], "premiums": { "500": { "single": 0, "couple": 0, "family": 0, "single_parent_family": 0 }, "750": { "single": 0, "couple": 0, "family": 0, "single_parent_family": 0 }, "0": { "single": 0, "couple": 0, "family": 0, "single_parent_family": 0 } }, "source": "australianunity.com.au", "last_verified": null },
+        { "id": "au-silver-plus-500", "name": "Silver Plus Hospital", "tier": "Silver Plus", "status": "current", "excess_options": [500, 750], "premiums": { "500": { "single": 0, "couple": 0, "family": 0, "single_parent_family": 0 }, "750": { "single": 0, "couple": 0, "family": 0, "single_parent_family": 0 } }, "source": "australianunity.com.au", "last_verified": null },
+        { "id": "au-silver-500", "name": "Silver Hospital", "tier": "Silver", "status": "current", "excess_options": [500, 750], "premiums": { "500": { "single": 0, "couple": 0, "family": 0, "single_parent_family": 0 }, "750": { "single": 0, "couple": 0, "family": 0, "single_parent_family": 0 } }, "source": "australianunity.com.au", "last_verified": null },
+        { "id": "au-bronze-plus-500", "name": "Bronze Plus Hospital", "tier": "Bronze Plus", "status": "current", "excess_options": [500, 750], "premiums": { "500": { "single": 0, "couple": 0, "family": 0, "single_parent_family": 0 }, "750": { "single": 0, "couple": 0, "family": 0, "single_parent_family": 0 } }, "source": "australianunity.com.au", "last_verified": null },
+        { "id": "au-bronze-500", "name": "Bronze Hospital", "tier": "Bronze", "status": "current", "excess_options": [500, 750], "premiums": { "500": { "single": 0, "couple": 0, "family": 0, "single_parent_family": 0 }, "750": { "single": 0, "couple": 0, "family": 0, "single_parent_family": 0 } }, "source": "australianunity.com.au", "last_verified": null },
+        { "id": "au-basic-750", "name": "Basic Hospital", "tier": "Basic", "status": "current", "excess_options": [750], "premiums": { "750": { "single": 0, "couple": 0, "family": 0, "single_parent_family": 0 } }, "source": "australianunity.com.au", "last_verified": null }
+      ],
+      "extras": [
+        { "id": "au-top-extras", "name": "Top Extras", "status": "current", "premiums": { "single": 0, "couple": 0, "family": 0, "single_parent_family": 0 }, "limits": { "general_dental": 0, "major_dental": 0, "optical": 0, "therapies": 0 }, "source": "australianunity.com.au", "last_verified": null },
+        { "id": "au-mid-extras", "name": "Mid Extras", "status": "current", "premiums": { "single": 0, "couple": 0, "family": 0, "single_parent_family": 0 }, "limits": { "general_dental": 0, "major_dental": 0, "optical": 0, "therapies": 0 }, "source": "australianunity.com.au", "last_verified": null },
+        { "id": "au-basic-extras", "name": "Basic Extras", "status": "current", "premiums": { "single": 0, "couple": 0, "family": 0, "single_parent_family": 0 }, "limits": { "general_dental": 0, "major_dental": 0, "optical": 0, "therapies": 0 }, "source": "australianunity.com.au", "last_verified": null }
+      ]
+    }
+  }
+}

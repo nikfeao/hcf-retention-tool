@@ -1,0 +1,975 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>HCF Retention Comparison Tool</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --hcf-blue: #003087;
+      --hcf-light: #e8f0fb;
+      --comp-grey: #4a5568;
+      --comp-light: #f7f7f7;
+      --border: #d1d5db;
+      --text: #1a202c;
+      --muted: #6b7280;
+      --green: #16a34a;
+      --red: #dc2626;
+      --warn-bg: #fffbeb;
+      --warn-border: #f59e0b;
+      --radius: 8px;
+      --font: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    }
+
+    body {
+      font-family: var(--font);
+      font-size: 14px;
+      color: var(--text);
+      background: #f3f4f6;
+      min-height: 100vh;
+    }
+
+    /* ── Header ── */
+    .header {
+      background: var(--hcf-blue);
+      color: white;
+      padding: 12px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .header h1 { font-size: 18px; font-weight: 700; letter-spacing: -0.3px; }
+    .header .sub { font-size: 12px; opacity: 0.75; }
+
+    /* ── Status bar ── */
+    .status-bar {
+      background: #1e3a5f;
+      color: #a0b4cc;
+      font-size: 11px;
+      padding: 6px 20px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+    .status-bar .dot { width: 7px; height: 7px; border-radius: 50%; background: #22c55e; display: inline-block; margin-right: 5px; }
+    .status-bar .dot.stale { background: #f59e0b; }
+    .status-bar .dot.error { background: #ef4444; }
+
+    /* ── Main layout ── */
+    .main { max-width: 1100px; margin: 0 auto; padding: 20px 16px; }
+
+    /* ── Data notice ── */
+    .data-notice {
+      background: var(--warn-bg);
+      border: 1px solid var(--warn-border);
+      border-radius: var(--radius);
+      padding: 10px 14px;
+      margin-bottom: 16px;
+      font-size: 12px;
+      color: #92400e;
+      display: none;
+    }
+    .data-notice.visible { display: block; }
+
+    /* ── Cards ── */
+    .card {
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 16px;
+      margin-bottom: 16px;
+    }
+    .card-title {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      color: var(--muted);
+      margin-bottom: 12px;
+    }
+
+    /* ── Two-column form ── */
+    .columns {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-bottom: 16px;
+    }
+    @media (max-width: 680px) { .columns { grid-template-columns: 1fr; } }
+
+    .col-hcf { border-top: 3px solid var(--hcf-blue); }
+    .col-comp { border-top: 3px solid var(--comp-grey); }
+    .col-hcf .col-label { color: var(--hcf-blue); }
+    .col-comp .col-label { color: var(--comp-grey); }
+    .col-label { font-weight: 700; font-size: 15px; margin-bottom: 14px; display: flex; align-items: center; gap: 6px; }
+
+    /* ── Form fields ── */
+    .field { margin-bottom: 12px; }
+    .field label { display: block; font-size: 12px; font-weight: 600; color: var(--muted); margin-bottom: 4px; }
+    .field-row { display: flex; gap: 6px; align-items: center; }
+
+    input[type="text"], input[type="number"], select {
+      width: 100%;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 8px 10px;
+      font-size: 14px;
+      font-family: var(--font);
+      color: var(--text);
+      background: white;
+      transition: border-color 0.15s;
+    }
+    input[type="text"]:focus, input[type="number"]:focus, select:focus {
+      outline: none;
+      border-color: var(--hcf-blue);
+      box-shadow: 0 0 0 2px rgba(0,48,135,0.1);
+    }
+    select { cursor: pointer; }
+
+    /* ── Autocomplete ── */
+    .autocomplete-wrap { position: relative; flex: 1; }
+    .autocomplete-list {
+      position: absolute;
+      top: 100%;
+      left: 0;
+      right: 0;
+      background: white;
+      border: 1px solid var(--border);
+      border-top: none;
+      border-radius: 0 0 6px 6px;
+      max-height: 200px;
+      overflow-y: auto;
+      z-index: 100;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+    .autocomplete-list li {
+      list-style: none;
+      padding: 8px 10px;
+      cursor: pointer;
+      font-size: 13px;
+      border-bottom: 1px solid #f3f4f6;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .autocomplete-list li:hover { background: var(--hcf-light); }
+    .autocomplete-list li .badge {
+      font-size: 10px;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-weight: 600;
+    }
+    .badge-current { background: #dcfce7; color: #15803d; }
+    .badge-offsale { background: #fef3c7; color: #92400e; }
+
+    /* ── Mic button ── */
+    .mic-btn {
+      flex-shrink: 0;
+      width: 34px;
+      height: 34px;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      background: white;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 15px;
+      transition: background 0.15s, border-color 0.15s;
+      user-select: none;
+    }
+    .mic-btn:hover { background: var(--hcf-light); border-color: var(--hcf-blue); }
+    .mic-btn.listening { background: #fee2e2; border-color: var(--red); animation: pulse 1s infinite; }
+    .mic-btn.hidden { display: none; }
+    @keyframes pulse { 0%,100% { opacity:1 } 50% { opacity:0.6 } }
+
+    /* ── Member details ── */
+    .member-card { }
+    .member-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 12px;
+    }
+    @media (max-width: 680px) { .member-grid { grid-template-columns: 1fr 1fr; } }
+
+    .loading-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    /* ── Compare button ── */
+    .compare-wrap { text-align: center; margin: 8px 0 20px; }
+    .compare-btn {
+      background: var(--hcf-blue);
+      color: white;
+      border: none;
+      border-radius: var(--radius);
+      padding: 14px 48px;
+      font-size: 16px;
+      font-weight: 700;
+      cursor: pointer;
+      letter-spacing: 0.3px;
+      transition: background 0.15s, transform 0.1s;
+    }
+    .compare-btn:hover { background: #002070; }
+    .compare-btn:active { transform: scale(0.98); }
+    .compare-btn:disabled { background: #9ca3af; cursor: not-allowed; }
+
+    /* ── Results ── */
+    #results { display: none; }
+    #results.visible { display: block; }
+
+    .results-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 12px;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .results-header h2 { font-size: 16px; font-weight: 700; }
+    .results-actions { display: flex; gap: 8px; }
+    .action-btn {
+      border: 1px solid var(--border);
+      background: white;
+      border-radius: 6px;
+      padding: 6px 14px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      color: var(--text);
+    }
+    .action-btn:hover { background: #f9fafb; }
+
+    /* ── Comparison table ── */
+    .comparison-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+    .comparison-table th {
+      padding: 10px 14px;
+      text-align: left;
+      font-size: 12px;
+      font-weight: 700;
+    }
+    .comparison-table th:first-child { color: var(--muted); font-weight: 600; width: 38%; }
+    .comparison-table th.th-hcf { background: var(--hcf-blue); color: white; border-radius: 6px 6px 0 0; }
+    .comparison-table th.th-comp { background: var(--comp-grey); color: white; border-radius: 6px 6px 0 0; }
+
+    .comparison-table td {
+      padding: 9px 14px;
+      border-bottom: 1px solid #f3f4f6;
+      vertical-align: top;
+    }
+    .comparison-table tr:last-child td { border-bottom: none; }
+    .comparison-table td.td-hcf { background: var(--hcf-light); }
+    .comparison-table td.td-comp { background: var(--comp-light); }
+    .comparison-table td.label { color: var(--muted); font-weight: 600; font-size: 12px; }
+
+    .row-final td { font-weight: 700; font-size: 15px; }
+    .row-final td.td-hcf { color: var(--hcf-blue); }
+    .row-section td {
+      background: #f9fafb !important;
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+      color: var(--muted);
+      padding: 6px 14px;
+    }
+
+    .saving { color: var(--green); font-weight: 700; }
+    .more-expensive { color: var(--red); font-weight: 700; }
+
+    .off-sale-warn {
+      background: var(--warn-bg);
+      border: 1px solid var(--warn-border);
+      border-radius: 6px;
+      padding: 8px 12px;
+      font-size: 11px;
+      color: #92400e;
+      margin-top: 10px;
+    }
+
+    .no-data { color: var(--muted); font-style: italic; }
+    .missing-data-note {
+      background: #fff7ed;
+      border: 1px solid #fed7aa;
+      border-radius: 6px;
+      padding: 10px 14px;
+      font-size: 12px;
+      color: #9a3412;
+      margin-top: 12px;
+    }
+
+    /* ── Print ── */
+    @media print {
+      body { background: white; }
+      .header, .status-bar { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+      .compare-wrap, .results-actions, .card:not(.results-card) { display: none !important; }
+      #results { display: block !important; }
+      .comparison-table th.th-hcf, .comparison-table th.th-comp { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="header">
+  <div>
+    <h1>HCF Retention Comparison Tool</h1>
+    <div class="sub">New A.I.N. — Internal agent tool</div>
+  </div>
+</div>
+
+<div class="status-bar" id="statusBar">
+  <span><span class="dot" id="statusDot"></span><span id="statusText">Loading data...</span></span>
+  <span id="statusSources"></span>
+</div>
+
+<div class="main">
+
+  <div class="data-notice" id="dataNotice">
+    ⚠ Some product premiums are not yet populated. Enter the quoted price manually in the override field below.
+  </div>
+
+  <!-- Input columns -->
+  <div class="columns">
+
+    <!-- HCF column -->
+    <div class="card col-hcf">
+      <div class="col-label">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+        HCF — Current Cover
+      </div>
+
+      <div class="field">
+        <label>Hospital Product</label>
+        <div class="field-row">
+          <div class="autocomplete-wrap">
+            <input type="text" id="hcfHospitalInput" placeholder="Search product name..." autocomplete="off">
+            <ul class="autocomplete-list" id="hcfHospitalList" style="display:none"></ul>
+          </div>
+          <button class="mic-btn" id="mic-hcfHospitalInput" title="Voice input" onclick="startVoice('hcfHospitalInput')">🎙</button>
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Hospital Excess</label>
+        <select id="hcfExcess">
+          <option value="">— select product first —</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label>Extras Product</label>
+        <div class="field-row">
+          <div class="autocomplete-wrap">
+            <input type="text" id="hcfExtrasInput" placeholder="Search extras product..." autocomplete="off">
+            <ul class="autocomplete-list" id="hcfExtrasList" style="display:none"></ul>
+          </div>
+          <button class="mic-btn" id="mic-hcfExtrasInput" title="Voice input" onclick="startVoice('hcfExtrasInput')">🎙</button>
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Price Override <span style="font-weight:400;color:var(--muted)">(if product data not loaded)</span></label>
+        <input type="number" id="hcfPriceOverride" placeholder="Monthly $ total (optional)" min="0" step="0.01">
+      </div>
+    </div>
+
+    <!-- Competitor column -->
+    <div class="card col-comp">
+      <div class="col-label" style="color:var(--comp-grey)">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+        Competitor — New Cover
+      </div>
+
+      <div class="field">
+        <label>Competitor Fund</label>
+        <select id="compFund">
+          <option value="">— select fund —</option>
+          <option value="nib">nib</option>
+          <option value="bupa">Bupa</option>
+          <option value="medibank">Medibank</option>
+          <option value="ahm">ahm</option>
+          <option value="australian_unity">Australian Unity</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label>Hospital Product</label>
+        <div class="field-row">
+          <div class="autocomplete-wrap">
+            <input type="text" id="compHospitalInput" placeholder="Search product name..." autocomplete="off">
+            <ul class="autocomplete-list" id="compHospitalList" style="display:none"></ul>
+          </div>
+          <button class="mic-btn" id="mic-compHospitalInput" title="Voice input" onclick="startVoice('compHospitalInput')">🎙</button>
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Hospital Excess</label>
+        <select id="compExcess">
+          <option value="">— select product first —</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label>Extras Product</label>
+        <div class="field-row">
+          <div class="autocomplete-wrap">
+            <input type="text" id="compExtrasInput" placeholder="Search extras product..." autocomplete="off">
+            <ul class="autocomplete-list" id="compExtrasList" style="display:none"></ul>
+          </div>
+          <button class="mic-btn" id="mic-compExtrasInput" title="Voice input" onclick="startVoice('compExtrasInput')">🎙</button>
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Quoted Monthly Price <span style="font-weight:400;color:var(--muted)">(from member)</span></label>
+        <input type="number" id="compPriceOverride" placeholder="e.g. 145.00" min="0" step="0.01">
+      </div>
+    </div>
+  </div>
+
+  <!-- Member details -->
+  <div class="card member-card">
+    <div class="card-title">Member Details</div>
+    <div class="member-grid">
+      <div class="field">
+        <label>Cover Type</label>
+        <select id="coverType">
+          <option value="single">Single</option>
+          <option value="couple">Couple</option>
+          <option value="family">Family</option>
+          <option value="single_parent_family">Single Parent Family</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Age Band</label>
+        <select id="ageBand">
+          <option value="under65">Under 65</option>
+          <option value="age6569">65 – 69</option>
+          <option value="age70plus">70+</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Government Rebate Tier</label>
+        <select id="rebateTier">
+          <option value="tier0">Tier 0 — Full rebate</option>
+          <option value="tier1">Tier 1 — Reduced</option>
+          <option value="tier2">Tier 2 — Further reduced</option>
+          <option value="tier3">Tier 3 — No rebate</option>
+        </select>
+      </div>
+    </div>
+    <div class="loading-row" id="loadingRow">
+      <div class="field">
+        <label>Policyholder LHC Loading (%)</label>
+        <div class="field-row">
+          <input type="number" id="loadingPH" placeholder="0" min="0" max="70" step="2" value="0">
+          <button class="mic-btn" id="mic-loadingPH" title="Voice input" onclick="startVoice('loadingPH')">🎙</button>
+        </div>
+      </div>
+      <div class="field" id="partnerLoadingField" style="display:none">
+        <label>Partner LHC Loading (%)</label>
+        <div class="field-row">
+          <input type="number" id="loadingPartner" placeholder="0" min="0" max="70" step="2" value="0">
+          <button class="mic-btn" id="mic-loadingPartner" title="Voice input" onclick="startVoice('loadingPartner')">🎙</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Compare button -->
+  <div class="compare-wrap">
+    <button class="compare-btn" id="compareBtn" onclick="runComparison()">Compare Now</button>
+  </div>
+
+  <!-- Results -->
+  <div id="results" class="card results-card">
+    <div class="results-header">
+      <h2>Comparison</h2>
+      <div class="results-actions">
+        <button class="action-btn" onclick="window.print()">🖨 Print</button>
+        <button class="action-btn" onclick="document.getElementById('results').classList.remove('visible'); document.getElementById('results').style.display='none'">✕ Clear</button>
+      </div>
+    </div>
+    <div id="resultsContent"></div>
+  </div>
+
+</div><!-- /main -->
+
+<script>
+// ═══════════════════════════════════════════════════
+// DATA
+// ═══════════════════════════════════════════════════
+let productsData = null;
+let metaData = null;
+
+// Selected product objects
+let sel = {
+  hcfHospital: null,
+  hcfExtras: null,
+  compHospital: null,
+  compExtras: null
+};
+
+// ═══════════════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════════════
+async function init() {
+  // Check voice support
+  const hasVoice = ('SpeechRecognition' in window || 'webkitSpeechRecognition' in window);
+  if (!hasVoice) {
+    document.querySelectorAll('.mic-btn').forEach(b => b.classList.add('hidden'));
+  }
+
+  // Show partner loading when cover type changes
+  document.getElementById('coverType').addEventListener('change', e => {
+    const showPartner = ['couple', 'family', 'single_parent_family'].includes(e.target.value);
+    document.getElementById('partnerLoadingField').style.display = showPartner ? 'block' : 'none';
+  });
+
+  // Load data
+  try {
+    const [pRes, mRes] = await Promise.all([
+      fetch('data/products.json'),
+      fetch('data/meta.json')
+    ]);
+    productsData = await pRes.json();
+    metaData = await mRes.json();
+    updateStatusBar();
+    checkDataCompleteness();
+    wireAutocomplete();
+  } catch (e) {
+    setStatusError();
+  }
+}
+
+// ═══════════════════════════════════════════════════
+// STATUS BAR
+// ═══════════════════════════════════════════════════
+function updateStatusBar() {
+  const dot = document.getElementById('statusDot');
+  const text = document.getElementById('statusText');
+  const sources = document.getElementById('statusSources');
+
+  const updated = new Date(metaData.last_updated);
+  const now = new Date();
+  const hoursAgo = (now - updated) / 3600000;
+
+  const dateStr = updated.toLocaleDateString('en-AU', { day: 'numeric', month: 'short', year: 'numeric' });
+  const timeStr = updated.toLocaleTimeString('en-AU', { hour: '2-digit', minute: '2-digit' });
+
+  if (hoursAgo > 36) {
+    dot.className = 'dot stale';
+    text.textContent = `⚠ Last updated: ${dateStr}, ${timeStr} AEST — data may be outdated`;
+  } else {
+    dot.className = 'dot';
+    text.textContent = `Last updated: ${dateStr}, ${timeStr} AEST`;
+  }
+
+  const sourceNames = metaData.sources.map(s => s.fund).join(' · ');
+  sources.textContent = `Sources: ${sourceNames}`;
+}
+
+function setStatusError() {
+  document.getElementById('statusDot').className = 'dot error';
+  document.getElementById('statusText').textContent = 'Could not load product data';
+}
+
+// ═══════════════════════════════════════════════════
+// DATA COMPLETENESS CHECK
+// ═══════════════════════════════════════════════════
+function checkDataCompleteness() {
+  if (!productsData) return;
+  // Check if any HCF hospital products have 0 premiums
+  const hcfHospital = productsData.funds.hcf.hospital;
+  const hasMissing = hcfHospital.some(p => {
+    const excess = Object.keys(p.premiums)[0];
+    return p.premiums[excess].single === 0;
+  });
+  if (hasMissing) {
+    document.getElementById('dataNotice').classList.add('visible');
+  }
+}
+
+// ═══════════════════════════════════════════════════
+// AUTOCOMPLETE
+// ═══════════════════════════════════════════════════
+function wireAutocomplete() {
+  setupAC('hcfHospitalInput', 'hcfHospitalList', 'hcf', 'hospital', (p) => {
+    sel.hcfHospital = p;
+    populateExcess('hcfExcess', p);
+  });
+  setupAC('hcfExtrasInput', 'hcfExtrasList', 'hcf', 'extras', (p) => {
+    sel.hcfExtras = p;
+  });
+  setupAC('compHospitalInput', 'compHospitalList', null, 'hospital', (p) => {
+    sel.compHospital = p;
+    populateExcess('compExcess', p);
+  }, true);
+  setupAC('compExtrasInput', 'compExtrasList', null, 'extras', (p) => {
+    sel.compExtras = p;
+  }, true);
+
+  document.getElementById('compFund').addEventListener('change', () => {
+    // Reset competitor selections when fund changes
+    sel.compHospital = null;
+    sel.compExtras = null;
+    document.getElementById('compHospitalInput').value = '';
+    document.getElementById('compExtrasInput').value = '';
+    document.getElementById('compExcess').innerHTML = '<option value="">— select product first —</option>';
+  });
+}
+
+function setupAC(inputId, listId, fundKey, type, onSelect, useCompFund = false) {
+  const input = document.getElementById(inputId);
+  const list = document.getElementById(listId);
+
+  input.addEventListener('input', () => {
+    const fund = useCompFund ? document.getElementById('compFund').value : fundKey;
+    if (!fund || !productsData) { list.style.display = 'none'; return; }
+
+    const query = input.value.toLowerCase().trim();
+    const products = productsData.funds[fund]?.[type] || [];
+    const filtered = query
+      ? products.filter(p => p.name.toLowerCase().includes(query))
+      : products;
+
+    renderList(list, filtered, input, onSelect);
+  });
+
+  input.addEventListener('focus', () => {
+    const fund = useCompFund ? document.getElementById('compFund').value : fundKey;
+    if (!fund || !productsData) return;
+    const products = productsData.funds[fund]?.[type] || [];
+    renderList(list, products, input, onSelect);
+  });
+
+  document.addEventListener('click', (e) => {
+    if (!input.contains(e.target) && !list.contains(e.target)) {
+      list.style.display = 'none';
+    }
+  });
+}
+
+function renderList(list, products, input, onSelect) {
+  if (!products.length) { list.style.display = 'none'; return; }
+  list.innerHTML = '';
+  products.forEach(p => {
+    const li = document.createElement('li');
+    const badge = document.createElement('span');
+    badge.className = 'badge ' + (p.status === 'off-sale' ? 'badge-offsale' : 'badge-current');
+    badge.textContent = p.status === 'off-sale' ? 'Off-sale' : 'Current';
+    li.textContent = p.name + ' ';
+    li.appendChild(badge);
+    li.addEventListener('mousedown', (e) => {
+      e.preventDefault();
+      input.value = p.name;
+      list.style.display = 'none';
+      onSelect(p);
+    });
+    list.appendChild(li);
+  });
+  list.style.display = 'block';
+}
+
+function populateExcess(selectId, product) {
+  const sel = document.getElementById(selectId);
+  sel.innerHTML = '';
+  if (!product || !product.excess_options) {
+    sel.innerHTML = '<option value="">— N/A —</option>';
+    return;
+  }
+  product.excess_options.forEach(ex => {
+    const opt = document.createElement('option');
+    opt.value = ex;
+    opt.textContent = ex === 0 ? 'No excess' : `$${ex}`;
+    sel.appendChild(opt);
+  });
+}
+
+// ═══════════════════════════════════════════════════
+// VOICE INPUT
+// ═══════════════════════════════════════════════════
+let activeRecognition = null;
+
+function startVoice(fieldId) {
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (!SR) return;
+
+  const btn = document.getElementById('mic-' + fieldId);
+  const input = document.getElementById(fieldId);
+
+  if (activeRecognition) {
+    activeRecognition.stop();
+    activeRecognition = null;
+    if (btn) btn.classList.remove('listening');
+    return;
+  }
+
+  const recognition = new SR();
+  recognition.lang = 'en-AU';
+  recognition.continuous = false;
+  recognition.interimResults = false;
+
+  activeRecognition = recognition;
+  if (btn) btn.classList.add('listening');
+
+  recognition.onresult = (event) => {
+    const transcript = event.results[0][0].transcript;
+    input.value = transcript;
+    input.dispatchEvent(new Event('input'));
+    input.dispatchEvent(new Event('change'));
+  };
+
+  recognition.onend = () => {
+    activeRecognition = null;
+    if (btn) btn.classList.remove('listening');
+  };
+
+  recognition.onerror = () => {
+    activeRecognition = null;
+    if (btn) btn.classList.remove('listening');
+  };
+
+  recognition.start();
+}
+
+// ═══════════════════════════════════════════════════
+// CALCULATION
+// ═══════════════════════════════════════════════════
+function getRebateRate(tier, ageBand) {
+  if (!productsData) return 0;
+  return productsData.rebate_rates[tier]?.[ageBand] ?? 0;
+}
+
+function calcFinalPremium(hospitalBase, extrasBase, loadingPct, rebateRate) {
+  // LHC loading applies to hospital only
+  const hospitalLoaded = hospitalBase * (1 + loadingPct / 100);
+  const totalLoaded = hospitalLoaded + extrasBase;
+  // Rebate applies to total loaded premium
+  const finalPremium = totalLoaded * (1 - rebateRate);
+  return {
+    hospitalBase,
+    extrasBase,
+    hospitalLoaded,
+    totalBeforeRebate: totalLoaded,
+    rebateAmount: totalLoaded * rebateRate,
+    finalPremium
+  };
+}
+
+function getProductPremium(product, excess, coverType) {
+  if (!product || !product.premiums) return 0;
+  const excessKey = String(excess);
+  const premiums = product.premiums[excessKey] || product.premiums[Object.keys(product.premiums)[0]];
+  return premiums?.[coverType] ?? 0;
+}
+
+function getExtrasPremium(product, coverType) {
+  if (!product || !product.premiums) return 0;
+  return product.premiums[coverType] ?? 0;
+}
+
+// ═══════════════════════════════════════════════════
+// COMPARISON
+// ═══════════════════════════════════════════════════
+function runComparison() {
+  const coverType = document.getElementById('coverType').value;
+  const ageBand = document.getElementById('ageBand').value;
+  const rebateTier = document.getElementById('rebateTier').value;
+  const loadingPH = parseFloat(document.getElementById('loadingPH').value) || 0;
+  const loadingPartner = parseFloat(document.getElementById('loadingPartner').value) || 0;
+  const hcfExcess = document.getElementById('hcfExcess').value;
+  const compExcess = document.getElementById('compExcess').value;
+  const hcfOverride = parseFloat(document.getElementById('hcfPriceOverride').value) || 0;
+  const compOverride = parseFloat(document.getElementById('compPriceOverride').value) || 0;
+
+  // Average loading for couple/family policies
+  const isCouple = ['couple', 'family', 'single_parent_family'].includes(coverType);
+  const avgLoading = isCouple ? (loadingPH + loadingPartner) / 2 : loadingPH;
+
+  const rebateRate = getRebateRate(rebateTier, ageBand);
+  const compFundKey = document.getElementById('compFund').value;
+  const compFundName = compFundKey ? productsData?.funds[compFundKey]?.name || compFundKey : 'Competitor';
+
+  // HCF premiums
+  const hcfHospBase = getProductPremium(sel.hcfHospital, hcfExcess, coverType);
+  const hcfExtBase = getExtrasPremium(sel.hcfExtras, coverType);
+
+  // Comp premiums
+  const compHospBase = getProductPremium(sel.compHospital, compExcess, coverType);
+  const compExtBase = getExtrasPremium(sel.compExtras, coverType);
+
+  // Use override if base is 0 or if override explicitly provided
+  const hcfFinalMonthly = hcfOverride > 0
+    ? hcfOverride
+    : (hcfHospBase + hcfExtBase > 0 ? calcFinalPremium(hcfHospBase, hcfExtBase, avgLoading, rebateRate).finalPremium : null);
+
+  const compFinalMonthly = compOverride > 0
+    ? compOverride
+    : (compHospBase + compExtBase > 0 ? calcFinalPremium(compHospBase, compExtBase, avgLoading, rebateRate).finalPremium : null);
+
+  const calc = {
+    hcf: hcfHospBase + hcfExtBase > 0 && hcfOverride === 0
+      ? calcFinalPremium(hcfHospBase, hcfExtBase, avgLoading, rebateRate)
+      : null,
+    comp: compHospBase + compExtBase > 0 && compOverride === 0
+      ? calcFinalPremium(compHospBase, compExtBase, avgLoading, rebateRate)
+      : null
+  };
+
+  renderResults({
+    hcf: {
+      fundName: 'HCF',
+      hospital: sel.hcfHospital,
+      extras: sel.hcfExtras,
+      excess: hcfExcess,
+      calc: calc.hcf,
+      override: hcfOverride,
+      finalMonthly: hcfFinalMonthly
+    },
+    comp: {
+      fundName: compFundName,
+      hospital: sel.compHospital,
+      extras: sel.compExtras,
+      excess: compExcess,
+      calc: calc.comp,
+      override: compOverride,
+      finalMonthly: compFinalMonthly
+    },
+    rebateTier,
+    ageBand,
+    avgLoading,
+    coverType
+  });
+}
+
+// ═══════════════════════════════════════════════════
+// RENDER RESULTS
+// ═══════════════════════════════════════════════════
+function fmt(val) {
+  if (val === null || val === undefined || val === 0) return '<span class="no-data">—</span>';
+  if (typeof val === 'number') return '$' + val.toFixed(2);
+  return val;
+}
+
+function fmtLimit(val) {
+  if (!val || val === 0) return '<span class="no-data">—</span>';
+  return '$' + val.toLocaleString() + '/yr';
+}
+
+function renderResults(data) {
+  const { hcf, comp, avgLoading, coverType, rebateTier, ageBand } = data;
+
+  const hcfFinal = hcf.finalMonthly;
+  const compFinal = comp.finalMonthly;
+
+  let savingHtml = '';
+  if (hcfFinal && compFinal) {
+    const diff = hcfFinal - compFinal;
+    if (diff > 0) {
+      savingHtml = `<div class="more-expensive">Member saves $${diff.toFixed(2)}/mo with competitor</div>`;
+    } else if (diff < 0) {
+      savingHtml = `<div class="saving">HCF is $${Math.abs(diff).toFixed(2)}/mo cheaper ✓</div>`;
+    } else {
+      savingHtml = `<div>Same price</div>`;
+    }
+  }
+
+  const rebateLabels = { tier0: 'Tier 0 (full)', tier1: 'Tier 1', tier2: 'Tier 2', tier3: 'Tier 3 (none)' };
+  const ageLabels = { under65: 'Under 65', age6569: '65–69', age70plus: '70+' };
+  const rebateRate = getRebateRate(rebateTier, ageBand);
+
+  const hcfOffSale = hcf.hospital?.status === 'off-sale' || hcf.extras?.status === 'off-sale';
+  const compOffSale = comp.hospital?.status === 'off-sale' || comp.extras?.status === 'off-sale';
+
+  const rows = [
+    { section: 'Product' },
+    { label: 'Fund', hcfVal: 'HCF', compVal: comp.fundName },
+    { label: 'Hospital Product', hcfVal: hcf.hospital?.name || '—', compVal: comp.hospital?.name || '—' },
+    { label: 'Hospital Tier', hcfVal: hcf.hospital?.tier || '—', compVal: comp.hospital?.tier || '—' },
+    { label: 'Hospital Excess', hcfVal: hcf.excess ? (hcf.excess === '0' ? 'No excess' : '$' + hcf.excess) : '—', compVal: comp.excess ? (comp.excess === '0' ? 'No excess' : '$' + comp.excess) : '—' },
+    { label: 'Extras Product', hcfVal: hcf.extras?.name || '—', compVal: comp.extras?.name || '—' },
+
+    { section: 'Premium Breakdown' },
+    { label: 'Hospital (base)', hcfVal: hcf.calc ? fmt(hcf.calc.hospitalBase) : (hcf.override ? fmt(hcf.override) + ' <small>(manual)</small>' : '<span class="no-data">enter override above</span>'), compVal: comp.calc ? fmt(comp.calc.hospitalBase) : (comp.override ? fmt(comp.override) + ' <small>(manual)</small>' : '<span class="no-data">enter quoted price above</span>') },
+    { label: 'Extras (base)', hcfVal: hcf.calc ? fmt(hcf.calc.extrasBase) : '—', compVal: comp.calc ? fmt(comp.calc.extrasBase) : '—' },
+    { label: `LHC Loading (${avgLoading.toFixed(0)}%)`, hcfVal: hcf.calc ? fmt(hcf.calc.hospitalLoaded - hcf.calc.hospitalBase) : '—', compVal: comp.calc ? fmt(comp.calc.hospitalLoaded - comp.calc.hospitalBase) : '—' },
+    { label: `Rebate (${rebateLabels[rebateTier]}, ${ageLabels[ageBand]}, ${(rebateRate * 100).toFixed(2)}%)`, hcfVal: hcf.calc ? '-' + fmt(hcf.calc.rebateAmount) : '—', compVal: comp.calc ? '-' + fmt(comp.calc.rebateAmount) : '—' },
+
+    { section: 'Final Cost', highlight: true },
+    { label: 'Monthly Premium', hcfVal: hcfFinal ? '<strong>$' + hcfFinal.toFixed(2) + '</strong>' : '<span class="no-data">—</span>', compVal: compFinal ? '<strong>$' + compFinal.toFixed(2) + '</strong>' : '<span class="no-data">—</span>', isFinal: true },
+    { label: 'Annual Cost', hcfVal: hcfFinal ? '<strong>$' + (hcfFinal * 12).toFixed(2) + '</strong>' : '<span class="no-data">—</span>', compVal: compFinal ? '<strong>$' + (compFinal * 12).toFixed(2) + '</strong>' : '<span class="no-data">—</span>', isFinal: true },
+
+    { section: 'Extras Limits' },
+    { label: 'General Dental', hcfVal: fmtLimit(hcf.extras?.limits?.general_dental), compVal: fmtLimit(comp.extras?.limits?.general_dental) },
+    { label: 'Major Dental', hcfVal: fmtLimit(hcf.extras?.limits?.major_dental), compVal: fmtLimit(comp.extras?.limits?.major_dental) },
+    { label: 'Optical', hcfVal: fmtLimit(hcf.extras?.limits?.optical), compVal: fmtLimit(comp.extras?.limits?.optical) },
+    { label: 'Therapies', hcfVal: fmtLimit(hcf.extras?.limits?.therapies), compVal: fmtLimit(comp.extras?.limits?.therapies) },
+  ];
+
+  let html = `
+    <table class="comparison-table">
+      <thead>
+        <tr>
+          <th></th>
+          <th class="th-hcf">HCF</th>
+          <th class="th-comp">${comp.fundName}</th>
+        </tr>
+      </thead>
+      <tbody>
+  `;
+
+  rows.forEach(row => {
+    if (row.section) {
+      html += `<tr class="row-section"><td colspan="3">${row.section}</td></tr>`;
+    } else {
+      const rowClass = row.isFinal ? 'row-final' : '';
+      html += `
+        <tr class="${rowClass}">
+          <td class="label">${row.label}</td>
+          <td class="td-hcf">${row.hcfVal}</td>
+          <td class="td-comp">${row.compVal}</td>
+        </tr>
+      `;
+    }
+  });
+
+  html += '</tbody></table>';
+
+  if (savingHtml) {
+    html += `<div style="text-align:right;margin-top:12px;font-size:15px">${savingHtml}</div>`;
+  }
+
+  if (hcfOffSale || compOffSale) {
+    html += `<div class="off-sale-warn">⚠ One or more products shown are off-sale. Pricing data sourced from archived PDFs and may not reflect current rates. Verify directly with the fund before quoting.</div>`;
+  }
+
+  const missingData = (hcf.calc === null && hcf.override === 0) || (comp.calc === null && comp.override === 0);
+  if (missingData) {
+    html += `<div class="missing-data-note">📋 Premium data for one or more products has not been loaded yet. Enter the quoted monthly price in the override field above, then compare again.</div>`;
+  }
+
+  document.getElementById('resultsContent').innerHTML = html;
+  const resultsEl = document.getElementById('results');
+  resultsEl.style.display = 'block';
+  resultsEl.classList.add('visible');
+  resultsEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+// ── Start ──
+init();
+</script>
+</body>
+</html>
