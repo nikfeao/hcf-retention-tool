@@ -1,5 +1,5 @@
 {
-  "_note": "Premiums are monthly base rates in AUD for NSW/ACT. 0 = not yet populated. Source: privatehealth.gov.au (April 1 2026) and HCF PDFs (Jan 2026). Scraper updates 'current' products daily. 'off-sale' products are never deleted.",
+  "_note": "Premiums are monthly base rates in AUD for NSW/ACT (pre-rebate). Source: fund websites and APIs directly. Medibank: live API. HCF: PDFs. Scraper updates 'current' products daily. 'off-sale' products are never deleted.",
   "_rebate_rates_year": "2025-26",
   "rebate_rates": {
     "tier0": {
@@ -70,8 +70,8 @@
               "single_parent_family": 0
             },
             "750": {
-              "single": 165.99,
-              "couple": 425.78,
+              "single": 0,
+              "couple": 0,
               "family": 0,
               "single_parent_family": 0
             }
@@ -229,7 +229,7 @@
             "chiro_osteo": 0,
             "orthodontics": 0
           },
-          "limits_note": "Starter Extras — limited basic cover. Limits to be populated from product summary PDF.",
+          "limits_note": "Starter Extras \u2014 limited basic cover. Limits to be populated from product summary PDF.",
           "source": "privatehealth.gov.au",
           "last_verified": "2026-04-16"
         }
@@ -363,10 +363,10 @@
               "couple": 393.62,
               "family": 393.62,
               "single_parent_family": 196.81,
-              "_note": "VIC-sourced (privatehealth.gov.au NIB/J51/VGGS10). NSW verify needed — scraper will update."
+              "_note": "VIC-sourced (privatehealth.gov.au NIB/J51/VGGS10). NSW verify needed \u2014 scraper will update."
             }
           },
-          "source": "privatehealth.gov.au (NIB/J51/VGGS10 — VIC single)",
+          "source": "privatehealth.gov.au (NIB/J51/VGGS10 \u2014 VIC single)",
           "last_verified": "2026-04-16"
         },
         {
@@ -553,7 +553,7 @@
               "single_parent_family": 131.8
             }
           },
-          "source": "privatehealth.gov.au (BUP/H48C/NMQQ10 — NSW confirmed)",
+          "source": "privatehealth.gov.au (BUP/H48C/NMQQ10 \u2014 NSW confirmed)",
           "last_verified": "2026-04-16"
         },
         {
@@ -666,168 +666,140 @@
       "name": "Medibank",
       "hospital": [
         {
-          "id": "medibank-gold-500",
-          "name": "Gold Hospital",
-          "tier": "Gold",
+          "id": "medibank-basic-accident-and-ambulance",
+          "name": "Basic Accident and Ambulance",
+          "tier": "Basic",
           "status": "current",
-          "excess_options": [
-            0,
-            500,
-            750
-          ],
+          "excess_options": [0],
           "premiums": {
-            "500": {
-              "single": 0,
-              "couple": 0,
-              "family": 0,
-              "single_parent_family": 0
-            },
-            "750": {
-              "single": 0,
-              "couple": 0,
-              "family": 0,
-              "single_parent_family": 0
-            },
             "0": {
-              "single": 0,
-              "couple": 0,
-              "family": 0,
-              "single_parent_family": 0
+              "single": 111.60,
+              "couple": 223.20,
+              "family": 223.20,
+              "single_parent_family": 111.60
             }
           },
-          "source": "medibank.com.au",
-          "last_verified": null
-        },
-        {
-          "id": "medibank-silver-plus-500",
-          "name": "Silver Plus Hospital",
-          "tier": "Silver Plus",
-          "status": "current",
-          "excess_options": [
-            500,
-            750
-          ],
-          "premiums": {
-            "500": {
-              "single": 0,
-              "couple": 0,
-              "family": 0,
-              "single_parent_family": 0
-            },
-            "750": {
-              "single": 0,
-              "couple": 0,
-              "family": 0,
-              "single_parent_family": 0
-            }
-          },
-          "source": "medibank.com.au",
-          "last_verified": null
-        },
-        {
-          "id": "medibank-silver-500",
-          "name": "Silver Hospital",
-          "tier": "Silver",
-          "status": "current",
-          "excess_options": [
-            500,
-            750
-          ],
-          "premiums": {
-            "500": {
-              "single": 0,
-              "couple": 0,
-              "family": 0,
-              "single_parent_family": 0
-            },
-            "750": {
-              "single": 0,
-              "couple": 0,
-              "family": 0,
-              "single_parent_family": 0
-            }
-          },
-          "source": "medibank.com.au",
-          "last_verified": null
-        },
-        {
-          "id": "medibank-bronze-plus-500",
-          "name": "Bronze Plus Value",
-          "tier": "Bronze Plus",
-          "status": "current",
-          "excess_options": [
-            250,
-            500,
-            750
-          ],
-          "premiums": {
-            "250": {
-              "single": 179.8,
-              "couple": 359.6,
-              "family": 359.6,
-              "single_parent_family": 179.8,
-              "_note": "VIC-sourced (privatehealth.gov.au MBP/J128/VQEW10). NSW verify needed — scraper will update."
-            },
-            "500": {
-              "single": 0,
-              "couple": 0,
-              "family": 0,
-              "single_parent_family": 0
-            },
-            "750": {
-              "single": 0,
-              "couple": 0,
-              "family": 0,
-              "single_parent_family": 0
-            }
-          },
-          "source": "privatehealth.gov.au (MBP/J128/VQEW10 — VIC single, $250 excess)",
+          "source": "medibank.com.au (API)",
           "last_verified": "2026-04-16"
         },
         {
-          "id": "medibank-bronze-500",
-          "name": "Bronze Hospital",
-          "tier": "Bronze",
+          "id": "medibank-basic-plus-select",
+          "name": "Basic Plus Select",
+          "tier": "Basic Plus",
           "status": "current",
-          "excess_options": [
-            500,
-            750
-          ],
+          "excess_options": [750],
           "premiums": {
-            "500": {
-              "single": 0,
-              "couple": 0,
-              "family": 0,
-              "single_parent_family": 0
-            },
             "750": {
-              "single": 0,
-              "couple": 0,
-              "family": 0,
-              "single_parent_family": 0
+              "single": 118.85,
+              "couple": 237.70,
+              "family": 237.70,
+              "single_parent_family": 118.85
             }
           },
-          "source": "medibank.com.au",
-          "last_verified": null
+          "source": "medibank.com.au (API)",
+          "last_verified": "2026-04-16"
         },
         {
-          "id": "medibank-basic-750",
-          "name": "Basic Hospital",
-          "tier": "Basic",
+          "id": "medibank-bronze-plus-value",
+          "name": "Bronze Plus Value",
+          "tier": "Bronze Plus",
           "status": "current",
-          "excess_options": [
-            750
-          ],
+          "excess_options": [750],
           "premiums": {
             "750": {
-              "single": 0,
-              "couple": 0,
-              "family": 0,
-              "single_parent_family": 0
+              "single": 127.30,
+              "couple": 254.60,
+              "family": 254.60,
+              "single_parent_family": 127.30
             }
           },
-          "source": "medibank.com.au",
-          "last_verified": null
+          "source": "medibank.com.au (API)",
+          "last_verified": "2026-04-16"
+        },
+        {
+          "id": "medibank-bronze-plus-support",
+          "name": "Bronze Plus Support",
+          "tier": "Bronze Plus",
+          "status": "current",
+          "excess_options": [500],
+          "premiums": {
+            "500": {
+              "single": 140.15,
+              "couple": 280.30,
+              "family": 280.30,
+              "single_parent_family": 140.15
+            }
+          },
+          "source": "medibank.com.au (API)",
+          "last_verified": "2026-04-16"
+        },
+        {
+          "id": "medibank-silver-plus-core",
+          "name": "Silver Plus Core",
+          "tier": "Silver Plus",
+          "status": "current",
+          "excess_options": [750],
+          "premiums": {
+            "750": {
+              "single": 157.65,
+              "couple": 315.30,
+              "family": 315.30,
+              "single_parent_family": 157.65
+            }
+          },
+          "source": "medibank.com.au (API)",
+          "last_verified": "2026-04-16"
+        },
+        {
+          "id": "medibank-silver-plus-support",
+          "name": "Silver Plus Support",
+          "tier": "Silver Plus",
+          "status": "current",
+          "excess_options": [500],
+          "premiums": {
+            "500": {
+              "single": 181.75,
+              "couple": 363.50,
+              "family": 363.50,
+              "single_parent_family": 181.75
+            }
+          },
+          "source": "medibank.com.au (API)",
+          "last_verified": "2026-04-16"
+        },
+        {
+          "id": "medibank-silver-plus-secure",
+          "name": "Silver Plus Secure",
+          "tier": "Silver Plus",
+          "status": "current",
+          "excess_options": [250],
+          "premiums": {
+            "250": {
+              "single": 249.55,
+              "couple": 499.10,
+              "family": 499.10,
+              "single_parent_family": 249.55
+            }
+          },
+          "source": "medibank.com.au (API)",
+          "last_verified": "2026-04-16"
+        },
+        {
+          "id": "medibank-gold-protect",
+          "name": "Gold Protect",
+          "tier": "Gold",
+          "status": "current",
+          "excess_options": [750],
+          "premiums": {
+            "750": {
+              "single": 388.55,
+              "couple": 777.10,
+              "family": 777.10,
+              "single_parent_family": 388.55
+            }
+          },
+          "source": "medibank.com.au (API)",
+          "last_verified": "2026-04-16"
         }
       ],
       "extras": [
@@ -1033,10 +1005,10 @@
               "couple": 260.5,
               "family": 260.5,
               "single_parent_family": 130.25,
-              "_note": "QLD-sourced (privatehealth.gov.au AHM/J9A/QELV10). NSW verify needed — scraper will update."
+              "_note": "QLD-sourced (privatehealth.gov.au AHM/J9A/QELV10). NSW verify needed \u2014 scraper will update."
             }
           },
-          "source": "privatehealth.gov.au (AHM/J9A — $500 NSW confirmed, $750 QLD)",
+          "source": "privatehealth.gov.au (AHM/J9A \u2014 $500 NSW confirmed, $750 QLD)",
           "last_verified": "2026-04-16"
         },
         {
@@ -1224,7 +1196,7 @@
               "_note": "NSW couple confirmed (AUF/J52/NCAS20). Single = couple/2 per community rating."
             }
           },
-          "source": "privatehealth.gov.au (AUF/J52/NCAS20 — NSW confirmed)",
+          "source": "privatehealth.gov.au (AUF/J52/NCAS20 \u2014 NSW confirmed)",
           "last_verified": "2026-04-16"
         },
         {

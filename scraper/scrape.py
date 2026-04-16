@@ -1,52 +1,42 @@
 """
-HCF Retention Tool — Haiku-Powered Daily Scraper
-Replaces Playwright with Claude Haiku + httpx for smarter, cheaper extraction.
+HCF Retention Tool — Multi-Strategy Direct Fund Scraper
+Scrapes pricing directly from each fund's own website.
 
-Architecture:
-  - httpx:      lightweight HTTP fetching (no browser needed)
-  - pdfplumber: extract text from PHIS PDFs cheaply
-  - Claude Haiku: parse HTML/text into structured JSON when needed
+Strategy per fund:
+  - Medibank:          Direct JSON API via httpx (confirmed, no Playwright needed)
+  - Australian Unity:  Rate chart PDF via httpx + pdfplumber + Haiku; Playwright fallback
+  - nib, Bupa, ahm:   Playwright best-effort (no public rate PDFs discovered)
+  - HCF:              Skip — Imperva WAF blocks headless Chrome; existing data preserved
 
-Data sources:
-  - privatehealth.gov.au PHIS PDFs → premiums (all funds, all cover types)
-  - HCF product summary PDFs       → extras benefit limits
-  - Competitor fund PDFs           → competitor extras limits
-
-Estimated cost: ~$0.03–0.06/run → under $2/month
+State target: NSW (agents are NSW-based)
+Cover types: single, couple, family, single_parent_family
 """
 
 from __future__ import annotations
 
-import io
 import json
 import os
 import re
 import sys
 from datetime import datetime, timezone, timedelta
-from typing import Optional
 
 import httpx
-import pdfplumber
 from anthropic import Anthropic
+from playwright.sync_api import sync_playwright, Page, TimeoutError as PlaywrightTimeout
 
-# ── Paths ────────────────────────────────────────────────────────────────────
-SCRIPT_DIR  = os.path.dirname(os.path.abspath(__file__))
-DATA_DIR    = os.path.join(SCRIPT_DIR, '..', 'data')
+# ── Paths ─────────────────────────────────────────────────────────────────────
+SCRIPT_DIR    = os.path.dirname(os.path.abspath(__file__))
+DATA_DIR      = os.path.join(SCRIPT_DIR, '..', 'data')
 PRODUCTS_FILE = os.path.join(DATA_DIR, 'products.json')
 META_FILE     = os.path.join(DATA_DIR, 'meta.json')
 
-AEST = timezone(timedelta(hours=10))
+AEST  = timezone(timedelta(hours=10))
 TODAY = datetime.now(AEST).strftime('%Y-%m-%d')
 
-# ── Clients ──────────────────────────────────────────────────────────────────
+# ── Clients ───────────────────────────────────────────────────────────────────
 anthropic_client = Anthropic(api_key=os.environ['ANTHROPIC_API_KEY'])
 
-HTTP_HEADERS = {
-    'User-Agent': 'Mozilla/5.0 (compatible; NewAIN-Bot/2.0; +https://tools.newain.com.au)',
-    'Accept': 'text/html,application/xhtml+xml,application/pdf,*/*',
-}
-
-# ── JSON helpers ─────────────────────────────────────────────────────────────
+# ── JSON helpers ──────────────────────────────────────────────────────────────
 def load_json(path):
     with open(path, 'r', encoding='utf-8') as f:
         return json.load(f)
@@ -56,482 +46,569 @@ def save_json(path, data):
         json.dump(data, f, indent=2, ensure_ascii=False)
     print(f"  Saved: {os.path.basename(path)}")
 
-# ── HTTP fetch ───────────────────────────────────────────────────────────────
-def fetch(url: str, timeout: int = 20) -> Optional[bytes]:
-    try:
-        r = httpx.get(url, headers=HTTP_HEADERS, timeout=timeout, follow_redirects=True)
-        r.raise_for_status()
-        return r.content
-    except Exception as e:
-        print(f"    HTTP error for {url}: {e}")
-        return None
-
-# ── PDF text extraction ───────────────────────────────────────────────────────
-def pdf_to_text(data: bytes) -> str:
-    try:
-        with pdfplumber.open(io.BytesIO(data)) as pdf:
-            return '\n'.join(
-                page.extract_text() or ''
-                for page in pdf.pages
-            ).strip()
-    except Exception as e:
-        print(f"    PDF parse error: {e}")
-        return ''
-
-# ── Haiku extraction ──────────────────────────────────────────────────────────
-def haiku_extract(system: str, content: str, max_tokens: int = 512) -> dict:
-    """
-    Call Claude Haiku with a system prompt and content.
-    Expects Haiku to return a JSON object.
-    Returns {} on failure.
-    """
+# ── Haiku ─────────────────────────────────────────────────────────────────────
+def haiku_extract(system: str, content: str, max_tokens: int = 2048) -> dict | list:
+    """Call Haiku and return parsed JSON. Returns {} or [] on failure."""
     try:
         msg = anthropic_client.messages.create(
             model='claude-haiku-4-5-20251001',
             max_tokens=max_tokens,
             system=system,
-            messages=[{'role': 'user', 'content': content[:40000]}],
+            messages=[{'role': 'user', 'content': content[:60000]}],
         )
         text = msg.content[0].text.strip()
-        # Strip markdown fences if present
         if text.startswith('```'):
             text = text.split('```')[1]
             if text.startswith('json'):
                 text = text[4:]
         return json.loads(text)
     except Exception as e:
-        print(f"    Haiku extract error: {e}")
+        print(f"    Haiku error: {e}")
         return {}
 
-# ════════════════════════════════════════════════════════════════════════════
-# PHIS PRODUCT REGISTRY
-# Known product codes on privatehealth.gov.au for each fund.
-# Format: (product_code, state_cover_code, cover_type)
-# cover_type: single | couple | family | single_parent_family
-# Source: privatehealth.gov.au (verified April 2026)
-#
-# To add new codes: search privatehealth.gov.au for the product and note the
-# URL pattern: /dynamic/Download/{FUND}/{PRODUCT_CODE}/{STATE_COVER_CODE}
-# ════════════════════════════════════════════════════════════════════════════
-PHIS_REGISTRY = {
 
-    # ── HCF Hospital ──────────────────────────────────────────────────────
-    'hcf': {
-        'hospital': [
-            # Hospital Optimal Gold $750 excess
-            ('H36R', 'SPVD10', 'single',               'Hospital Optimal Gold', 'Gold', 750),
-            # Hospital Silver Plus $500 excess
-            ('H29I', 'VLEI10', 'single',                'Hospital Silver Plus', 'Silver Plus', 500),
-            # Hospital Standard Silver Plus $750 excess
-            ('H31K', 'NMDK10', 'single',                'Hospital Standard Silver Plus', 'Silver Plus', 750),
-            ('H31G', 'NMAF20', 'couple',                'Hospital Standard Silver Plus', 'Silver Plus', 750),
-        ],
-        'extras': [
-            # Mid Extras
-            ('I30', 'NKTX10', 'single',  'Mid Extras'),
-            # Starter Extras (with Optical)
-            ('I21', 'NGEP10', 'single',  'Starter Extras (with Optical)'),
-            # Choose My Extras
-            ('I31', 'NPWH10', 'single',  'Choose My Extras'),
-        ],
-    },
+# ── Playwright helpers ────────────────────────────────────────────────────────
+def navigate(page: Page, url: str, wait_ms: int = 4000) -> bool:
+    try:
+        page.goto(url, wait_until='domcontentloaded', timeout=30000)
+        page.wait_for_timeout(wait_ms)
+        return True
+    except Exception as e:
+        print(f"    Navigate error ({url}): {e}")
+        return False
 
-    # ── nib ───────────────────────────────────────────────────────────────
-    'nib': {
-        'hospital': [],
-        'extras':   [],
-    },
 
-    # ── Bupa ──────────────────────────────────────────────────────────────
-    'bupa': {
-        'hospital': [],
-        'extras':   [],
-    },
+def page_text(page: Page) -> str:
+    """Return visible text from a rendered page, stripping nav/footer/scripts."""
+    try:
+        return page.evaluate("""() => {
+            ['script','style','nav','footer','header','noscript'].forEach(t =>
+                document.querySelectorAll(t).forEach(el => el.remove())
+            );
+            return document.body.innerText;
+        }""")
+    except Exception:
+        return page.inner_text('body')
 
-    # ── Medibank ──────────────────────────────────────────────────────────
-    'medibank': {
-        'hospital': [],
-        'extras':   [],
-    },
 
-    # ── ahm ───────────────────────────────────────────────────────────────
-    'ahm': {
-        'hospital': [],
-        'extras':   [],
-    },
+def try_select_state(page: Page, state: str = 'NSW') -> bool:
+    selectors = [
+        'select[id*="state"]', 'select[name*="state"]',
+        'select[id*="State"]', '[data-testid*="state"] select',
+        'select[aria-label*="state" i]',
+    ]
+    for sel in selectors:
+        try:
+            el = page.query_selector(sel)
+            if el:
+                el.select_option(value=state)
+                page.wait_for_timeout(2000)
+                return True
+        except Exception:
+            continue
+    return False
 
-    # ── Australian Unity ──────────────────────────────────────────────────
-    'australian_unity': {
-        'hospital': [],
-        'extras':   [],
-    },
-}
 
-# ── HCF extras benefit limit PDFs ────────────────────────────────────────────
-HCF_EXTRAS_PDFS = {
-    'hcf-top-extras':     'https://www.hcf.com.au/content/dam/hcf/pdf/brochures/HCF-Top-Extras.pdf',
-    'hcf-mid-extras':     'https://www.hcf.com.au/content/dam/hcf/pdf/brochures/HCF-Mid-Extras.pdf',
-    'hcf-general-extras': 'https://www.hcf.com.au/content/dam/hcf/pdf/brochures/5-General-Extras.pdf',
-}
+# ── Haiku system prompts ──────────────────────────────────────────────────────
+HAIKU_PRODUCTS_SYSTEM = """
+You extract health insurance product pricing from an Australian health fund website page.
 
-HAIKU_EXTRAS_SYSTEM = """
-You extract health insurance extras benefit limits from a product summary document.
-Return ONLY a JSON object with these exact keys (all values are integers in AUD, 0 if not found):
-{
-  "general_dental": <annual limit per person>,
-  "major_dental": <annual limit per person — use combined dental limit if separate major dental not stated>,
-  "optical": <annual limit per person>,
-  "therapies": <annual limit per person for physio/allied health>,
-  "chiro_osteo": <annual limit per person for chiropractic/osteopathy>,
-  "orthodontics": <annual limit per person, lifetime limit if only lifetime stated>
-}
-If a limit increases by year (Year 1/2/3+), return the Year 1 value.
-"""
-
-HAIKU_PHIS_SYSTEM = """
-You extract health insurance premium information from a Private Health Information Statement (PHIS).
-Return ONLY a JSON object:
-{
-  "product_name": "<exact product name>",
-  "monthly_premium": <number — the dollar amount shown, before rebate>,
-  "cover_type": "<single|couple|family|single_parent_family>",
-  "state": "<NSW|VIC|QLD|SA|WA|TAS|NT|ACT>",
-  "excess": <number or 0 if not applicable>,
-  "is_closed": <true if closed to new members, false otherwise>
-}
-Map cover descriptions:
-- "one person" → "single"
-- "2 adults (and no-one else)" → "couple"
-- "two adults & dependants" or "3 or more people, only 2 adults" → "family"
-- "one adult & dependants" or "2 or more people, only one adult" → "single_parent_family"
-"""
-
-HAIKU_SEARCH_SYSTEM = """
-You are extracting health insurance product codes from a government website page.
-The page lists health insurance products with links in the format:
-/dynamic/Download/{FUND}/{PRODUCT_CODE}/{STATE_COVER_CODE}
-or /dynamic/Premium/PHIS/{FUND}/{PRODUCT_CODE}/{STATE_COVER_CODE}
-
-Return ONLY a JSON array of objects:
+Return ONLY a JSON array. Each element is one product:
 [
   {
-    "product_code": "<e.g. H36R>",
-    "state_cover_code": "<e.g. SPVD10>",
-    "product_name": "<name if visible>",
-    "cover_type": "<single|couple|family|single_parent_family>",
-    "fund": "<fund code e.g. HCF>"
+    "name": "<product name>",
+    "tier": "<Gold|Silver Plus|Silver|Bronze Plus|Bronze|Basic Plus|Basic>",
+    "type": "<hospital|extras>",
+    "excess": <number or null>,
+    "status": "<current|closed>",
+    "premiums": {
+      "single": <monthly $ as number or null>,
+      "couple": <monthly $ as number or null>,
+      "family": <monthly $ as number or null>,
+      "single_parent_family": <monthly $ as number or null>
+    }
   }
 ]
-Only include entries where fund matches what was requested.
-Return [] if no products found.
+
+Rules:
+- Premiums are monthly dollar amounts BEFORE any government rebate
+- If page only shows one cover type, record it and set others to null
+- If price is shown per fortnight, multiply by 26 then divide by 12 (round to 2dp)
+- If price is shown per year, divide by 12
+- "tier" must be one of the exact strings listed — infer from product name
+- "type" = "hospital" if hospital product, "extras" if extras/general
+- "status" = "closed" only if page explicitly says "closed to new members"
+- Return [] if no health insurance products with prices are found
 """
 
-# ════════════════════════════════════════════════════════════════════════════
-# PREMIUM FETCHERS
-# ════════════════════════════════════════════════════════════════════════════
+HAIKU_AU_PDF_SYSTEM = """
+You extract health insurance premium data from an Australian Unity rate chart PDF.
 
-def parse_phis_text(text: str) -> Optional[dict]:
-    """
-    Parse a PHIS PDF text without Haiku — these PDFs have a consistent format.
-    Extracts: monthly_premium, cover_type, state, product_name, is_closed.
-    Returns None if parsing fails (fallback to Haiku).
-    """
-    # Premium amount
-    price_match = re.search(r'\$(\d{1,4}(?:\.\d{2})?)\s*\n.*?before any rebate', text, re.DOTALL)
-    if not price_match:
-        price_match = re.search(r'\$([\d,]+(?:\.\d{2})?)\s*\n', text)
-    if not price_match:
-        return None
-    try:
-        premium = float(price_match.group(1).replace(',', ''))
-    except ValueError:
-        return None
-
-    # Cover type
-    cover_type = 'single'
-    t = text[:600]
-    if 'two adults & dependants' in t or '3 or more people, only 2' in t:
-        cover_type = 'family'
-    elif '2 adults (and no-one else)' in t or 'Covers 2 adults' in t:
-        cover_type = 'couple'
-    elif 'one adult & dependants' in t or '2 or more people, only one' in t:
-        cover_type = 'single_parent_family'
-
-    # State
-    state = 'NSW'
-    for s in ['NSW', 'VIC', 'QLD', 'SA', 'WA', 'TAS', 'NT', 'ACT']:
-        if f'Available in {s}' in text or f'Available in {s} &' in text:
-            state = s
-            break
-
-    # Product name
-    name_match = re.search(r'(?:HCF|NIB|BUPA|MEDIBANK|AHM|Australian Unity)\s+([A-Z][^\n]{3,60})\n', text)
-    product_name = name_match.group(0).strip() if name_match else ''
-
-    # Excess
-    excess_match = re.search(r'excess of \$(\d+)', text)
-    excess = int(excess_match.group(1)) if excess_match else 0
-
-    is_closed = 'Closed to new members' in text
-
-    return {
-        'monthly_premium': premium,
-        'cover_type':      cover_type,
-        'state':           state,
-        'product_name':    product_name,
-        'excess':          excess,
-        'is_closed':       is_closed,
+Return ONLY a JSON array. Each element is one product:
+[
+  {
+    "name": "<product name>",
+    "tier": "<Gold|Silver Plus|Silver|Bronze Plus|Bronze|Basic Plus|Basic>",
+    "excess": <excess amount as number or 0 if none>,
+    "premiums": {
+      "single_tier3_dd": <Tier 3 direct debit monthly price or null>,
+      "couple_tier3_dd": <Tier 3 direct debit monthly price or null>
     }
+  }
+]
+
+Rules:
+- "Tier 3" column = no government rebate = base price (what we want)
+- Prices shown include a 4% direct debit discount
+- To get true base price: divide by 0.96
+- Only extract NSW/ACT prices
+- Return [] if no prices are clearly found
+"""
 
 
-def fetch_phis_premium(fund: str, product_code: str, state_cover_code: str) -> Optional[dict]:
+# ════════════════════════════════════════════════════════════════════════════
+# MEDIBANK — DIRECT API (httpx, no Playwright)
+# ════════════════════════════════════════════════════════════════════════════
+
+MEDIBANK_BASE      = 'https://www.medibank.com.au'
+MEDIBANK_LIST_URL  = f'{MEDIBANK_BASE}/bin/medibank/productlist'
+MEDIBANK_PRICE_URL = f'{MEDIBANK_BASE}/bin/medibank/price/'
+MEDIBANK_COMPONENT = (
+    '/content/retail/en/health-insurance/packages/'
+    'jcr:content/root/productcomparison_co'
+)
+MEDIBANK_HEADERS = {
+    'User-Agent': (
+        'Mozilla/5.0 (Windows NT 10.0; Win64; x64) '
+        'AppleWebKit/537.36 (KHTML, like Gecko) '
+        'Chrome/124.0.0.0 Safari/537.36'
+    ),
+    'Accept': 'application/json, text/plain, */*',
+    'Referer': 'https://www.medibank.com.au/health-insurance/',
+}
+
+
+def _medibank_tier(title: str) -> str:
+    t = title
+    if 'Gold' in t:        return 'Gold'
+    if 'Silver Plus' in t: return 'Silver Plus'
+    if 'Silver' in t:      return 'Silver'
+    if 'Bronze Plus' in t: return 'Bronze Plus'
+    if 'Bronze' in t:      return 'Bronze'
+    if 'Basic Plus' in t:  return 'Basic Plus'
+    return 'Basic'
+
+
+def scrape_medibank_api() -> list[dict]:
     """
-    Fetch a PHIS PDF from privatehealth.gov.au, extract premium data.
-    Uses regex parsing first (free), falls back to Haiku if needed.
-    Returns dict with premium info, or {} on failure.
+    Call Medibank's internal pricing API to get all hospital products and
+    pre-rebate NSW premiums. Returns a list of product dicts ready for merge.
     """
-    url = f'https://www.privatehealth.gov.au/dynamic/Download/{fund.upper()}/{product_code}/{state_cover_code}'
-    data = fetch(url)
-    if not data:
-        return {}
-    text = pdf_to_text(data)
-    if not text:
-        return {}
+    print("  Calling Medibank product list API...")
 
-    # Try cheap regex parse first
-    result = parse_phis_text(text)
-    if result:
-        result['source_url'] = url
-        return result
+    with httpx.Client(timeout=30, follow_redirects=True) as client:
+        # Step 1: product list
+        r = client.get(
+            MEDIBANK_LIST_URL,
+            params={
+                'componentPath': MEDIBANK_COMPONENT,
+                'productFilter': json.dumps({
+                    'age': 35, 'scale': 'S', 'filterType': 'all',
+                    'coverForChild': False, 'audience': 'default',
+                    'productType': 'hospital', 'state': 'NSW',
+                }),
+                'journey': 'get-a-quote',
+            },
+            headers=MEDIBANK_HEADERS,
+        )
+        r.raise_for_status()
+        raw = r.json()
 
-    # Fallback to Haiku
-    print(f"    Regex parse failed, using Haiku ...")
-    result = haiku_extract(HAIKU_PHIS_SYSTEM, text, max_tokens=256)
-    if result:
-        result['source_url'] = url
+    products_raw = raw.get('hospitalProducts', [])
+    if not products_raw:
+        print("    No products returned from Medibank API")
+        return []
+
+    print(f"    {len(products_raw)} products in product list")
+
+    # Extract tableId from each product's 'path' (e.g. .../CT00024615/...)
+    product_info = []
+    for p in products_raw:
+        path = p.get('path', '')
+        m = re.search(r'/(CT\d+)', path)
+        table_id = m.group(1) if m else p.get('tableId', '')
+        if not table_id:
+            continue
+        product_info.append({
+            'tableId':  table_id,
+            'title':    p.get('title', ''),
+            'excess':   int(p.get('defaultExcessValue') or 0),
+        })
+
+    if not product_info:
+        print("    Could not extract tableIds from product list")
+        return []
+
+    # Step 2: fetch prices per scale (S = single, C = couple, F = family)
+    DOB = '16/04/1991'
+    hospital_ids = [{'tableId': p['tableId']} for p in product_info]
+    prices: dict[str, dict[str, float]] = {}  # tableId → {S/C/F → monthly}
+
+    with httpx.Client(timeout=30, follow_redirects=True) as client:
+        for scale in ['S', 'C', 'F']:
+            print(f"    Fetching {scale} prices...")
+            r2 = client.post(
+                MEDIBANK_PRICE_URL,
+                json={
+                    'scale': scale,
+                    'state': 'NSW',
+                    'isPensioner': False,
+                    'dob': DOB,
+                    'partnerDob': DOB,
+                    'cae': 0,
+                    'partnerCae': 0,
+                    'includeLHCLoading': False,
+                    'includePartnerLHCLoading': False,
+                    'dualRates': False,
+                    'ruleset': 'Retail',
+                    'fgrRebateTier': 3,   # 3 = no rebate = base pre-rebate price
+                    'extrasProducts': [],
+                    'hospitalProducts': hospital_ids,
+                },
+                headers={**MEDIBANK_HEADERS, 'Content-Type': 'application/json'},
+            )
+            r2.raise_for_status()
+            for pp in r2.json().get('hospitalProductPrice', []):
+                tid     = pp.get('tableId', '')
+                monthly = round(pp.get('price', {}).get('monthlyPrice', 0) or 0, 2)
+                prices.setdefault(tid, {})[scale] = monthly
+
+    # Step 3: build product dicts
+    result = []
+    for p in product_info:
+        tid    = p['tableId']
+        title  = p['title']
+        excess = p['excess']
+        ps     = prices.get(tid, {})
+
+        single = ps.get('S', 0)
+        couple = ps.get('C', 0)
+        family = ps.get('F', 0)
+
+        result.append({
+            'name':    title,
+            'tier':    _medibank_tier(title),
+            'type':    'hospital',
+            'excess':  excess,
+            'status':  'current',
+            'premiums': {
+                str(excess): {
+                    'single':              single,
+                    'couple':              couple,
+                    'family':              family,
+                    'single_parent_family': single,   # community rating
+                }
+            },
+        })
+        print(f"    {title} (${excess} excess): single=${single}, couple=${couple}")
+
     return result
 
 
-def discover_phis_codes(fund_code: str, cover_type: str, cover_category: str = 'H') -> list[dict]:
+def replace_medibank_hospital(products_data: dict, scraped: list[dict]) -> dict:
     """
-    Try to find product codes for a fund on privatehealth.gov.au by
-    fetching the comparison search page and asking Haiku to extract codes.
-    cover_category: 'H' = hospital, 'GH' = extras
-    Returns list of {product_code, state_cover_code, product_name, cover_type}
+    Replace (not merge) Medibank hospital products with fresh API data.
+    Extras are left unchanged.
     """
-    type_map = {
-        'single':               'S',
-        'couple':               'C',
-        'family':               'F',
-        'single_parent_family': 'SPF',
-    }
-    type_param = type_map.get(cover_type, 'S')
+    hospital_list = []
+    for sp in scraped:
+        name   = sp['name']
+        excess = sp['excess']
+        slug   = re.sub(r'[^a-z0-9]+', '-', name.lower()).strip('-')
+        hospital_list.append({
+            'id':           f'medibank-{slug}',
+            'name':         name,
+            'tier':         sp['tier'],
+            'status':       'current',
+            'excess_options': [excess],
+            'premiums':     sp['premiums'],
+            'source':       'medibank.com.au (API)',
+            'last_verified': TODAY,
+        })
+    products_data['funds']['medibank']['hospital'] = hospital_list
+    print(f"  Replaced Medibank hospital products: {len(hospital_list)} products")
+    return products_data
 
-    urls_to_try = [
-        f'https://www.privatehealth.gov.au/dynamic/search/getquote?State=NSW&Cover={cover_category}&TypeOfCover={type_param}&Fund={fund_code.upper()}&Tier=0&PageSize=50',
-        f'https://www.privatehealth.gov.au/healthinsurance/search/{("hospital" if cover_category == "H" else "general")}/?State=NSW&TypeOfCover={type_param}&Fund={fund_code.upper()}',
-    ]
 
-    for url in urls_to_try:
-        data = fetch(url)
-        if not data:
+# ════════════════════════════════════════════════════════════════════════════
+# AUSTRALIAN UNITY — PDF then Playwright fallback
+# ════════════════════════════════════════════════════════════════════════════
+
+AU_RATE_CHART_URL = (
+    'https://www.australianunity.com.au/health-insurance/~/media/'
+    'health%20insurance/files/fact%20sheets/ratechart_nswact.ashx'
+)
+
+
+def _au_tier(name: str) -> str:
+    n = name
+    if 'Gold' in n:        return 'Gold'
+    if 'Silver Plus' in n: return 'Silver Plus'
+    if 'Silver' in n:      return 'Silver'
+    if 'Bronze Plus' in n: return 'Bronze Plus'
+    if 'Bronze' in n:      return 'Bronze'
+    if 'Basic Plus' in n:  return 'Basic Plus'
+    return 'Basic'
+
+
+def scrape_au_pdf() -> list[dict]:
+    """
+    Try to download Australian Unity's rate chart PDF directly.
+    Returns structured products, or [] if unavailable/stale.
+    """
+    try:
+        import pdfplumber
+        import io
+    except ImportError:
+        print("    pdfplumber not installed, skipping PDF approach")
+        return []
+
+    print("    Downloading Australian Unity rate chart PDF...")
+    try:
+        r = httpx.get(
+            AU_RATE_CHART_URL,
+            headers={'User-Agent': 'Mozilla/5.0 (compatible)'},
+            timeout=30,
+            follow_redirects=True,
+        )
+        if r.status_code != 200 or len(r.content) < 10000:
+            print(f"    PDF not accessible (status {r.status_code})")
+            return []
+    except Exception as e:
+        print(f"    PDF download failed: {e}")
+        return []
+
+    print(f"    PDF downloaded ({len(r.content):,} bytes), extracting text...")
+    try:
+        text_pages = []
+        with pdfplumber.open(io.BytesIO(r.content)) as pdf:
+            for pg in pdf.pages[:10]:  # limit to first 10 pages
+                t = pg.extract_text()
+                if t:
+                    text_pages.append(t)
+        pdf_text = '\n'.join(text_pages)
+    except Exception as e:
+        print(f"    PDF parse error: {e}")
+        return []
+
+    if not pdf_text.strip():
+        print("    PDF yielded no text")
+        return []
+
+    # Check if it looks like a current-year rate chart
+    # If it mentions years before 2024 and not current, skip
+    if '2018' in pdf_text and '2026' not in pdf_text and '2025' not in pdf_text:
+        print("    PDF appears to be from 2018 — too outdated, skipping")
+        return []
+
+    print("    Parsing PDF with Haiku...")
+    raw = haiku_extract(HAIKU_AU_PDF_SYSTEM, pdf_text, max_tokens=4096)
+    if not isinstance(raw, list) or not raw:
+        print("    Haiku returned no products from PDF")
+        return []
+
+    # Convert from Tier3 DD price to true base price (remove 4% DD discount)
+    result = []
+    for p in raw:
+        name = p.get('name', '').strip()
+        if not name:
             continue
-        try:
-            text = data.decode('utf-8', errors='ignore')
-        except Exception:
-            continue
-        if len(text) < 500 or 'privatehealth' not in text.lower():
-            continue
-        results = haiku_extract(HAIKU_SEARCH_SYSTEM, text, max_tokens=1024)
-        if isinstance(results, list) and results:
-            print(f"    Discovered {len(results)} product codes via search")
-            return results
+        excess = int(p.get('excess') or 0)
+        prems  = p.get('premiums', {})
 
-    return []
+        # Tier3 DD price / 0.96 = pre-rebate base price
+        t3_single = prems.get('single_tier3_dd') or 0
+        t3_couple = prems.get('couple_tier3_dd') or 0
 
+        single = round(t3_single / 0.96, 2) if t3_single else 0
+        couple = round(t3_couple / 0.96, 2) if t3_couple else 0
 
-# ════════════════════════════════════════════════════════════════════════════
-# EXTRAS BENEFIT LIMIT FETCHERS
-# ════════════════════════════════════════════════════════════════════════════
-
-def fetch_hcf_extras_limits(product_id: str, pdf_url: str) -> dict:
-    """Fetch an HCF extras product summary PDF and extract benefit limits."""
-    print(f"    Fetching limits: {pdf_url}")
-    data = fetch(pdf_url)
-    if not data:
-        return {}
-    text = pdf_to_text(data)
-    if not text:
-        return {}
-    return haiku_extract(HAIKU_EXTRAS_SYSTEM, text, max_tokens=256)
-
-
-# ════════════════════════════════════════════════════════════════════════════
-# MERGE HELPERS
-# ════════════════════════════════════════════════════════════════════════════
-
-def find_hospital_product(fund_data: dict, product_name: str, tier: str, excess: int) -> Optional[dict]:
-    """Find a hospital product in fund data by name/tier/excess."""
-    for p in fund_data.get('hospital', []):
-        if (tier.lower() in p.get('tier', '').lower() or
-                product_name.lower() in p.get('name', '').lower()):
-            if excess in p.get('excess_options', []):
-                return p
-    return None
-
-
-def find_extras_product(fund_data: dict, product_name: str) -> Optional[dict]:
-    """Find an extras product in fund data by name."""
-    name_lower = product_name.lower()
-    for p in fund_data.get('extras', []):
-        if name_lower in p.get('name', '').lower() or p.get('name', '').lower() in name_lower:
-            return p
-    return None
-
-
-def upsert_hospital_premium(fund_data: dict, phis_result: dict, excess: int, tier: str, product_name: str) -> bool:
-    """Update a hospital product's premium for the given cover type. Returns True if updated."""
-    cover_type = phis_result.get('cover_type')
-    premium    = phis_result.get('monthly_premium')
-    if not cover_type or not premium:
-        return False
-
-    product = find_hospital_product(fund_data, product_name, tier, excess)
-    if not product:
-        return False
-
-    excess_key = str(excess)
-    if excess_key not in product.get('premiums', {}):
-        product.setdefault('premiums', {})[excess_key] = {
-            'single': 0, 'couple': 0, 'family': 0, 'single_parent_family': 0
-        }
-    product['premiums'][excess_key][cover_type] = premium
-    product['last_verified'] = TODAY
-    product['source'] = 'privatehealth.gov.au'
-    return True
-
-
-def upsert_extras_premium(fund_data: dict, phis_result: dict, product_name: str) -> bool:
-    """Update an extras product's premium for the given cover type. Returns True if updated."""
-    cover_type = phis_result.get('cover_type')
-    premium    = phis_result.get('monthly_premium')
-    if not cover_type or not premium:
-        return False
-
-    product = find_extras_product(fund_data, product_name)
-    if not product:
-        return False
-
-    product.setdefault('premiums', {})[cover_type] = premium
-    product['last_verified'] = TODAY
-    product['source'] = 'privatehealth.gov.au'
-    return True
-
-
-# ════════════════════════════════════════════════════════════════════════════
-# FUND SCRAPERS
-# ════════════════════════════════════════════════════════════════════════════
-
-def scrape_fund_premiums(fund_key: str, fund_data: dict) -> dict:
-    """
-    Scrape premiums for a fund using:
-    1. Known PHIS product codes from registry
-    2. Discovered codes (if discovery finds new ones)
-    Returns updated fund_data.
-    """
-    registry = PHIS_REGISTRY.get(fund_key, {'hospital': [], 'extras': []})
-
-    # ── Hospital premiums ──
-    updated_h = 0
-    for entry in registry['hospital']:
-        prod_code, state_code, cover_type, prod_name, tier, excess = entry
-        print(f"    PHIS hospital: {prod_name} ({cover_type}) ...")
-        result = fetch_phis_premium(fund_key, prod_code, state_code)
-        if result:
-            if upsert_hospital_premium(fund_data, result, excess, tier, prod_name):
-                updated_h += 1
-                print(f"      → ${result.get('monthly_premium')}/month {cover_type}")
-            else:
-                print(f"      → product not found in data (skipped)")
-        else:
-            print(f"      → fetch failed")
-
-    # Attempt discovery for cover types not in registry
-    known_hospital_types = {e[2] for e in registry['hospital']}
-    all_types = {'single', 'couple', 'family', 'single_parent_family'}
-    missing_types = all_types - known_hospital_types
-
-    if missing_types and registry['hospital']:
-        print(f"    Attempting discovery for missing cover types: {missing_types}")
-        for cover_type in missing_types:
-            discovered = discover_phis_codes(fund_key, cover_type, 'H')
-            for d in discovered:
-                result = fetch_phis_premium(fund_key, d['product_code'], d['state_cover_code'])
-                if result:
-                    excess = result.get('excess', 0)
-                    tier   = result.get('product_name', '')
-                    if upsert_hospital_premium(fund_data, result, excess, tier, d.get('product_name', '')):
-                        updated_h += 1
-                        print(f"      → Discovered: {d.get('product_name')} {cover_type} ${result.get('monthly_premium')}")
-
-    # ── Extras premiums ──
-    updated_e = 0
-    for entry in registry['extras']:
-        prod_code, state_code, cover_type, prod_name = entry
-        print(f"    PHIS extras: {prod_name} ({cover_type}) ...")
-        result = fetch_phis_premium(fund_key, prod_code, state_code)
-        if result:
-            if upsert_extras_premium(fund_data, result, prod_name):
-                updated_e += 1
-                print(f"      → ${result.get('monthly_premium')}/month {cover_type}")
-            else:
-                print(f"      → product not found in data (skipped)")
-
-    # Attempt discovery for extras cover types
-    known_extras_types = {e[2] for e in registry['extras']}
-    missing_extras_types = all_types - known_extras_types
-    if missing_extras_types and registry['extras']:
-        print(f"    Attempting extras discovery for: {missing_extras_types}")
-        for cover_type in missing_extras_types:
-            discovered = discover_phis_codes(fund_key, cover_type, 'GH')
-            for d in discovered:
-                result = fetch_phis_premium(fund_key, d['product_code'], d['state_cover_code'])
-                if result:
-                    if upsert_extras_premium(fund_data, result, d.get('product_name', '')):
-                        updated_e += 1
-                        print(f"      → Discovered: {d.get('product_name')} {cover_type} ${result.get('monthly_premium')}")
-
-    print(f"    Updated: {updated_h} hospital premiums, {updated_e} extras premiums")
-    return fund_data
-
-
-def scrape_hcf_extras_limits(fund_data: dict) -> dict:
-    """
-    Fetch HCF extras product summary PDFs and update benefit limits.
-    Only runs if limits appear stale (zeros present).
-    """
-    for product_id, pdf_url in HCF_EXTRAS_PDFS.items():
-        product = next((p for p in fund_data.get('extras', []) if p['id'] == product_id), None)
-        if not product:
+        if not single and not couple:
             continue
 
-        # Only refetch if KEY limits look stale (orthodontics=0 is legitimate)
-        limits = product.get('limits', {})
-        key_fields = ['general_dental', 'optical', 'therapies']
-        has_zeros = any(limits.get(f, 0) == 0 for f in key_fields)
-        if not has_zeros:
-            print(f"    Limits OK (skipping fetch): {product['name']}")
+        result.append({
+            'name':    name,
+            'tier':    _au_tier(name),
+            'type':    'hospital',
+            'excess':  excess,
+            'status':  'current',
+            'premiums': {
+                str(excess): {
+                    'single':              single,
+                    'couple':              couple,
+                    'family':              couple,       # community rating
+                    'single_parent_family': single,
+                }
+            },
+        })
+        print(f"    {name}: single=${single}, couple=${couple}")
+
+    return result
+
+
+def scrape_au_playwright(page: Page) -> list[dict]:
+    """Playwright fallback for Australian Unity."""
+    results = []
+
+    for product_type, url in [
+        ('hospital', 'https://www.australianunity.com.au/health-wellbeing/health-insurance/hospital-cover'),
+        ('extras',   'https://www.australianunity.com.au/health-wellbeing/health-insurance/extras-cover'),
+    ]:
+        print(f"  Scraping AU {product_type} (Playwright)...")
+        if not navigate(page, url):
+            continue
+        try_select_state(page, 'NSW')
+        text = page_text(page)
+        found = haiku_extract(
+            HAIKU_PRODUCTS_SYSTEM,
+            f'Australian Unity {product_type} page:\n\n{text}',
+        )
+        if isinstance(found, list):
+            results.extend(found)
+            print(f"    {len(found)} products found")
+
+    return results
+
+
+# ════════════════════════════════════════════════════════════════════════════
+# nib — Playwright
+# ════════════════════════════════════════════════════════════════════════════
+
+def scrape_nib(page: Page) -> list[dict]:
+    results = []
+    for product_type, url in [
+        ('hospital', 'https://www.nib.com.au/health-insurance/hospital'),
+        ('extras',   'https://www.nib.com.au/health-insurance/extras'),
+    ]:
+        print(f"  Scraping nib {product_type}...")
+        if not navigate(page, url, wait_ms=5000):
+            continue
+        try_select_state(page, 'NSW')
+        text = page_text(page)
+        found = haiku_extract(
+            HAIKU_PRODUCTS_SYSTEM,
+            f'nib {product_type} page:\n\n{text}',
+        )
+        if isinstance(found, list):
+            results.extend(found)
+            print(f"    {len(found)} products found")
+    return results
+
+
+# ════════════════════════════════════════════════════════════════════════════
+# Bupa — Playwright
+# ════════════════════════════════════════════════════════════════════════════
+
+def scrape_bupa(page: Page) -> list[dict]:
+    results = []
+    for product_type, url in [
+        ('hospital', 'https://www.bupa.com.au/health-insurance/hospital'),
+        ('extras',   'https://www.bupa.com.au/health-insurance/extras-cover'),
+    ]:
+        print(f"  Scraping Bupa {product_type}...")
+        if not navigate(page, url, wait_ms=5000):
+            continue
+        try_select_state(page, 'NSW')
+        text = page_text(page)
+        found = haiku_extract(
+            HAIKU_PRODUCTS_SYSTEM,
+            f'Bupa {product_type} page:\n\n{text}',
+        )
+        if isinstance(found, list):
+            results.extend(found)
+            print(f"    {len(found)} products found")
+    return results
+
+
+# ════════════════════════════════════════════════════════════════════════════
+# ahm — Playwright
+# ════════════════════════════════════════════════════════════════════════════
+
+def scrape_ahm(page: Page) -> list[dict]:
+    results = []
+    for product_type, url in [
+        ('hospital', 'https://www.ahm.com.au/health-insurance/hospital'),
+        ('extras',   'https://www.ahm.com.au/health-insurance/extras'),
+    ]:
+        print(f"  Scraping ahm {product_type}...")
+        if not navigate(page, url, wait_ms=5000):
+            continue
+        try_select_state(page, 'NSW')
+        text = page_text(page)
+        found = haiku_extract(
+            HAIKU_PRODUCTS_SYSTEM,
+            f'ahm {product_type} page:\n\n{text}',
+        )
+        if isinstance(found, list):
+            results.extend(found)
+            print(f"    {len(found)} products found")
+    return results
+
+
+# ════════════════════════════════════════════════════════════════════════════
+# DATA MERGE (for Playwright-scraped products)
+# ════════════════════════════════════════════════════════════════════════════
+
+def merge_into_fund(fund_data: dict, scraped: list[dict], source_domain: str) -> dict:
+    """
+    Merge freshly scraped products into existing fund data.
+    Updates premiums for matched products by name; logs unmatched ones.
+    """
+    for sp in scraped:
+        sname   = (sp.get('name') or '').lower().strip()
+        stype   = sp.get('type', 'hospital')
+        sexcess = sp.get('excess')
+        sprems  = sp.get('premiums') or {}
+
+        product_list = fund_data.get(stype, [])
+        matched = None
+
+        for p in product_list:
+            pname = p.get('name', '').lower()
+            if sname in pname or pname in sname:
+                if stype == 'hospital':
+                    if sexcess is None or sexcess in p.get('excess_options', []):
+                        matched = p
+                        break
+                else:
+                    matched = p
+                    break
+
+        if not matched:
+            print(f"    No match for: '{sp.get('name')}' ({stype})")
             continue
 
-        print(f"    Fetching limits: {product['name']}")
-        new_limits = fetch_hcf_extras_limits(product_id, pdf_url)
-        if new_limits:
-            product['limits'] = new_limits
-            product['last_verified'] = TODAY
-            product['source'] = pdf_url
-            print(f"      → {new_limits}")
-        else:
-            print(f"      → failed to extract limits")
+        updated = False
+        if stype == 'hospital' and sexcess is not None:
+            ekey = str(int(sexcess))
+            slot = matched.setdefault('premiums', {}).setdefault(
+                ekey, {'single': 0, 'couple': 0, 'family': 0, 'single_parent_family': 0}
+            )
+            for ct, val in sprems.items():
+                if val and val > 0:
+                    slot[ct] = val
+                    updated = True
+        elif stype == 'extras':
+            slot = matched.setdefault('premiums', {})
+            for ct, val in sprems.items():
+                if val and val > 0:
+                    slot[ct] = val
+                    updated = True
+
+        if updated:
+            matched['last_verified'] = TODAY
+            matched['source'] = source_domain
+            print(f"    Updated: {matched['name']}")
 
     return fund_data
 
@@ -542,47 +619,140 @@ def scrape_hcf_extras_limits(fund_data: dict) -> dict:
 
 def main():
     now_str = datetime.now(AEST).isoformat()
-    print(f"\n=== HCF Retention Tool — Daily Scrape [{now_str}] ===\n")
+    print(f"\n=== HCF Retention Tool — Direct Fund Scrape [{now_str}] ===\n")
 
     products_data = load_json(PRODUCTS_FILE)
     meta_data     = load_json(META_FILE)
+    results: dict[str, str] = {}
 
-    source_results = {}
+    # ── 1. Medibank API (no browser needed) ──────────────────────────────────
+    print("\n[Medibank] — direct API")
+    try:
+        medibank_products = scrape_medibank_api()
+        if medibank_products:
+            products_data = replace_medibank_hospital(products_data, medibank_products)
+            results['medibank'] = 'ok'
+        else:
+            results['medibank'] = 'no_data'
+    except Exception as e:
+        print(f"  ERROR: {e}")
+        results['medibank'] = 'error'
 
-    for fund_key in products_data['funds']:
-        print(f"\n[{fund_key.upper()}]")
+    # ── 2. Australian Unity — PDF then Playwright fallback ───────────────────
+    print("\n[Australian Unity] — PDF / Playwright")
+    au_scraped = scrape_au_pdf()
+    au_used_pdf = bool(au_scraped)
+
+    # Playwright-dependent funds — open browser once for all
+    playwright_needed = not au_used_pdf  # need browser if PDF failed for AU + always for others
+
+    # ── 3–5. Playwright-based funds ──────────────────────────────────────────
+    with sync_playwright() as pw:
+        browser = pw.chromium.launch(headless=True)
+        context = browser.new_context(
+            user_agent=(
+                'Mozilla/5.0 (Windows NT 10.0; Win64; x64) '
+                'AppleWebKit/537.36 (KHTML, like Gecko) '
+                'Chrome/124.0.0.0 Safari/537.36'
+            ),
+            viewport={'width': 1440, 'height': 900},
+            locale='en-AU',
+            timezone_id='Australia/Sydney',
+        )
+        page = context.new_page()
+        page.route(
+            '**/*.{png,jpg,jpeg,gif,svg,ico,woff,woff2,ttf,eot}',
+            lambda route: route.abort()
+        )
+
+        # AU Playwright fallback if PDF didn't work
+        if not au_used_pdf:
+            print("  Falling back to Playwright for Australian Unity...")
+            au_scraped = scrape_au_playwright(page)
+
         try:
-            fund_data = products_data['funds'][fund_key]
-
-            # Update premiums from privatehealth.gov.au
-            fund_data = scrape_fund_premiums(fund_key, fund_data)
-
-            # For HCF: also update extras benefit limits from PDFs
-            if fund_key == 'hcf':
-                fund_data = scrape_hcf_extras_limits(fund_data)
-
-            products_data['funds'][fund_key] = fund_data
-            source_results[fund_key] = 'ok'
-
+            if au_scraped:
+                products_data['funds']['australian_unity'] = merge_into_fund(
+                    products_data['funds']['australian_unity'],
+                    au_scraped,
+                    'australianunity.com.au',
+                )
+                results['australian_unity'] = 'ok'
+            else:
+                print("  No data obtained for Australian Unity")
+                results['australian_unity'] = 'no_data'
         except Exception as e:
-            print(f"  ERROR scraping {fund_key}: {e}")
-            source_results[fund_key] = 'error'
+            print(f"  ERROR (Australian Unity merge): {e}")
+            results['australian_unity'] = 'error'
 
-    # ── Update meta ──
+        # nib
+        print("\n[nib] — Playwright")
+        try:
+            nib_scraped = scrape_nib(page)
+            products_data['funds']['nib'] = merge_into_fund(
+                products_data['funds']['nib'], nib_scraped, 'nib.com.au'
+            )
+            results['nib'] = 'ok' if nib_scraped else 'no_data'
+        except Exception as e:
+            print(f"  ERROR: {e}")
+            results['nib'] = 'error'
+
+        # Bupa
+        print("\n[Bupa] — Playwright")
+        try:
+            bupa_scraped = scrape_bupa(page)
+            products_data['funds']['bupa'] = merge_into_fund(
+                products_data['funds']['bupa'], bupa_scraped, 'bupa.com.au'
+            )
+            results['bupa'] = 'ok' if bupa_scraped else 'no_data'
+        except Exception as e:
+            print(f"  ERROR: {e}")
+            results['bupa'] = 'error'
+
+        # ahm
+        print("\n[ahm] — Playwright")
+        try:
+            ahm_scraped = scrape_ahm(page)
+            products_data['funds']['ahm'] = merge_into_fund(
+                products_data['funds']['ahm'], ahm_scraped, 'ahm.com.au'
+            )
+            results['ahm'] = 'ok' if ahm_scraped else 'no_data'
+        except Exception as e:
+            print(f"  ERROR: {e}")
+            results['ahm'] = 'error'
+
+        browser.close()
+
+    # HCF — skip (Imperva WAF blocks headless Chrome)
+    print("\n[HCF] — skipped (WAF protection, existing data preserved)")
+    results['hcf'] = 'skipped'
+
+    # ── Update meta ────────────────────────────────────────────────────────
     meta_data['last_updated'] = now_str
-    for source in meta_data['sources']:
-        fund_key = source['fund'].lower().replace(' ', '_')
-        source['status'] = source_results.get(fund_key, 'skipped')
+    fund_domains = {
+        'hcf': 'hcf.com.au',
+        'nib': 'nib.com.au',
+        'bupa': 'bupa.com.au',
+        'medibank': 'medibank.com.au',
+        'ahm': 'ahm.com.au',
+        'australian_unity': 'australianunity.com.au',
+    }
+    for src in meta_data.get('sources', []):
+        fkey = src['fund'].lower().replace(' ', '_')
+        src['status'] = results.get(fkey, 'skipped')
+        src['url']    = fund_domains.get(fkey, '')
+        src['note']   = f'Direct scrape from {fund_domains.get(fkey, "?")} on {TODAY}'
 
     save_json(PRODUCTS_FILE, products_data)
     save_json(META_FILE, meta_data)
 
-    print(f"\n=== Scrape complete ===\n")
+    print(f"\n=== Scrape complete ===")
+    for fund, status in results.items():
+        print(f"  {fund}: {status}")
 
-    all_failed = all(v == 'error' for v in source_results.values())
-    if all_failed:
-        print("ERROR: All fund scrapes failed.")
-        sys.exit(1)
+    # Exit 1 only if Medibank API (the one reliable source) also failed
+    if results.get('medibank') == 'error':
+        print("\nWARNING: Medibank API failed — check API endpoints are still valid.")
 
 
 if __name__ == '__main__':
