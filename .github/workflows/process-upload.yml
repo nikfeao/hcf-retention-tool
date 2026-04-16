@@ -1,0 +1,58 @@
+name: Process Manual Upload
+
+on:
+  workflow_dispatch:
+    inputs:
+      fund_key:
+        description: 'Fund key (hcf, nib, bupa, medibank, ahm, australian_unity)'
+        required: true
+      product_id:
+        description: 'Product ID from products.json (e.g. nib-basic-750)'
+        required: true
+      excess:
+        description: 'Excess value or "extras" (e.g. 750, 500, extras)'
+        required: true
+      upload_path:
+        description: 'Path of uploaded file in repo (e.g. _uploads/nib-rate-apr26.pdf)'
+        required: true
+      source_note:
+        description: 'Source description (e.g. nib rate card April 2026)'
+        required: false
+
+jobs:
+  process:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install dependencies
+        run: pip install anthropic pdfplumber
+
+      - name: Extract prices and update data
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          FUND_KEY:     ${{ github.event.inputs.fund_key }}
+          PRODUCT_ID:   ${{ github.event.inputs.product_id }}
+          EXCESS:       ${{ github.event.inputs.excess }}
+          UPLOAD_PATH:  ${{ github.event.inputs.upload_path }}
+          SOURCE_NOTE:  ${{ github.event.inputs.source_note }}
+        run: python scraper/process_upload.py
+
+      - name: Commit results and clean up upload
+        run: |
+          git config user.name "New A.I.N. Bot"
+          git config user.email "nikfeao@gmail.com"
+          git rm --ignore-unmatch "${{ github.event.inputs.upload_path }}"
+          git add data/products.json data/meta.json
+          git diff --staged --quiet && echo "No changes to commit." || \
+            git commit -m "Manual data update: ${{ github.event.inputs.product_id }} (${{ github.event.inputs.fund_key }}, $(date +%Y-%m-%d))"
+          git push

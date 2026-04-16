@@ -555,51 +555,32 @@
           <input type="file" id="uploadFile" accept=".pdf,.png,.jpg,.jpeg,.webp" onchange="handleFileSelected(this.files[0])">
         </div>
 
-        <div id="extractionArea" style="display:none">
-          <div class="extraction-preview">
-            <h4>Extracted Prices — Review &amp; Edit</h4>
-            <div class="extraction-price-row">
-              <label>Single / month ($)</label>
-              <input type="number" id="extSingle" step="0.01" min="0" placeholder="0.00">
-            </div>
-            <div class="extraction-price-row">
-              <label>Couple / month ($)</label>
-              <input type="number" id="extCouple" step="0.01" min="0" placeholder="0.00">
-            </div>
-            <div class="extraction-price-row">
-              <label>Family / month ($)</label>
-              <input type="number" id="extFamily" step="0.01" min="0" placeholder="0.00">
-            </div>
-            <div class="extraction-price-row">
-              <label>Single Parent / month ($)</label>
-              <input type="number" id="extSingleParent" step="0.01" min="0" placeholder="0.00">
-            </div>
-            <div class="field" style="margin-top:8px">
-              <label>Source note (optional)</label>
-              <input type="text" id="extNote" placeholder="e.g. nib-rate-card-apr26.pdf">
-            </div>
-          </div>
-          <button class="admin-btn btn-save" id="saveBtn" onclick="saveToGithub()">✓ Save to GitHub</button>
-          <div id="saveStatus" class="cred-status" style="margin-top:6px"></div>
+        <div class="field">
+          <label>Source note <span style="font-weight:400;color:var(--muted)">(optional)</span></label>
+          <input type="text" id="extNote" placeholder="e.g. nib rate card April 2026">
         </div>
 
-        <button class="admin-btn btn-extract" id="extractBtn" onclick="extractFromUpload()" style="display:none">
-          🤖 Extract prices with AI
+        <button class="admin-btn btn-save" id="submitBtn" onclick="submitUpload()" style="display:none">
+          ☁ Upload &amp; Process with AI
         </button>
-        <div id="extractStatus" class="cred-status" style="margin-top:6px"></div>
+        <div id="submitStatus" class="cred-status" style="margin-top:6px"></div>
+        <div id="submitSuccess" style="display:none;margin-top:10px;padding:10px 12px;background:#f0fdf4;border:1px solid #86efac;border-radius:6px;font-size:12px;color:#15803d">
+          ✓ Upload submitted. Claude will extract the prices using the saved API key and commit the result.<br>
+          <strong>Data will update in ~2 minutes.</strong> Refresh the page then to see the new values.
+        </div>
       </div>
 
       <!-- RIGHT: Credentials + Log -->
       <div>
-        <div class="admin-section-title">API Credentials <span style="font-weight:400;text-transform:none;letter-spacing:0">(session only — cleared when tab closes)</span></div>
-        <div class="field">
-          <label>Anthropic API Key</label>
-          <input type="password" id="adminAnthropicKey" placeholder="sk-ant-api03-..." autocomplete="off">
+        <div class="admin-section-title">GitHub Token <span style="font-weight:400;text-transform:none;letter-spacing:0">(session only — cleared when tab closes)</span></div>
+        <div style="font-size:12px;color:var(--muted);margin-bottom:10px;line-height:1.5">
+          The AI extraction uses the <code>ANTHROPIC_API_KEY</code> already saved as a GitHub Secret — no key needed here.<br>
+          Only a GitHub token is required to upload the file and trigger the workflow.
         </div>
         <div class="field">
           <label>GitHub Personal Access Token</label>
           <input type="password" id="adminGithubToken" placeholder="ghp_..." autocomplete="off">
-          <div style="font-size:11px;color:var(--muted);margin-top:3px">Needs <code>repo</code> write access to nikfeao/hcf-retention-tool</div>
+          <div style="font-size:11px;color:var(--muted);margin-top:3px">Needs <code>repo</code> and <code>actions</code> write access to nikfeao/hcf-retention-tool</div>
         </div>
         <button class="admin-btn btn-cred" onclick="saveCredentials()" style="width:auto;padding:8px 16px">Save for session</button>
         <div id="credStatus" class="cred-status"></div>
@@ -1323,31 +1304,24 @@ function toggleAdmin() {
 // ADMIN — CREDENTIALS
 // ═══════════════════════════════════════════════════
 function saveCredentials() {
-  const anthropic = document.getElementById('adminAnthropicKey').value.trim();
-  const github    = document.getElementById('adminGithubToken').value.trim();
-  const status    = document.getElementById('credStatus');
-
-  if (!anthropic && !github) {
-    status.textContent = 'Enter at least one key.';
+  const github = document.getElementById('adminGithubToken').value.trim();
+  const status = document.getElementById('credStatus');
+  if (!github) {
+    status.textContent = 'Enter your GitHub token.';
     status.className   = 'cred-status err';
     return;
   }
-  if (anthropic) sessionStorage.setItem('ain_anthropic_key', anthropic);
-  if (github)    sessionStorage.setItem('ain_github_token',  github);
-
-  status.textContent = '✓ Saved for this session.';
+  sessionStorage.setItem('ain_github_token', github);
+  status.textContent = '✓ GitHub token saved for this session.';
   status.className   = 'cred-status ok';
-  document.getElementById('adminAnthropicKey').value = '';
-  document.getElementById('adminGithubToken').value  = '';
+  document.getElementById('adminGithubToken').value = '';
 }
 
 function loadCredentials() {
-  // Pre-fill masked placeholders if keys are stored
-  const hasAnthropic = !!sessionStorage.getItem('ain_anthropic_key');
-  const hasGithub    = !!sessionStorage.getItem('ain_github_token');
-  const status       = document.getElementById('credStatus');
-  if (hasAnthropic || hasGithub) {
-    status.textContent = `✓ Keys loaded: ${[hasAnthropic && 'Anthropic', hasGithub && 'GitHub'].filter(Boolean).join(', ')}.`;
+  const hasGithub = !!sessionStorage.getItem('ain_github_token');
+  const status    = document.getElementById('credStatus');
+  if (hasGithub) {
+    status.textContent = '✓ GitHub token loaded.';
     status.className   = 'cred-status ok';
   }
 }
@@ -1412,9 +1386,9 @@ function populateAdminExcess() {
     excessSel.appendChild(opt);
   }
 
-  // Show extract button only if a file is selected
+  // Show submit button only if a file is already selected
   const hasFile = document.getElementById('uploadFile').files.length > 0;
-  extractBtn.style.display = hasFile ? 'block' : 'none';
+  document.getElementById('submitBtn').style.display = hasFile ? 'block' : 'none';
 }
 
 // ═══════════════════════════════════════════════════
@@ -1431,13 +1405,12 @@ function handleFileSelected(file) {
   zone.classList.add('has-file');
   label.textContent = `✓ ${file.name} (${(file.size / 1024).toFixed(0)} KB)`;
 
-  // Show extract button if product is also selected
+  // Show submit button if product is also selected
   const hasProduct = !!document.getElementById('adminProduct').value;
-  const extractBtn = document.getElementById('extractBtn');
-  if (hasProduct) extractBtn.style.display = 'block';
+  if (hasProduct) document.getElementById('submitBtn').style.display = 'block';
 
-  document.getElementById('extractStatus').textContent = '';
-  document.getElementById('extractionArea').style.display = 'none';
+  document.getElementById('submitStatus').textContent = '';
+  document.getElementById('submitSuccess').style.display = 'none';
 }
 
 // Drag and drop
@@ -1455,240 +1428,46 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 // ═══════════════════════════════════════════════════
-// ADMIN — AI EXTRACTION
+// ADMIN — UPLOAD + TRIGGER WORKFLOW
 // ═══════════════════════════════════════════════════
-async function extractFromUpload() {
-  const apiKey = sessionStorage.getItem('ain_anthropic_key');
-  if (!apiKey) {
-    document.getElementById('extractStatus').textContent = '⚠ Enter your Anthropic API key first (above).';
-    document.getElementById('extractStatus').className = 'cred-status err';
+async function submitUpload() {
+  const githubToken = sessionStorage.getItem('ain_github_token');
+  if (!githubToken) {
+    setSubmitStatus('⚠ Enter your GitHub token first (right panel).', 'err');
     return;
   }
   if (!uploadedFile) {
-    document.getElementById('extractStatus').textContent = '⚠ Upload a file first.';
-    document.getElementById('extractStatus').className = 'cred-status err';
+    setSubmitStatus('⚠ Upload a file first.', 'err');
     return;
   }
 
   const fundKey   = document.getElementById('adminFund').value;
   const productId = document.getElementById('adminProduct').value;
   const excess    = document.getElementById('adminExcess').value;
+  const note      = document.getElementById('extNote').value.trim() || uploadedFile.name;
 
-  if (!fundKey || !productId) {
-    document.getElementById('extractStatus').textContent = '⚠ Select a fund and product first.';
-    document.getElementById('extractStatus').className = 'cred-status err';
+  if (!fundKey || !productId || !excess) {
+    setSubmitStatus('⚠ Select fund, product, and excess first.', 'err');
     return;
   }
 
-  const allProducts = [
-    ...(productsData.funds[fundKey]?.hospital || []),
-    ...(productsData.funds[fundKey]?.extras   || [])
-  ];
-  const product   = allProducts.find(p => p.id === productId);
-  const fundName  = productsData.funds[fundKey]?.name || fundKey;
-
-  const btn = document.getElementById('extractBtn');
-  const statusEl = document.getElementById('extractStatus');
+  const btn = document.getElementById('submitBtn');
   btn.disabled = true;
-  btn.innerHTML = '<span class="spinner"></span>Extracting…';
-  statusEl.textContent = '';
+  btn.innerHTML = '<span class="spinner"></span>Uploading…';
+  setSubmitStatus('', '');
+
+  const OWNER = 'nikfeao';
+  const REPO  = 'hcf-retention-tool';
 
   try {
-    // Read file as base64
-    const base64 = await fileToBase64(uploadedFile);
-    const isPdf  = uploadedFile.type === 'application/pdf' || uploadedFile.name.toLowerCase().endsWith('.pdf');
-    const mediaType = isPdf ? 'application/pdf' : (uploadedFile.type || 'image/jpeg');
+    // ── Step 1: Upload file to _uploads/ in the repo ─────────────────────────
+    const timestamp = Date.now();
+    const ext       = uploadedFile.name.split('.').pop().toLowerCase();
+    const uploadPath = `_uploads/${timestamp}_${fundKey}_${productId}.${ext}`;
 
-    const excessLabel = excess === 'extras' ? 'no excess' : `$${excess} excess`;
-    const prompt = `This is a health insurance rate document from ${fundName} in Australia.
+    const fileB64 = await fileToBase64(uploadedFile);
 
-Find the monthly premium for the following product in NSW/ACT:
-- Product name: ${product?.name || productId}
-- Excess: ${excessLabel}
-- State: NSW or ACT
-
-Return ONLY a JSON object with these exact keys:
-{
-  "single": <monthly $ as number or null>,
-  "couple": <monthly $ as number or null>,
-  "family": <monthly $ as number or null>,
-  "single_parent_family": <monthly $ as number or null>,
-  "notes": "<any useful context about the prices found>"
-}
-
-Rules:
-- All amounts must be BASE monthly premiums BEFORE any government rebate
-- If the document shows prices with direct debit discount, remove it (divide by 0.96)
-- If the document shows annual prices, divide by 12
-- If the document shows fortnightly prices, multiply by 26 then divide by 12
-- Community rating: couple = 2 × single, family = 2 × single, single parent = single
-- If you cannot find the specific product, return nulls with a notes explanation`;
-
-    const body = {
-      model: 'claude-haiku-4-5-20251001',
-      max_tokens: 512,
-      messages: [{
-        role: 'user',
-        content: [
-          {
-            type: isPdf ? 'document' : 'image',
-            source: { type: 'base64', media_type: mediaType, data: base64 }
-          },
-          { type: 'text', text: prompt }
-        ]
-      }]
-    };
-
-    const res = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'x-api-key': apiKey,
-        'anthropic-version': '2023-06-01',
-        'anthropic-dangerous-direct-browser-access': 'true'
-      },
-      body: JSON.stringify(body)
-    });
-
-    if (!res.ok) {
-      const err = await res.json().catch(() => ({}));
-      throw new Error(err.error?.message || `API error ${res.status}`);
-    }
-
-    const data   = await res.json();
-    let text     = data.content?.[0]?.text?.trim() || '{}';
-    if (text.startsWith('```')) {
-      text = text.split('```')[1] || text;
-      if (text.startsWith('json')) text = text.slice(4);
-      text = text.split('```')[0];
-    }
-    const extracted = JSON.parse(text.trim());
-
-    // Populate preview fields
-    document.getElementById('extSingle').value      = extracted.single      || '';
-    document.getElementById('extCouple').value      = extracted.couple      || '';
-    document.getElementById('extFamily').value      = extracted.family      || '';
-    document.getElementById('extSingleParent').value = extracted.single_parent_family || '';
-    document.getElementById('extNote').value        = uploadedFile.name;
-
-    document.getElementById('extractionArea').style.display = 'block';
-
-    if (extracted.notes) {
-      statusEl.textContent = `AI note: ${extracted.notes}`;
-      statusEl.className   = 'cred-status ok';
-    } else {
-      statusEl.textContent = '✓ Prices extracted — review and confirm below.';
-      statusEl.className   = 'cred-status ok';
-    }
-
-  } catch (e) {
-    console.error(e);
-    statusEl.textContent = `⚠ Extraction failed: ${e.message}`;
-    statusEl.className   = 'cred-status err';
-  } finally {
-    btn.disabled = false;
-    btn.innerHTML = '🤖 Extract prices with AI';
-  }
-}
-
-function fileToBase64(file) {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onload  = e => {
-      // Strip the data:...;base64, prefix
-      const b64 = e.target.result.split(',')[1];
-      resolve(b64);
-    };
-    reader.onerror = reject;
-    reader.readAsDataURL(file);
-  });
-}
-
-// ═══════════════════════════════════════════════════
-// ADMIN — GITHUB SAVE
-// ═══════════════════════════════════════════════════
-async function saveToGithub() {
-  const githubToken = sessionStorage.getItem('ain_github_token');
-  if (!githubToken) {
-    document.getElementById('saveStatus').textContent = '⚠ Enter your GitHub token first (above).';
-    document.getElementById('saveStatus').className   = 'cred-status err';
-    return;
-  }
-
-  const fundKey   = document.getElementById('adminFund').value;
-  const productId = document.getElementById('adminProduct').value;
-  const excess    = document.getElementById('adminExcess').value;
-  const note      = document.getElementById('extNote').value.trim();
-
-  const single      = parseFloat(document.getElementById('extSingle').value)      || 0;
-  const couple      = parseFloat(document.getElementById('extCouple').value)      || 0;
-  const family      = parseFloat(document.getElementById('extFamily').value)      || 0;
-  const singleParent = parseFloat(document.getElementById('extSingleParent').value) || 0;
-
-  if (!single && !couple && !family) {
-    document.getElementById('saveStatus').textContent = '⚠ At least one premium value is required.';
-    document.getElementById('saveStatus').className   = 'cred-status err';
-    return;
-  }
-
-  const saveBtn  = document.getElementById('saveBtn');
-  const statusEl = document.getElementById('saveStatus');
-  saveBtn.disabled = true;
-  saveBtn.innerHTML = '<span class="spinner"></span>Saving…';
-  statusEl.textContent = '';
-
-  try {
-    const OWNER = 'nikfeao';
-    const REPO  = 'hcf-retention-tool';
-    const PATH  = 'data/products.json';
-    const META_PATH = 'data/meta.json';
-
-    // ── 1. Get current products.json SHA ──
-    const fileRes = await fetch(`https://api.github.com/repos/${OWNER}/${REPO}/contents/${PATH}`, {
-      headers: { 'Authorization': `token ${githubToken}`, 'Accept': 'application/vnd.github.v3+json' }
-    });
-    if (!fileRes.ok) throw new Error(`GitHub API ${fileRes.status}: ${await fileRes.text()}`);
-    const fileData = await fileRes.json();
-    const sha = fileData.sha;
-
-    // ── 2. Update in-memory productsData ──
-    const allProducts = [
-      ...(productsData.funds[fundKey]?.hospital || []),
-      ...(productsData.funds[fundKey]?.extras   || [])
-    ];
-    const product = allProducts.find(p => p.id === productId);
-    if (!product) throw new Error(`Product ${productId} not found in data`);
-
-    const today = new Date().toISOString().split('T')[0];
-
-    if (excess === 'extras') {
-      // Extras: premiums are flat per cover type
-      product.premiums.single              = single      || product.premiums.single;
-      product.premiums.couple              = couple      || product.premiums.couple;
-      product.premiums.family              = family      || product.premiums.family;
-      product.premiums.single_parent_family = singleParent || product.premiums.single_parent_family;
-    } else {
-      // Hospital: premiums keyed by excess
-      const excessKey = String(excess);
-      if (!product.premiums[excessKey]) {
-        product.premiums[excessKey] = { single: 0, couple: 0, family: 0, single_parent_family: 0 };
-      }
-      if (single)      product.premiums[excessKey].single              = single;
-      if (couple)      product.premiums[excessKey].couple              = couple;
-      if (family)      product.premiums[excessKey].family              = family;
-      if (singleParent) product.premiums[excessKey].single_parent_family = singleParent;
-    }
-
-    product.last_verified   = today;
-    product.source          = note ? `manual upload: ${note}` : 'manual upload';
-    product.last_uploaded   = today;
-    product.upload_source   = note || 'manual upload';
-
-    // Rebuild list assignment (products are objects so already mutated)
-
-    // ── 3. Commit products.json ──
-    const updatedContent = btoa(unescape(encodeURIComponent(JSON.stringify(productsData, null, 2))));
-    const commitRes = await fetch(`https://api.github.com/repos/${OWNER}/${REPO}/contents/${PATH}`, {
+    const uploadRes = await fetch(`https://api.github.com/repos/${OWNER}/${REPO}/contents/${uploadPath}`, {
       method: 'PUT',
       headers: {
         'Authorization': `token ${githubToken}`,
@@ -1696,60 +1475,51 @@ async function saveToGithub() {
         'Accept': 'application/vnd.github.v3+json'
       },
       body: JSON.stringify({
-        message: `Manual data update: ${product.name} (${fundKey}, ${today})`,
-        content: updatedContent,
-        sha: sha
+        message: `Upload rate document: ${productId} (${new Date().toISOString().split('T')[0]})`,
+        content: fileB64
       })
     });
-    if (!commitRes.ok) throw new Error(`GitHub commit ${commitRes.status}: ${await commitRes.text()}`);
 
-    // ── 4. Update meta.json upload_log ──
-    try {
-      const metaRes  = await fetch(`https://api.github.com/repos/${OWNER}/${REPO}/contents/${META_PATH}`, {
-        headers: { 'Authorization': `token ${githubToken}`, 'Accept': 'application/vnd.github.v3+json' }
-      });
-      if (metaRes.ok) {
-        const metaFile = await metaRes.json();
-        const metaSha  = metaFile.sha;
-
-        if (!metaData.upload_log) metaData.upload_log = [];
-        metaData.upload_log.unshift({
-          date:       today,
-          fund:       productsData.funds[fundKey]?.name || fundKey,
-          product:    product.name,
-          excess:     excess === 'extras' ? 'extras' : `$${excess}`,
-          single:     single || null,
-          couple:     couple || null,
-          source:     note || 'manual',
-        });
-        metaData.upload_log = metaData.upload_log.slice(0, 50); // keep last 50
-
-        const metaContent = btoa(unescape(encodeURIComponent(JSON.stringify(metaData, null, 2))));
-        await fetch(`https://api.github.com/repos/${OWNER}/${REPO}/contents/${META_PATH}`, {
-          method: 'PUT',
-          headers: {
-            'Authorization': `token ${githubToken}`,
-            'Content-Type': 'application/json',
-            'Accept': 'application/vnd.github.v3+json'
-          },
-          body: JSON.stringify({
-            message: `Update upload log (${today})`,
-            content: metaContent,
-            sha: metaSha
-          })
-        });
-        renderUploadLog();
-        updateStatusBar();
-      }
-    } catch (metaErr) {
-      console.warn('Could not update meta.json upload log:', metaErr);
+    if (!uploadRes.ok) {
+      const err = await uploadRes.json().catch(() => ({}));
+      throw new Error(`File upload failed (${uploadRes.status}): ${err.message || uploadRes.statusText}`);
     }
 
-    statusEl.textContent = '✓ Saved! GitHub Pages will update in ~1 minute.';
-    statusEl.className   = 'cred-status ok';
+    btn.innerHTML = '<span class="spinner"></span>Triggering AI…';
 
-    // Reset upload UI
-    document.getElementById('extractionArea').style.display = 'none';
+    // ── Step 2: Trigger the process-upload workflow ───────────────────────────
+    const dispatchRes = await fetch(
+      `https://api.github.com/repos/${OWNER}/${REPO}/actions/workflows/process-upload.yml/dispatches`,
+      {
+        method: 'POST',
+        headers: {
+          'Authorization': `token ${githubToken}`,
+          'Content-Type': 'application/json',
+          'Accept': 'application/vnd.github.v3+json'
+        },
+        body: JSON.stringify({
+          ref: 'main',
+          inputs: {
+            fund_key:    fundKey,
+            product_id:  productId,
+            excess:      String(excess),
+            upload_path: uploadPath,
+            source_note: note
+          }
+        })
+      }
+    );
+
+    if (!dispatchRes.ok) {
+      const err = await dispatchRes.json().catch(() => ({}));
+      throw new Error(`Workflow trigger failed (${dispatchRes.status}): ${err.message || dispatchRes.statusText}`);
+    }
+
+    // ── Success ───────────────────────────────────────────────────────────────
+    document.getElementById('submitSuccess').style.display = 'block';
+    setSubmitStatus('', '');
+
+    // Reset UI
     document.getElementById('uploadZone').classList.remove('has-file');
     document.getElementById('uploadZoneLabel').textContent = 'Drop a PDF or screenshot here, or click to browse';
     document.getElementById('uploadFile').value = '';
@@ -1757,12 +1527,26 @@ async function saveToGithub() {
 
   } catch (e) {
     console.error(e);
-    statusEl.textContent = `⚠ Save failed: ${e.message}`;
-    statusEl.className   = 'cred-status err';
+    setSubmitStatus(`⚠ ${e.message}`, 'err');
   } finally {
-    saveBtn.disabled = false;
-    saveBtn.innerHTML = '✓ Save to GitHub';
+    btn.disabled = false;
+    btn.innerHTML = '☁ Upload &amp; Process with AI';
   }
+}
+
+function setSubmitStatus(msg, cls) {
+  const el = document.getElementById('submitStatus');
+  el.textContent = msg;
+  el.className   = cls ? `cred-status ${cls}` : 'cred-status';
+}
+
+function fileToBase64(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload  = e => resolve(e.target.result.split(',')[1]);
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
 }
 
 // ═══════════════════════════════════════════════════
