@@ -1,5 +1,5 @@
 {
-  "_note": "Premiums are monthly base rates in AUD. 0 = not yet populated. Populate from fund PDFs before going live. Scraper updates 'current' products daily. 'off-sale' products are never deleted.",
+  "_note": "Premiums are monthly base rates in AUD for NSW/ACT. 0 = not yet populated. Source: privatehealth.gov.au (April 1 2026) and HCF PDFs (Jan 2026). Scraper updates 'current' products daily. 'off-sale' products are never deleted.",
   "_rebate_rates_year": "2025-26",
   "rebate_rates": {
     "tier0": { "under65": 0.24608, "age6569": 0.28710, "age70plus": 0.32812 },
@@ -12,48 +12,46 @@
       "name": "HCF",
       "hospital": [
         {
-          "id": "hcf-gold-500",
-          "name": "Gold Hospital",
+          "id": "hcf-optimal-gold-750",
+          "name": "Hospital Optimal Gold",
           "tier": "Gold",
           "status": "current",
-          "excess_options": [0, 500, 750],
+          "excess_options": [500, 750],
           "premiums": {
             "500": { "single": 0, "couple": 0, "family": 0, "single_parent_family": 0 },
-            "750": { "single": 0, "couple": 0, "family": 0, "single_parent_family": 0 },
-            "0":   { "single": 0, "couple": 0, "family": 0, "single_parent_family": 0 }
+            "750": { "single": 494.25, "couple": 0, "family": 0, "single_parent_family": 0 }
           },
-          "source": "hcf.com.au",
-          "last_verified": "2026-04-15"
+          "source": "privatehealth.gov.au",
+          "last_verified": "2026-04-01"
         },
         {
           "id": "hcf-silver-plus-500",
-          "name": "Silver Plus Hospital",
+          "name": "Hospital Silver Plus",
           "tier": "Silver Plus",
           "status": "current",
           "excess_options": [500, 750],
           "premiums": {
-            "500": { "single": 0, "couple": 0, "family": 0, "single_parent_family": 0 },
+            "500": { "single": 275.47, "couple": 0, "family": 0, "single_parent_family": 0 },
             "750": { "single": 0, "couple": 0, "family": 0, "single_parent_family": 0 }
           },
-          "source": "hcf.com.au",
-          "last_verified": "2026-04-15"
+          "source": "privatehealth.gov.au",
+          "last_verified": "2026-04-01"
         },
         {
-          "id": "hcf-silver-500",
-          "name": "Silver Hospital",
-          "tier": "Silver",
+          "id": "hcf-standard-silver-plus-750",
+          "name": "Hospital Standard Silver Plus",
+          "tier": "Silver Plus",
           "status": "current",
-          "excess_options": [500, 750],
+          "excess_options": [750],
           "premiums": {
-            "500": { "single": 0, "couple": 0, "family": 0, "single_parent_family": 0 },
-            "750": { "single": 0, "couple": 0, "family": 0, "single_parent_family": 0 }
+            "750": { "single": 165.99, "couple": 425.78, "family": 0, "single_parent_family": 0 }
           },
-          "source": "hcf.com.au",
-          "last_verified": "2026-04-15"
+          "source": "privatehealth.gov.au",
+          "last_verified": "2026-04-01"
         },
         {
-          "id": "hcf-bronze-plus-500",
-          "name": "Bronze Plus Hospital",
+          "id": "hcf-bronze-plus-750",
+          "name": "Hospital Bronze Plus",
           "tier": "Bronze Plus",
           "status": "current",
           "excess_options": [500, 750],
@@ -65,34 +63,9 @@
           "last_verified": "2026-04-15"
         },
         {
-          "id": "hcf-bronze-500",
-          "name": "Bronze Hospital",
-          "tier": "Bronze",
-          "status": "current",
-          "excess_options": [500, 750],
-          "premiums": {
-            "500": { "single": 0, "couple": 0, "family": 0, "single_parent_family": 0 },
-            "750": { "single": 0, "couple": 0, "family": 0, "single_parent_family": 0 }
-          },
-          "source": "hcf.com.au",
-          "last_verified": "2026-04-15"
-        },
-        {
           "id": "hcf-basic-plus-750",
-          "name": "Basic Plus Hospital",
+          "name": "Hospital Basic Plus",
           "tier": "Basic Plus",
-          "status": "current",
-          "excess_options": [750],
-          "premiums": {
-            "750": { "single": 0, "couple": 0, "family": 0, "single_parent_family": 0 }
-          },
-          "source": "hcf.com.au",
-          "last_verified": "2026-04-15"
-        },
-        {
-          "id": "hcf-basic-750",
-          "name": "Basic Hospital",
-          "tier": "Basic",
           "status": "current",
           "excess_options": [750],
           "premiums": {
@@ -111,61 +84,73 @@
             "single": 0, "couple": 0, "family": 0, "single_parent_family": 0
           },
           "limits": {
-            "general_dental": 0,
-            "major_dental": 0,
-            "optical": 0,
-            "therapies": 0
+            "general_dental": 1000,
+            "major_dental": 1000,
+            "optical": 275,
+            "therapies": 600,
+            "chiro_osteo": 300,
+            "orthodontics": 800
           },
-          "source": "hcf.com.au",
-          "last_verified": "2026-04-15"
+          "limits_note": "Year 1 figures. Gen/Major dental increases to $1,150 Yr2, $1,300 Yr3+. Therapies $750 Yr2, $900 Yr3+. Chiro/Osteo $400 Yr2, $500 Yr3+.",
+          "source": "hcf.com.au/content/dam/hcf/pdf/brochures/HCF-Top-Extras.pdf",
+          "last_verified": "2026-01-01"
         },
         {
           "id": "hcf-mid-extras",
           "name": "Mid Extras",
           "status": "current",
           "premiums": {
-            "single": 0, "couple": 0, "family": 0, "single_parent_family": 0
+            "single": 49.40, "couple": 0, "family": 0, "single_parent_family": 0
           },
           "limits": {
-            "general_dental": 0,
-            "major_dental": 0,
-            "optical": 0,
-            "therapies": 0
+            "general_dental": 700,
+            "major_dental": 700,
+            "optical": 200,
+            "therapies": 350,
+            "chiro_osteo": 150,
+            "orthodontics": 0
           },
-          "source": "hcf.com.au",
-          "last_verified": "2026-04-15"
+          "limits_note": "Gen+Major dental is a combined $700 limit. Orthodontics not covered.",
+          "source": "hcf.com.au/content/dam/hcf/pdf/brochures/HCF-Mid-Extras.pdf",
+          "last_verified": "2026-01-01"
         },
         {
-          "id": "hcf-basic-extras",
-          "name": "Basic Extras",
+          "id": "hcf-general-extras",
+          "name": "General Extras",
           "status": "current",
           "premiums": {
             "single": 0, "couple": 0, "family": 0, "single_parent_family": 0
           },
           "limits": {
-            "general_dental": 0,
-            "major_dental": 0,
-            "optical": 0,
-            "therapies": 0
+            "general_dental": 400,
+            "major_dental": 300,
+            "optical": 180,
+            "therapies": 500,
+            "chiro_osteo": 250,
+            "orthodontics": 1500
           },
-          "source": "hcf.com.au",
-          "last_verified": "2026-04-15"
+          "limits_note": "Therapies $500 combined. Chiro/Osteo sub-limit $250 each. Orthodontics lifetime limit $1,500 (orthodontist) or $1,000 (general dentist), accrues $250/year.",
+          "source": "hcf.com.au/content/dam/hcf/pdf/brochures/5-General-Extras.pdf",
+          "last_verified": "2025-01-01"
         },
         {
           "id": "hcf-starter-extras",
-          "name": "Starter Extras",
+          "name": "Starter Extras (with Optical)",
           "status": "current",
           "premiums": {
-            "single": 0, "couple": 0, "family": 0, "single_parent_family": 0
+            "single": 23.94, "couple": 0, "family": 0, "single_parent_family": 0
           },
           "limits": {
             "general_dental": 0,
             "major_dental": 0,
             "optical": 0,
-            "therapies": 0
+            "therapies": 0,
+            "chiro_osteo": 0,
+            "orthodontics": 0
           },
+          "limits_note": "Starter Extras — limited basic cover. Limits to be populated from product summary PDF.",
           "source": "hcf.com.au",
-          "last_verified": "2026-04-15"
+          "last_verified": "2026-04-01"
         }
       ]
     },
@@ -176,7 +161,7 @@
         { "id": "nib-silver-plus-500", "name": "Silver Plus Hospital", "tier": "Silver Plus", "status": "current", "excess_options": [500, 750], "premiums": { "500": { "single": 0, "couple": 0, "family": 0, "single_parent_family": 0 }, "750": { "single": 0, "couple": 0, "family": 0, "single_parent_family": 0 } }, "source": "nib.com.au", "last_verified": null },
         { "id": "nib-silver-500", "name": "Silver Hospital", "tier": "Silver", "status": "current", "excess_options": [500, 750], "premiums": { "500": { "single": 0, "couple": 0, "family": 0, "single_parent_family": 0 }, "750": { "single": 0, "couple": 0, "family": 0, "single_parent_family": 0 } }, "source": "nib.com.au", "last_verified": null },
         { "id": "nib-bronze-plus-500", "name": "Bronze Plus Hospital", "tier": "Bronze Plus", "status": "current", "excess_options": [500, 750], "premiums": { "500": { "single": 0, "couple": 0, "family": 0, "single_parent_family": 0 }, "750": { "single": 0, "couple": 0, "family": 0, "single_parent_family": 0 } }, "source": "nib.com.au", "last_verified": null },
-        { "id": "nib-bronze-500", "name": "Bronze Hospital", "tier": "Bronze", "status": "current", "excess_options": [500, 750], "premiums": { "500": { "single": 0, "couple": 0, "family": 0, "single_parent_family": 0 }, "750": { "single": 0, "couple": 0, "family": 0, "single_parent_family": 0 } }, "source": "nib.com.au", "last_verified": null },
+        { "id": "nib-bronze-500", "name": "Bronze Starter Hospital Plus", "tier": "Bronze", "status": "current", "excess_options": [500], "premiums": { "500": { "single": 196.81, "couple": 393.62, "family": 393.62, "single_parent_family": 196.81, "_note": "VIC-sourced (privatehealth.gov.au NIB/J51/VGGS10). NSW verify needed — scraper will update." } }, "source": "privatehealth.gov.au (NIB/J51/VGGS10 — VIC single)", "last_verified": "2026-04-16" },
         { "id": "nib-basic-750", "name": "Basic Hospital", "tier": "Basic", "status": "current", "excess_options": [750], "premiums": { "750": { "single": 0, "couple": 0, "family": 0, "single_parent_family": 0 } }, "source": "nib.com.au", "last_verified": null }
       ],
       "extras": [
@@ -191,7 +176,7 @@
         { "id": "bupa-gold-500", "name": "Gold Hospital", "tier": "Gold", "status": "current", "excess_options": [0, 500, 750], "premiums": { "500": { "single": 0, "couple": 0, "family": 0, "single_parent_family": 0 }, "750": { "single": 0, "couple": 0, "family": 0, "single_parent_family": 0 }, "0": { "single": 0, "couple": 0, "family": 0, "single_parent_family": 0 } }, "source": "bupa.com.au", "last_verified": null },
         { "id": "bupa-silver-plus-500", "name": "Silver Plus Hospital", "tier": "Silver Plus", "status": "current", "excess_options": [500, 750], "premiums": { "500": { "single": 0, "couple": 0, "family": 0, "single_parent_family": 0 }, "750": { "single": 0, "couple": 0, "family": 0, "single_parent_family": 0 } }, "source": "bupa.com.au", "last_verified": null },
         { "id": "bupa-silver-500", "name": "Silver Hospital", "tier": "Silver", "status": "current", "excess_options": [500, 750], "premiums": { "500": { "single": 0, "couple": 0, "family": 0, "single_parent_family": 0 }, "750": { "single": 0, "couple": 0, "family": 0, "single_parent_family": 0 } }, "source": "bupa.com.au", "last_verified": null },
-        { "id": "bupa-bronze-plus-500", "name": "Bronze Plus Hospital", "tier": "Bronze Plus", "status": "current", "excess_options": [500, 750], "premiums": { "500": { "single": 0, "couple": 0, "family": 0, "single_parent_family": 0 }, "750": { "single": 0, "couple": 0, "family": 0, "single_parent_family": 0 } }, "source": "bupa.com.au", "last_verified": null },
+        { "id": "bupa-bronze-plus-500", "name": "Bronze Plus Simple Hospital", "tier": "Bronze Plus", "status": "current", "excess_options": [750], "premiums": { "750": { "single": 131.80, "couple": 263.60, "family": 263.60, "single_parent_family": 131.80 } }, "source": "privatehealth.gov.au (BUP/H48C/NMQQ10 — NSW confirmed)", "last_verified": "2026-04-16" },
         { "id": "bupa-bronze-500", "name": "Bronze Hospital", "tier": "Bronze", "status": "current", "excess_options": [500, 750], "premiums": { "500": { "single": 0, "couple": 0, "family": 0, "single_parent_family": 0 }, "750": { "single": 0, "couple": 0, "family": 0, "single_parent_family": 0 } }, "source": "bupa.com.au", "last_verified": null },
         { "id": "bupa-basic-750", "name": "Basic Hospital", "tier": "Basic", "status": "current", "excess_options": [750], "premiums": { "750": { "single": 0, "couple": 0, "family": 0, "single_parent_family": 0 } }, "source": "bupa.com.au", "last_verified": null }
       ],
@@ -207,7 +192,7 @@
         { "id": "medibank-gold-500", "name": "Gold Hospital", "tier": "Gold", "status": "current", "excess_options": [0, 500, 750], "premiums": { "500": { "single": 0, "couple": 0, "family": 0, "single_parent_family": 0 }, "750": { "single": 0, "couple": 0, "family": 0, "single_parent_family": 0 }, "0": { "single": 0, "couple": 0, "family": 0, "single_parent_family": 0 } }, "source": "medibank.com.au", "last_verified": null },
         { "id": "medibank-silver-plus-500", "name": "Silver Plus Hospital", "tier": "Silver Plus", "status": "current", "excess_options": [500, 750], "premiums": { "500": { "single": 0, "couple": 0, "family": 0, "single_parent_family": 0 }, "750": { "single": 0, "couple": 0, "family": 0, "single_parent_family": 0 } }, "source": "medibank.com.au", "last_verified": null },
         { "id": "medibank-silver-500", "name": "Silver Hospital", "tier": "Silver", "status": "current", "excess_options": [500, 750], "premiums": { "500": { "single": 0, "couple": 0, "family": 0, "single_parent_family": 0 }, "750": { "single": 0, "couple": 0, "family": 0, "single_parent_family": 0 } }, "source": "medibank.com.au", "last_verified": null },
-        { "id": "medibank-bronze-plus-500", "name": "Bronze Plus Hospital", "tier": "Bronze Plus", "status": "current", "excess_options": [500, 750], "premiums": { "500": { "single": 0, "couple": 0, "family": 0, "single_parent_family": 0 }, "750": { "single": 0, "couple": 0, "family": 0, "single_parent_family": 0 } }, "source": "medibank.com.au", "last_verified": null },
+        { "id": "medibank-bronze-plus-500", "name": "Bronze Plus Value", "tier": "Bronze Plus", "status": "current", "excess_options": [250, 500, 750], "premiums": { "250": { "single": 179.80, "couple": 359.60, "family": 359.60, "single_parent_family": 179.80, "_note": "VIC-sourced (privatehealth.gov.au MBP/J128/VQEW10). NSW verify needed — scraper will update." }, "500": { "single": 0, "couple": 0, "family": 0, "single_parent_family": 0 }, "750": { "single": 0, "couple": 0, "family": 0, "single_parent_family": 0 } }, "source": "privatehealth.gov.au (MBP/J128/VQEW10 — VIC single, $250 excess)", "last_verified": "2026-04-16" },
         { "id": "medibank-bronze-500", "name": "Bronze Hospital", "tier": "Bronze", "status": "current", "excess_options": [500, 750], "premiums": { "500": { "single": 0, "couple": 0, "family": 0, "single_parent_family": 0 }, "750": { "single": 0, "couple": 0, "family": 0, "single_parent_family": 0 } }, "source": "medibank.com.au", "last_verified": null },
         { "id": "medibank-basic-750", "name": "Basic Hospital", "tier": "Basic", "status": "current", "excess_options": [750], "premiums": { "750": { "single": 0, "couple": 0, "family": 0, "single_parent_family": 0 } }, "source": "medibank.com.au", "last_verified": null }
       ],
@@ -223,8 +208,8 @@
         { "id": "ahm-gold-500", "name": "Gold Hospital", "tier": "Gold", "status": "current", "excess_options": [0, 500, 750], "premiums": { "500": { "single": 0, "couple": 0, "family": 0, "single_parent_family": 0 }, "750": { "single": 0, "couple": 0, "family": 0, "single_parent_family": 0 }, "0": { "single": 0, "couple": 0, "family": 0, "single_parent_family": 0 } }, "source": "ahm.com.au", "last_verified": null },
         { "id": "ahm-silver-plus-500", "name": "Silver Plus Hospital", "tier": "Silver Plus", "status": "current", "excess_options": [500, 750], "premiums": { "500": { "single": 0, "couple": 0, "family": 0, "single_parent_family": 0 }, "750": { "single": 0, "couple": 0, "family": 0, "single_parent_family": 0 } }, "source": "ahm.com.au", "last_verified": null },
         { "id": "ahm-silver-500", "name": "Silver Hospital", "tier": "Silver", "status": "current", "excess_options": [500, 750], "premiums": { "500": { "single": 0, "couple": 0, "family": 0, "single_parent_family": 0 }, "750": { "single": 0, "couple": 0, "family": 0, "single_parent_family": 0 } }, "source": "ahm.com.au", "last_verified": null },
-        { "id": "ahm-bronze-plus-500", "name": "Bronze Plus Hospital", "tier": "Bronze Plus", "status": "current", "excess_options": [500, 750], "premiums": { "500": { "single": 0, "couple": 0, "family": 0, "single_parent_family": 0 }, "750": { "single": 0, "couple": 0, "family": 0, "single_parent_family": 0 } }, "source": "ahm.com.au", "last_verified": null },
-        { "id": "ahm-bronze-500", "name": "Bronze Hospital", "tier": "Bronze", "status": "current", "excess_options": [500, 750], "premiums": { "500": { "single": 0, "couple": 0, "family": 0, "single_parent_family": 0 }, "750": { "single": 0, "couple": 0, "family": 0, "single_parent_family": 0 } }, "source": "ahm.com.au", "last_verified": null },
+        { "id": "ahm-bronze-plus-500", "name": "Simple Bronze Plus", "tier": "Bronze Plus", "status": "current", "excess_options": [500, 750], "premiums": { "500": { "single": 0, "couple": 0, "family": 0, "single_parent_family": 0 }, "750": { "single": 0, "couple": 0, "family": 0, "single_parent_family": 0 } }, "source": "ahm.com.au", "last_verified": null },
+        { "id": "ahm-bronze-500", "name": "Starter Bronze", "tier": "Bronze", "status": "current", "excess_options": [0, 500, 750], "premiums": { "0": { "single": 0, "couple": 0, "family": 0, "single_parent_family": 0 }, "500": { "single": 243.90, "couple": 487.80, "family": 487.80, "single_parent_family": 243.90, "_note": "NSW single parent family = single (community rating). Source: privatehealth.gov.au AHM/J9A/NELG1Y" }, "750": { "single": 130.25, "couple": 260.50, "family": 260.50, "single_parent_family": 130.25, "_note": "QLD-sourced (privatehealth.gov.au AHM/J9A/QELV10). NSW verify needed — scraper will update." } }, "source": "privatehealth.gov.au (AHM/J9A — $500 NSW confirmed, $750 QLD)", "last_verified": "2026-04-16" },
         { "id": "ahm-basic-750", "name": "Basic Hospital", "tier": "Basic", "status": "current", "excess_options": [750], "premiums": { "750": { "single": 0, "couple": 0, "family": 0, "single_parent_family": 0 } }, "source": "ahm.com.au", "last_verified": null }
       ],
       "extras": [
@@ -239,8 +224,8 @@
         { "id": "au-gold-500", "name": "Gold Hospital", "tier": "Gold", "status": "current", "excess_options": [0, 500, 750], "premiums": { "500": { "single": 0, "couple": 0, "family": 0, "single_parent_family": 0 }, "750": { "single": 0, "couple": 0, "family": 0, "single_parent_family": 0 }, "0": { "single": 0, "couple": 0, "family": 0, "single_parent_family": 0 } }, "source": "australianunity.com.au", "last_verified": null },
         { "id": "au-silver-plus-500", "name": "Silver Plus Hospital", "tier": "Silver Plus", "status": "current", "excess_options": [500, 750], "premiums": { "500": { "single": 0, "couple": 0, "family": 0, "single_parent_family": 0 }, "750": { "single": 0, "couple": 0, "family": 0, "single_parent_family": 0 } }, "source": "australianunity.com.au", "last_verified": null },
         { "id": "au-silver-500", "name": "Silver Hospital", "tier": "Silver", "status": "current", "excess_options": [500, 750], "premiums": { "500": { "single": 0, "couple": 0, "family": 0, "single_parent_family": 0 }, "750": { "single": 0, "couple": 0, "family": 0, "single_parent_family": 0 } }, "source": "australianunity.com.au", "last_verified": null },
-        { "id": "au-bronze-plus-500", "name": "Bronze Plus Hospital", "tier": "Bronze Plus", "status": "current", "excess_options": [500, 750], "premiums": { "500": { "single": 0, "couple": 0, "family": 0, "single_parent_family": 0 }, "750": { "single": 0, "couple": 0, "family": 0, "single_parent_family": 0 } }, "source": "australianunity.com.au", "last_verified": null },
-        { "id": "au-bronze-500", "name": "Bronze Hospital", "tier": "Bronze", "status": "current", "excess_options": [500, 750], "premiums": { "500": { "single": 0, "couple": 0, "family": 0, "single_parent_family": 0 }, "750": { "single": 0, "couple": 0, "family": 0, "single_parent_family": 0 } }, "source": "australianunity.com.au", "last_verified": null },
+        { "id": "au-bronze-plus-500", "name": "Standard Hospital (Bronze Plus)", "tier": "Bronze Plus", "status": "current", "excess_options": [750], "premiums": { "750": { "single": 173.55, "couple": 347.10, "family": 347.10, "single_parent_family": 173.55, "_note": "NSW couple confirmed (AUF/J52/NCAS20). Single = couple/2 per community rating." } }, "source": "privatehealth.gov.au (AUF/J52/NCAS20 — NSW confirmed)", "last_verified": "2026-04-16" },
+        { "id": "au-bronze-500", "name": "Core Hospital (Bronze Plus)", "tier": "Bronze Plus", "status": "current", "excess_options": [500, 750], "premiums": { "500": { "single": 0, "couple": 0, "family": 0, "single_parent_family": 0 }, "750": { "single": 0, "couple": 0, "family": 0, "single_parent_family": 0 } }, "source": "australianunity.com.au", "last_verified": null },
         { "id": "au-basic-750", "name": "Basic Hospital", "tier": "Basic", "status": "current", "excess_options": [750], "premiums": { "750": { "single": 0, "couple": 0, "family": 0, "single_parent_family": 0 } }, "source": "australianunity.com.au", "last_verified": null }
       ],
       "extras": [

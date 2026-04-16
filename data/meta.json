@@ -1,7 +1,7 @@
 {
-  "last_updated": "2026-04-15T06:00:00+10:00",
+  "last_updated": "2026-04-16T00:00:00+10:00",
   "sources": [
-    { "fund": "HCF", "url": "hcf.com.au", "status": "manual", "note": "Populated from PDFs" },
+    { "fund": "HCF", "url": "hcf.com.au + privatehealth.gov.au", "status": "partial", "note": "Extras limits from HCF PDFs Jan 2026. Hospital singles (Optimal Gold $750, Silver Plus $500, Standard Silver Plus $750) from privatehealth.gov.au Apr 2026. Standard Silver Plus couple confirmed. Remaining hospital + all extras premiums still needed." },
     { "fund": "nib", "url": "nib.com.au", "status": "pending" },
     { "fund": "Bupa", "url": "bupa.com.au", "status": "pending" },
     { "fund": "Medibank", "url": "medibank.com.au", "status": "pending" },
