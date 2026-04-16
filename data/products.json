@@ -371,7 +371,7 @@
         },
         {
           "id": "nib-basic-750",
-          "name": "Basic Hospital",
+          "name": "Basic Essential Hospital Plus",
           "tier": "Basic",
           "status": "current",
           "excess_options": [
@@ -379,14 +379,24 @@
           ],
           "premiums": {
             "750": {
-              "single": 0,
-              "couple": 0,
-              "family": 0,
-              "single_parent_family": 0
+              "single": 129.04,
+              "couple": 258.08,
+              "family": 258.08,
+              "single_parent_family": 129.04
             }
           },
-          "source": "nib.com.au",
-          "last_verified": null
+          "phis_url": "https://www.privatehealth.gov.au/dynamic/Premium/PHIS/NIB/J35/NKIR10",
+          "phis_premiums": {
+            "750": {
+              "single": 129.04,
+              "couple": 258.08,
+              "family": 258.08,
+              "single_parent_family": 129.04
+            }
+          },
+          "phis_last_verified": "2026-04-16",
+          "source": "privatehealth.gov.au (NIB/J35/NKIR10 — NSW confirmed)",
+          "last_verified": "2026-04-16"
         }
       ],
       "extras": [
@@ -553,6 +563,16 @@
               "single_parent_family": 131.8
             }
           },
+          "phis_url": "https://www.privatehealth.gov.au/dynamic/Premium/PHIS/BUP/H48C/NMQQ10",
+          "phis_premiums": {
+            "750": {
+              "single": 131.80,
+              "couple": 263.60,
+              "family": 263.60,
+              "single_parent_family": 131.80
+            }
+          },
+          "phis_last_verified": "2026-04-16",
           "source": "privatehealth.gov.au (BUP/H48C/NMQQ10 \u2014 NSW confirmed)",
           "last_verified": "2026-04-16"
         },
@@ -1008,6 +1028,16 @@
               "_note": "QLD-sourced (privatehealth.gov.au AHM/J9A/QELV10). NSW verify needed \u2014 scraper will update."
             }
           },
+          "phis_url": "https://www.privatehealth.gov.au/dynamic/Premium/PHIS/AHM/J9A/NELG1Y",
+          "phis_premiums": {
+            "500": {
+              "single": 243.90,
+              "couple": 487.80,
+              "family": 487.80,
+              "single_parent_family": 243.90
+            }
+          },
+          "phis_last_verified": "2026-04-16",
           "source": "privatehealth.gov.au (AHM/J9A \u2014 $500 NSW confirmed, $750 QLD)",
           "last_verified": "2026-04-16"
         },
@@ -1196,6 +1226,16 @@
               "_note": "NSW couple confirmed (AUF/J52/NCAS20). Single = couple/2 per community rating."
             }
           },
+          "phis_url": "https://www.privatehealth.gov.au/dynamic/Premium/PHIS/AUF/J52/NCAS20",
+          "phis_premiums": {
+            "750": {
+              "single": 173.55,
+              "couple": 347.10,
+              "family": 347.10,
+              "single_parent_family": 173.55
+            }
+          },
+          "phis_last_verified": "2026-04-16",
           "source": "privatehealth.gov.au (AUF/J52/NCAS20 \u2014 NSW confirmed)",
           "last_verified": "2026-04-16"
         },

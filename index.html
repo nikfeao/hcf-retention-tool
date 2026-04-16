@@ -12,6 +12,8 @@
       --hcf-light: #e8f0fb;
       --comp-grey: #4a5568;
       --comp-light: #f7f7f7;
+      --phis-green: #065f46;
+      --phis-light: #ecfdf5;
       --border: #d1d5db;
       --text: #1a202c;
       --muted: #6b7280;
@@ -44,6 +46,20 @@
     }
     .header h1 { font-size: 18px; font-weight: 700; letter-spacing: -0.3px; }
     .header .sub { font-size: 12px; opacity: 0.75; }
+    .admin-toggle-btn {
+      background: rgba(255,255,255,0.15);
+      border: 1px solid rgba(255,255,255,0.35);
+      color: white;
+      border-radius: 6px;
+      padding: 7px 14px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.15s;
+      white-space: nowrap;
+    }
+    .admin-toggle-btn:hover { background: rgba(255,255,255,0.25); }
+    .admin-toggle-btn.active { background: rgba(255,255,255,0.3); }
 
     /* ── Status bar ── */
     .status-bar {
@@ -61,7 +77,7 @@
     .status-bar .dot.error { background: #ef4444; }
 
     /* ── Main layout ── */
-    .main { max-width: 1100px; margin: 0 auto; padding: 20px 16px; }
+    .main { max-width: 1200px; margin: 0 auto; padding: 20px 16px; }
 
     /* ── Data notice ── */
     .data-notice {
@@ -113,7 +129,7 @@
     .field label { display: block; font-size: 12px; font-weight: 600; color: var(--muted); margin-bottom: 4px; }
     .field-row { display: flex; gap: 6px; align-items: center; }
 
-    input[type="text"], input[type="number"], select {
+    input[type="text"], input[type="number"], input[type="password"], select, textarea {
       width: 100%;
       border: 1px solid var(--border);
       border-radius: 6px;
@@ -124,12 +140,13 @@
       background: white;
       transition: border-color 0.15s;
     }
-    input[type="text"]:focus, input[type="number"]:focus, select:focus {
+    input[type="text"]:focus, input[type="number"]:focus, input[type="password"]:focus, select:focus, textarea:focus {
       outline: none;
       border-color: var(--hcf-blue);
       box-shadow: 0 0 0 2px rgba(0,48,135,0.1);
     }
     select { cursor: pointer; }
+    textarea { resize: vertical; min-height: 60px; }
 
     /* ── Autocomplete ── */
     .autocomplete-wrap { position: relative; flex: 1; }
@@ -142,7 +159,7 @@
       border: 1px solid var(--border);
       border-top: none;
       border-radius: 0 0 6px 6px;
-      max-height: 200px;
+      max-height: 220px;
       overflow-y: auto;
       z-index: 100;
       box-shadow: 0 4px 12px rgba(0,0,0,0.1);
@@ -156,9 +173,11 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
+      gap: 6px;
     }
     .autocomplete-list li:hover { background: var(--hcf-light); }
-    .autocomplete-list li .badge {
+    .autocomplete-list li .badges { display: flex; align-items: center; gap: 4px; flex-shrink: 0; }
+    .badge {
       font-size: 10px;
       padding: 2px 6px;
       border-radius: 4px;
@@ -166,12 +185,20 @@
     }
     .badge-current { background: #dcfce7; color: #15803d; }
     .badge-offsale { background: #fef3c7; color: #92400e; }
+    /* Freshness dots */
+    .fresh-dot {
+      width: 7px; height: 7px; border-radius: 50%;
+      display: inline-block; flex-shrink: 0;
+    }
+    .fresh-dot.fresh   { background: #22c55e; }
+    .fresh-dot.aging   { background: #f59e0b; }
+    .fresh-dot.stale   { background: #ef4444; }
+    .fresh-dot.unknown { background: #9ca3af; }
 
     /* ── Mic button ── */
     .mic-btn {
       flex-shrink: 0;
-      width: 34px;
-      height: 34px;
+      width: 34px; height: 34px;
       border: 1px solid var(--border);
       border-radius: 6px;
       background: white;
@@ -189,19 +216,13 @@
     @keyframes pulse { 0%,100% { opacity:1 } 50% { opacity:0.6 } }
 
     /* ── Member details ── */
-    .member-card { }
     .member-grid {
       display: grid;
       grid-template-columns: 1fr 1fr 1fr;
       gap: 12px;
     }
     @media (max-width: 680px) { .member-grid { grid-template-columns: 1fr 1fr; } }
-
-    .loading-row {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 12px;
-    }
+    .loading-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
 
     /* ── Compare button ── */
     .compare-wrap { text-align: center; margin: 8px 0 20px; }
@@ -247,34 +268,37 @@
     }
     .action-btn:hover { background: #f9fafb; }
 
-    /* ── Comparison table ── */
+    /* ── Comparison table (4 columns) ── */
     .comparison-table {
       width: 100%;
       border-collapse: collapse;
       font-size: 13px;
     }
     .comparison-table th {
-      padding: 10px 14px;
+      padding: 10px 12px;
       text-align: left;
       font-size: 12px;
       font-weight: 700;
     }
-    .comparison-table th:first-child { color: var(--muted); font-weight: 600; width: 38%; }
-    .comparison-table th.th-hcf { background: var(--hcf-blue); color: white; border-radius: 6px 6px 0 0; }
+    .comparison-table th:first-child { color: var(--muted); font-weight: 600; width: 28%; }
+    .comparison-table th.th-hcf  { background: var(--hcf-blue); color: white; border-radius: 6px 6px 0 0; }
     .comparison-table th.th-comp { background: var(--comp-grey); color: white; border-radius: 6px 6px 0 0; }
+    .comparison-table th.th-phis { background: var(--phis-green); color: white; border-radius: 6px 6px 0 0; font-size: 11px; }
 
     .comparison-table td {
-      padding: 9px 14px;
+      padding: 9px 12px;
       border-bottom: 1px solid #f3f4f6;
       vertical-align: top;
     }
     .comparison-table tr:last-child td { border-bottom: none; }
-    .comparison-table td.td-hcf { background: var(--hcf-light); }
+    .comparison-table td.td-hcf  { background: var(--hcf-light); }
     .comparison-table td.td-comp { background: var(--comp-light); }
-    .comparison-table td.label { color: var(--muted); font-weight: 600; font-size: 12px; }
+    .comparison-table td.td-phis { background: var(--phis-light); color: #065f46; }
+    .comparison-table td.label   { color: var(--muted); font-weight: 600; font-size: 12px; }
 
     .row-final td { font-weight: 700; font-size: 15px; }
-    .row-final td.td-hcf { color: var(--hcf-blue); }
+    .row-final td.td-hcf  { color: var(--hcf-blue); }
+    .row-final td.td-phis { color: var(--phis-green); }
     .row-section td {
       background: #f9fafb !important;
       font-size: 11px;
@@ -282,12 +306,20 @@
       text-transform: uppercase;
       letter-spacing: 0.6px;
       color: var(--muted);
-      padding: 6px 14px;
+      padding: 6px 12px;
     }
 
-    .saving { color: var(--green); font-weight: 700; }
+    .saving       { color: var(--green); font-weight: 700; }
     .more-expensive { color: var(--red); font-weight: 700; }
 
+    .phis-source-note {
+      font-size: 10px;
+      color: #059669;
+      display: block;
+      margin-top: 2px;
+      font-weight: 400;
+    }
+    .phis-warn { color: #d97706; font-size: 10px; display: block; margin-top: 2px; }
     .off-sale-warn {
       background: var(--warn-bg);
       border: 1px solid var(--warn-border);
@@ -297,7 +329,6 @@
       color: #92400e;
       margin-top: 10px;
     }
-
     .no-data { color: var(--muted); font-style: italic; }
     .missing-data-note {
       background: #fff7ed;
@@ -309,13 +340,153 @@
       margin-top: 12px;
     }
 
+    /* ── Admin panel ── */
+    .admin-panel {
+      background: white;
+      border: 2px solid #e5e7eb;
+      border-radius: var(--radius);
+      margin-bottom: 20px;
+      overflow: hidden;
+    }
+    .admin-panel-header {
+      background: #f9fafb;
+      border-bottom: 1px solid #e5e7eb;
+      padding: 12px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .admin-panel-header h2 { font-size: 14px; font-weight: 700; }
+    .admin-close-btn {
+      background: none;
+      border: none;
+      font-size: 16px;
+      cursor: pointer;
+      color: var(--muted);
+      line-height: 1;
+      padding: 2px 6px;
+    }
+    .admin-close-btn:hover { color: var(--text); }
+
+    .admin-body {
+      padding: 16px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+    @media (max-width: 720px) { .admin-body { grid-template-columns: 1fr; } }
+
+    .admin-section-title {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      color: var(--muted);
+      margin-bottom: 12px;
+      padding-bottom: 6px;
+      border-bottom: 1px solid #f3f4f6;
+    }
+
+    /* Upload zone */
+    .upload-zone {
+      border: 2px dashed #d1d5db;
+      border-radius: var(--radius);
+      padding: 20px 12px;
+      text-align: center;
+      cursor: pointer;
+      transition: border-color 0.15s, background 0.15s;
+      background: #fafafa;
+      color: var(--muted);
+      font-size: 13px;
+      position: relative;
+      margin-bottom: 10px;
+    }
+    .upload-zone:hover, .upload-zone.drag-over { border-color: var(--hcf-blue); background: var(--hcf-light); }
+    .upload-zone.has-file { border-color: #22c55e; background: #f0fdf4; color: #15803d; }
+    .upload-zone input[type="file"] {
+      position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%;
+    }
+    .upload-icon { font-size: 24px; display: block; margin-bottom: 6px; }
+
+    /* Admin buttons */
+    .admin-btn {
+      width: 100%;
+      border: none;
+      border-radius: 6px;
+      padding: 10px 16px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      margin-top: 8px;
+      transition: background 0.15s;
+    }
+    .admin-btn:disabled { background: #9ca3af !important; cursor: not-allowed; }
+    .btn-extract { background: #1e3a5f; color: white; }
+    .btn-extract:hover:not(:disabled) { background: #152c47; }
+    .btn-save    { background: #16a34a; color: white; }
+    .btn-save:hover:not(:disabled)    { background: #15803d; }
+    .btn-cred    { background: #4b5563; color: white; }
+    .btn-cred:hover { background: #374151; }
+
+    /* Extraction preview */
+    .extraction-preview {
+      background: #f9fafb;
+      border: 1px solid #e5e7eb;
+      border-radius: 6px;
+      padding: 12px;
+      margin-top: 10px;
+      font-size: 12px;
+    }
+    .extraction-preview h4 {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+      color: var(--muted);
+      margin-bottom: 8px;
+    }
+    .extraction-price-row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; margin-bottom: 6px; }
+    .extraction-price-row label { font-weight: 600; min-width: 150px; }
+    .extraction-price-row input { max-width: 120px; }
+
+    /* Upload log */
+    .upload-log-empty { color: var(--muted); font-size: 12px; font-style: italic; padding: 8px 0; }
+    .log-entry {
+      padding: 8px 0;
+      border-bottom: 1px solid #f3f4f6;
+      font-size: 12px;
+    }
+    .log-entry:last-child { border-bottom: none; }
+    .log-entry-header { display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; }
+    .log-entry-fund { font-weight: 700; color: var(--text); }
+    .log-entry-date { color: var(--muted); font-size: 11px; white-space: nowrap; }
+    .log-entry-detail { color: var(--muted); margin-top: 2px; }
+
+    /* Credentials saved flash */
+    .cred-status { font-size: 11px; margin-top: 4px; }
+    .cred-status.ok  { color: #16a34a; }
+    .cred-status.err { color: #dc2626; }
+
+    /* Admin spinner */
+    .spinner {
+      display: inline-block;
+      width: 14px; height: 14px;
+      border: 2px solid rgba(255,255,255,0.3);
+      border-top-color: white;
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+      vertical-align: middle;
+      margin-right: 6px;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
     /* ── Print ── */
     @media print {
       body { background: white; }
       .header, .status-bar { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-      .compare-wrap, .results-actions, .card:not(.results-card) { display: none !important; }
+      .compare-wrap, .results-actions, .card:not(.results-card), .admin-panel { display: none !important; }
       #results { display: block !important; }
-      .comparison-table th.th-hcf, .comparison-table th.th-comp { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+      .comparison-table th { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
     }
   </style>
 </head>
@@ -326,6 +497,7 @@
     <h1>HCF Retention Comparison Tool</h1>
     <div class="sub">New A.I.N. — Internal agent tool</div>
   </div>
+  <button class="admin-toggle-btn" id="adminToggleBtn" onclick="toggleAdmin()">⚙ Update Data</button>
 </div>
 
 <div class="status-bar" id="statusBar">
@@ -337,6 +509,108 @@
 
   <div class="data-notice" id="dataNotice">
     ⚠ Some product premiums are not yet populated. Enter the quoted price manually in the override field below.
+  </div>
+
+  <!-- Admin panel (hidden by default) -->
+  <div class="admin-panel" id="adminPanel" style="display:none">
+    <div class="admin-panel-header">
+      <h2>⚙ Data Management — Upload rate PDFs or screenshots</h2>
+      <button class="admin-close-btn" onclick="toggleAdmin()" title="Close">✕</button>
+    </div>
+    <div class="admin-body">
+
+      <!-- LEFT: Upload new data -->
+      <div>
+        <div class="admin-section-title">Upload Rate Data</div>
+
+        <div class="field">
+          <label>Fund</label>
+          <select id="adminFund" onchange="populateAdminProducts()">
+            <option value="">— select fund —</option>
+            <option value="nib">nib</option>
+            <option value="bupa">Bupa</option>
+            <option value="medibank">Medibank</option>
+            <option value="ahm">ahm</option>
+            <option value="australian_unity">Australian Unity</option>
+            <option value="hcf">HCF</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Product</label>
+          <select id="adminProduct" onchange="populateAdminExcess()">
+            <option value="">— select fund first —</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Excess / Cover</label>
+          <select id="adminExcess">
+            <option value="">— select product first —</option>
+          </select>
+        </div>
+
+        <div class="upload-zone" id="uploadZone">
+          <span class="upload-icon">📄</span>
+          <div id="uploadZoneLabel">Drop a PDF or screenshot here, or click to browse</div>
+          <div style="font-size:11px;margin-top:4px;opacity:0.7">Supported: PDF, PNG, JPG, WEBP</div>
+          <input type="file" id="uploadFile" accept=".pdf,.png,.jpg,.jpeg,.webp" onchange="handleFileSelected(this.files[0])">
+        </div>
+
+        <div id="extractionArea" style="display:none">
+          <div class="extraction-preview">
+            <h4>Extracted Prices — Review &amp; Edit</h4>
+            <div class="extraction-price-row">
+              <label>Single / month ($)</label>
+              <input type="number" id="extSingle" step="0.01" min="0" placeholder="0.00">
+            </div>
+            <div class="extraction-price-row">
+              <label>Couple / month ($)</label>
+              <input type="number" id="extCouple" step="0.01" min="0" placeholder="0.00">
+            </div>
+            <div class="extraction-price-row">
+              <label>Family / month ($)</label>
+              <input type="number" id="extFamily" step="0.01" min="0" placeholder="0.00">
+            </div>
+            <div class="extraction-price-row">
+              <label>Single Parent / month ($)</label>
+              <input type="number" id="extSingleParent" step="0.01" min="0" placeholder="0.00">
+            </div>
+            <div class="field" style="margin-top:8px">
+              <label>Source note (optional)</label>
+              <input type="text" id="extNote" placeholder="e.g. nib-rate-card-apr26.pdf">
+            </div>
+          </div>
+          <button class="admin-btn btn-save" id="saveBtn" onclick="saveToGithub()">✓ Save to GitHub</button>
+          <div id="saveStatus" class="cred-status" style="margin-top:6px"></div>
+        </div>
+
+        <button class="admin-btn btn-extract" id="extractBtn" onclick="extractFromUpload()" style="display:none">
+          🤖 Extract prices with AI
+        </button>
+        <div id="extractStatus" class="cred-status" style="margin-top:6px"></div>
+      </div>
+
+      <!-- RIGHT: Credentials + Log -->
+      <div>
+        <div class="admin-section-title">API Credentials <span style="font-weight:400;text-transform:none;letter-spacing:0">(session only — cleared when tab closes)</span></div>
+        <div class="field">
+          <label>Anthropic API Key</label>
+          <input type="password" id="adminAnthropicKey" placeholder="sk-ant-api03-..." autocomplete="off">
+        </div>
+        <div class="field">
+          <label>GitHub Personal Access Token</label>
+          <input type="password" id="adminGithubToken" placeholder="ghp_..." autocomplete="off">
+          <div style="font-size:11px;color:var(--muted);margin-top:3px">Needs <code>repo</code> write access to nikfeao/hcf-retention-tool</div>
+        </div>
+        <button class="admin-btn btn-cred" onclick="saveCredentials()" style="width:auto;padding:8px 16px">Save for session</button>
+        <div id="credStatus" class="cred-status"></div>
+
+        <div style="margin-top: 20px">
+          <div class="admin-section-title">Recent Manual Updates</div>
+          <div id="uploadLog"><div class="upload-log-empty">No manual updates recorded yet.</div></div>
+        </div>
+      </div>
+
+    </div>
   </div>
 
   <!-- Input columns -->
@@ -440,7 +714,7 @@
   </div>
 
   <!-- Member details -->
-  <div class="card member-card">
+  <div class="card">
     <div class="card-title">Member Details</div>
     <div class="member-grid">
       <div class="field">
@@ -514,7 +788,6 @@
 let productsData = null;
 let metaData = null;
 
-// Selected product objects
 let sel = {
   hcfHospital: null,
   hcfExtras: null,
@@ -526,31 +799,29 @@ let sel = {
 // INIT
 // ═══════════════════════════════════════════════════
 async function init() {
-  // Check voice support
   const hasVoice = ('SpeechRecognition' in window || 'webkitSpeechRecognition' in window);
-  if (!hasVoice) {
-    document.querySelectorAll('.mic-btn').forEach(b => b.classList.add('hidden'));
-  }
+  if (!hasVoice) document.querySelectorAll('.mic-btn').forEach(b => b.classList.add('hidden'));
 
-  // Show partner loading when cover type changes
   document.getElementById('coverType').addEventListener('change', e => {
     const showPartner = ['couple', 'family', 'single_parent_family'].includes(e.target.value);
     document.getElementById('partnerLoadingField').style.display = showPartner ? 'block' : 'none';
   });
 
-  // Load data
   try {
     const [pRes, mRes] = await Promise.all([
-      fetch('data/products.json'),
-      fetch('data/meta.json')
+      fetch('data/products.json?' + Date.now()),
+      fetch('data/meta.json?' + Date.now())
     ]);
     productsData = await pRes.json();
     metaData = await mRes.json();
     updateStatusBar();
     checkDataCompleteness();
     wireAutocomplete();
+    loadCredentials();
+    renderUploadLog();
   } catch (e) {
     setStatusError();
+    console.error('Data load error:', e);
   }
 }
 
@@ -558,27 +829,26 @@ async function init() {
 // STATUS BAR
 // ═══════════════════════════════════════════════════
 function updateStatusBar() {
-  const dot = document.getElementById('statusDot');
+  const dot  = document.getElementById('statusDot');
   const text = document.getElementById('statusText');
-  const sources = document.getElementById('statusSources');
+  const srcs = document.getElementById('statusSources');
 
-  const updated = new Date(metaData.last_updated);
-  const now = new Date();
-  const hoursAgo = (now - updated) / 3600000;
-
-  const dateStr = updated.toLocaleDateString('en-AU', { day: 'numeric', month: 'short', year: 'numeric' });
-  const timeStr = updated.toLocaleTimeString('en-AU', { hour: '2-digit', minute: '2-digit' });
+  const updated  = new Date(metaData.last_updated);
+  const hoursAgo = (Date.now() - updated) / 3600000;
+  const dateStr  = updated.toLocaleDateString('en-AU', { day: 'numeric', month: 'short', year: 'numeric' });
+  const timeStr  = updated.toLocaleTimeString('en-AU', { hour: '2-digit', minute: '2-digit' });
 
   if (hoursAgo > 36) {
     dot.className = 'dot stale';
-    text.textContent = `⚠ Last updated: ${dateStr}, ${timeStr} AEST — data may be outdated`;
+    text.textContent = `⚠ Last auto-update: ${dateStr}, ${timeStr} AEST — may be outdated`;
   } else {
     dot.className = 'dot';
-    text.textContent = `Last updated: ${dateStr}, ${timeStr} AEST`;
+    text.textContent = `Last auto-update: ${dateStr}, ${timeStr} AEST`;
   }
 
+  const uploadCount = (metaData.upload_log || []).length;
   const sourceNames = metaData.sources.map(s => s.fund).join(' · ');
-  sources.textContent = `Sources: ${sourceNames}`;
+  srcs.textContent = `Sources: ${sourceNames}` + (uploadCount ? ` · ${uploadCount} manual update${uploadCount > 1 ? 's' : ''}` : '');
 }
 
 function setStatusError() {
@@ -587,42 +857,58 @@ function setStatusError() {
 }
 
 // ═══════════════════════════════════════════════════
-// DATA COMPLETENESS CHECK
+// DATA COMPLETENESS
 // ═══════════════════════════════════════════════════
 function checkDataCompleteness() {
   if (!productsData) return;
-  // Check if any HCF hospital products have 0 premiums
-  const hcfHospital = productsData.funds.hcf.hospital;
-  const hasMissing = hcfHospital.some(p => {
+  const hasMissing = productsData.funds.hcf.hospital.some(p => {
     const excess = Object.keys(p.premiums)[0];
     return p.premiums[excess].single === 0;
   });
-  if (hasMissing) {
-    document.getElementById('dataNotice').classList.add('visible');
-  }
+  if (hasMissing) document.getElementById('dataNotice').classList.add('visible');
+}
+
+// ═══════════════════════════════════════════════════
+// FRESHNESS HELPERS
+// ═══════════════════════════════════════════════════
+function freshnessClass(lastVerified) {
+  if (!lastVerified) return 'unknown';
+  const days = (Date.now() - new Date(lastVerified)) / 86400000;
+  if (days < 7)  return 'fresh';
+  if (days < 30) return 'aging';
+  return 'stale';
+}
+
+function freshnessLabel(lastVerified) {
+  if (!lastVerified) return 'not verified';
+  const days = Math.floor((Date.now() - new Date(lastVerified)) / 86400000);
+  if (days === 0) return 'today';
+  if (days === 1) return '1 day ago';
+  if (days < 30)  return `${days} days ago`;
+  const months = Math.floor(days / 30);
+  return `${months} month${months > 1 ? 's' : ''} ago`;
 }
 
 // ═══════════════════════════════════════════════════
 // AUTOCOMPLETE
 // ═══════════════════════════════════════════════════
 function wireAutocomplete() {
-  setupAC('hcfHospitalInput', 'hcfHospitalList', 'hcf', 'hospital', (p) => {
+  setupAC('hcfHospitalInput', 'hcfHospitalList', 'hcf', 'hospital', p => {
     sel.hcfHospital = p;
     populateExcess('hcfExcess', p);
   });
-  setupAC('hcfExtrasInput', 'hcfExtrasList', 'hcf', 'extras', (p) => {
+  setupAC('hcfExtrasInput', 'hcfExtrasList', 'hcf', 'extras', p => {
     sel.hcfExtras = p;
   });
-  setupAC('compHospitalInput', 'compHospitalList', null, 'hospital', (p) => {
+  setupAC('compHospitalInput', 'compHospitalList', null, 'hospital', p => {
     sel.compHospital = p;
     populateExcess('compExcess', p);
   }, true);
-  setupAC('compExtrasInput', 'compExtrasList', null, 'extras', (p) => {
+  setupAC('compExtrasInput', 'compExtrasList', null, 'extras', p => {
     sel.compExtras = p;
   }, true);
 
   document.getElementById('compFund').addEventListener('change', () => {
-    // Reset competitor selections when fund changes
     sel.compHospital = null;
     sel.compExtras = null;
     document.getElementById('compHospitalInput').value = '';
@@ -633,32 +919,25 @@ function wireAutocomplete() {
 
 function setupAC(inputId, listId, fundKey, type, onSelect, useCompFund = false) {
   const input = document.getElementById(inputId);
-  const list = document.getElementById(listId);
+  const list  = document.getElementById(listId);
 
   input.addEventListener('input', () => {
     const fund = useCompFund ? document.getElementById('compFund').value : fundKey;
     if (!fund || !productsData) { list.style.display = 'none'; return; }
-
-    const query = input.value.toLowerCase().trim();
+    const query    = input.value.toLowerCase().trim();
     const products = productsData.funds[fund]?.[type] || [];
-    const filtered = query
-      ? products.filter(p => p.name.toLowerCase().includes(query))
-      : products;
-
+    const filtered = query ? products.filter(p => p.name.toLowerCase().includes(query)) : products;
     renderList(list, filtered, input, onSelect);
   });
 
   input.addEventListener('focus', () => {
     const fund = useCompFund ? document.getElementById('compFund').value : fundKey;
     if (!fund || !productsData) return;
-    const products = productsData.funds[fund]?.[type] || [];
-    renderList(list, products, input, onSelect);
+    renderList(list, productsData.funds[fund]?.[type] || [], input, onSelect);
   });
 
-  document.addEventListener('click', (e) => {
-    if (!input.contains(e.target) && !list.contains(e.target)) {
-      list.style.display = 'none';
-    }
+  document.addEventListener('click', e => {
+    if (!input.contains(e.target) && !list.contains(e.target)) list.style.display = 'none';
   });
 }
 
@@ -666,13 +945,17 @@ function renderList(list, products, input, onSelect) {
   if (!products.length) { list.style.display = 'none'; return; }
   list.innerHTML = '';
   products.forEach(p => {
-    const li = document.createElement('li');
-    const badge = document.createElement('span');
-    badge.className = 'badge ' + (p.status === 'off-sale' ? 'badge-offsale' : 'badge-current');
-    badge.textContent = p.status === 'off-sale' ? 'Off-sale' : 'Current';
-    li.textContent = p.name + ' ';
-    li.appendChild(badge);
-    li.addEventListener('mousedown', (e) => {
+    const li     = document.createElement('li');
+    const fClass = freshnessClass(p.last_verified);
+    const fLabel = freshnessLabel(p.last_verified);
+
+    li.innerHTML = `<span>${p.name}</span>
+      <span class="badges">
+        <span class="fresh-dot ${fClass}" title="Data: ${fLabel}"></span>
+        <span class="badge ${p.status === 'off-sale' ? 'badge-offsale' : 'badge-current'}">${p.status === 'off-sale' ? 'Off-sale' : 'Current'}</span>
+      </span>`;
+
+    li.addEventListener('mousedown', e => {
       e.preventDefault();
       input.value = p.name;
       list.style.display = 'none';
@@ -684,17 +967,17 @@ function renderList(list, products, input, onSelect) {
 }
 
 function populateExcess(selectId, product) {
-  const sel = document.getElementById(selectId);
-  sel.innerHTML = '';
+  const s = document.getElementById(selectId);
+  s.innerHTML = '';
   if (!product || !product.excess_options) {
-    sel.innerHTML = '<option value="">— N/A —</option>';
+    s.innerHTML = '<option value="">— N/A —</option>';
     return;
   }
   product.excess_options.forEach(ex => {
     const opt = document.createElement('option');
     opt.value = ex;
     opt.textContent = ex === 0 ? 'No excess' : `$${ex}`;
-    sel.appendChild(opt);
+    s.appendChild(opt);
   });
 }
 
@@ -706,42 +989,27 @@ let activeRecognition = null;
 function startVoice(fieldId) {
   const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
   if (!SR) return;
-
-  const btn = document.getElementById('mic-' + fieldId);
+  const btn   = document.getElementById('mic-' + fieldId);
   const input = document.getElementById(fieldId);
-
   if (activeRecognition) {
     activeRecognition.stop();
     activeRecognition = null;
     if (btn) btn.classList.remove('listening');
     return;
   }
-
   const recognition = new SR();
   recognition.lang = 'en-AU';
   recognition.continuous = false;
   recognition.interimResults = false;
-
   activeRecognition = recognition;
   if (btn) btn.classList.add('listening');
-
-  recognition.onresult = (event) => {
-    const transcript = event.results[0][0].transcript;
-    input.value = transcript;
+  recognition.onresult = e => {
+    input.value = e.results[0][0].transcript;
     input.dispatchEvent(new Event('input'));
     input.dispatchEvent(new Event('change'));
   };
-
-  recognition.onend = () => {
-    activeRecognition = null;
-    if (btn) btn.classList.remove('listening');
-  };
-
-  recognition.onerror = () => {
-    activeRecognition = null;
-    if (btn) btn.classList.remove('listening');
-  };
-
+  recognition.onend = () => { activeRecognition = null; if (btn) btn.classList.remove('listening'); };
+  recognition.onerror = () => { activeRecognition = null; if (btn) btn.classList.remove('listening'); };
   recognition.start();
 }
 
@@ -749,69 +1017,70 @@ function startVoice(fieldId) {
 // CALCULATION
 // ═══════════════════════════════════════════════════
 function getRebateRate(tier, ageBand) {
-  if (!productsData) return 0;
-  return productsData.rebate_rates[tier]?.[ageBand] ?? 0;
+  return productsData?.rebate_rates[tier]?.[ageBand] ?? 0;
 }
 
 function calcFinalPremium(hospitalBase, extrasBase, loadingPct, rebateRate) {
-  // LHC loading applies to hospital only
   const hospitalLoaded = hospitalBase * (1 + loadingPct / 100);
-  const totalLoaded = hospitalLoaded + extrasBase;
-  // Rebate applies to total loaded premium
-  const finalPremium = totalLoaded * (1 - rebateRate);
+  const totalLoaded    = hospitalLoaded + extrasBase;
   return {
     hospitalBase,
     extrasBase,
     hospitalLoaded,
     totalBeforeRebate: totalLoaded,
     rebateAmount: totalLoaded * rebateRate,
-    finalPremium
+    finalPremium: totalLoaded * (1 - rebateRate)
   };
 }
 
 function getProductPremium(product, excess, coverType) {
-  if (!product || !product.premiums) return 0;
+  if (!product?.premiums) return 0;
   const excessKey = String(excess);
-  const premiums = product.premiums[excessKey] || product.premiums[Object.keys(product.premiums)[0]];
+  const premiums  = product.premiums[excessKey] || product.premiums[Object.keys(product.premiums)[0]];
   return premiums?.[coverType] ?? 0;
 }
 
+function getPhisPremium(product, excess, coverType) {
+  if (!product?.phis_premiums) return null;
+  const excessKey = String(excess);
+  const premiums  = product.phis_premiums[excessKey] || product.phis_premiums[Object.keys(product.phis_premiums)[0]];
+  const val = premiums?.[coverType] ?? null;
+  return (val && val > 0) ? val : null;
+}
+
 function getExtrasPremium(product, coverType) {
-  if (!product || !product.premiums) return 0;
-  return product.premiums[coverType] ?? 0;
+  return product?.premiums?.[coverType] ?? 0;
 }
 
 // ═══════════════════════════════════════════════════
 // COMPARISON
 // ═══════════════════════════════════════════════════
 function runComparison() {
-  const coverType = document.getElementById('coverType').value;
-  const ageBand = document.getElementById('ageBand').value;
+  const coverType  = document.getElementById('coverType').value;
+  const ageBand    = document.getElementById('ageBand').value;
   const rebateTier = document.getElementById('rebateTier').value;
-  const loadingPH = parseFloat(document.getElementById('loadingPH').value) || 0;
-  const loadingPartner = parseFloat(document.getElementById('loadingPartner').value) || 0;
-  const hcfExcess = document.getElementById('hcfExcess').value;
+  const loadingPH  = parseFloat(document.getElementById('loadingPH').value) || 0;
+  const loadingPar = parseFloat(document.getElementById('loadingPartner').value) || 0;
+  const hcfExcess  = document.getElementById('hcfExcess').value;
   const compExcess = document.getElementById('compExcess').value;
-  const hcfOverride = parseFloat(document.getElementById('hcfPriceOverride').value) || 0;
+  const hcfOverride  = parseFloat(document.getElementById('hcfPriceOverride').value) || 0;
   const compOverride = parseFloat(document.getElementById('compPriceOverride').value) || 0;
 
-  // Average loading for couple/family policies
-  const isCouple = ['couple', 'family', 'single_parent_family'].includes(coverType);
-  const avgLoading = isCouple ? (loadingPH + loadingPartner) / 2 : loadingPH;
-
+  const isCouple   = ['couple', 'family', 'single_parent_family'].includes(coverType);
+  const avgLoading = isCouple ? (loadingPH + loadingPar) / 2 : loadingPH;
   const rebateRate = getRebateRate(rebateTier, ageBand);
-  const compFundKey = document.getElementById('compFund').value;
+
+  const compFundKey  = document.getElementById('compFund').value;
   const compFundName = compFundKey ? productsData?.funds[compFundKey]?.name || compFundKey : 'Competitor';
 
-  // HCF premiums
-  const hcfHospBase = getProductPremium(sel.hcfHospital, hcfExcess, coverType);
-  const hcfExtBase = getExtrasPremium(sel.hcfExtras, coverType);
-
-  // Comp premiums
+  const hcfHospBase  = getProductPremium(sel.hcfHospital, hcfExcess, coverType);
+  const hcfExtBase   = getExtrasPremium(sel.hcfExtras, coverType);
   const compHospBase = getProductPremium(sel.compHospital, compExcess, coverType);
-  const compExtBase = getExtrasPremium(sel.compExtras, coverType);
+  const compExtBase  = getExtrasPremium(sel.compExtras, coverType);
 
-  // Use override if base is 0 or if override explicitly provided
+  // PHIS premium for competitor
+  const phisHospBase = getPhisPremium(sel.compHospital, compExcess, coverType);
+
   const hcfFinalMonthly = hcfOverride > 0
     ? hcfOverride
     : (hcfHospBase + hcfExtBase > 0 ? calcFinalPremium(hcfHospBase, hcfExtBase, avgLoading, rebateRate).finalPremium : null);
@@ -820,14 +1089,9 @@ function runComparison() {
     ? compOverride
     : (compHospBase + compExtBase > 0 ? calcFinalPremium(compHospBase, compExtBase, avgLoading, rebateRate).finalPremium : null);
 
-  const calc = {
-    hcf: hcfHospBase + hcfExtBase > 0 && hcfOverride === 0
-      ? calcFinalPremium(hcfHospBase, hcfExtBase, avgLoading, rebateRate)
-      : null,
-    comp: compHospBase + compExtBase > 0 && compOverride === 0
-      ? calcFinalPremium(compHospBase, compExtBase, avgLoading, rebateRate)
-      : null
-  };
+  const phisCalc = phisHospBase
+    ? calcFinalPremium(phisHospBase, compExtBase, avgLoading, rebateRate)
+    : null;
 
   renderResults({
     hcf: {
@@ -835,7 +1099,8 @@ function runComparison() {
       hospital: sel.hcfHospital,
       extras: sel.hcfExtras,
       excess: hcfExcess,
-      calc: calc.hcf,
+      calc: (hcfHospBase + hcfExtBase > 0 && hcfOverride === 0)
+        ? calcFinalPremium(hcfHospBase, hcfExtBase, avgLoading, rebateRate) : null,
       override: hcfOverride,
       finalMonthly: hcfFinalMonthly
     },
@@ -844,14 +1109,21 @@ function runComparison() {
       hospital: sel.compHospital,
       extras: sel.compExtras,
       excess: compExcess,
-      calc: calc.comp,
+      calc: (compHospBase + compExtBase > 0 && compOverride === 0)
+        ? calcFinalPremium(compHospBase, compExtBase, avgLoading, rebateRate) : null,
       override: compOverride,
       finalMonthly: compFinalMonthly
     },
-    rebateTier,
-    ageBand,
-    avgLoading,
-    coverType
+    phis: {
+      hospital: sel.compHospital,
+      calc: phisCalc,
+      hospBase: phisHospBase,
+      extBase: compExtBase,
+      finalMonthly: phisCalc ? phisCalc.finalPremium : null,
+      url: sel.compHospital?.phis_url || null,
+      lastVerified: sel.compHospital?.phis_last_verified || null
+    },
+    rebateTier, ageBand, avgLoading, coverType
   });
 }
 
@@ -870,53 +1142,116 @@ function fmtLimit(val) {
 }
 
 function renderResults(data) {
-  const { hcf, comp, avgLoading, coverType, rebateTier, ageBand } = data;
+  const { hcf, comp, phis, avgLoading, coverType, rebateTier, ageBand } = data;
+  const hcfFinal   = hcf.finalMonthly;
+  const compFinal  = comp.finalMonthly;
+  const phisFinal  = phis.finalMonthly;
 
-  const hcfFinal = hcf.finalMonthly;
-  const compFinal = comp.finalMonthly;
+  const rebateLabels = { tier0: 'Tier 0 (full)', tier1: 'Tier 1', tier2: 'Tier 2', tier3: 'Tier 3 (none)' };
+  const ageLabels    = { under65: 'Under 65', age6569: '65–69', age70plus: '70+' };
+  const rebateRate   = getRebateRate(rebateTier, ageBand);
 
+  // Saving summary
   let savingHtml = '';
   if (hcfFinal && compFinal) {
     const diff = hcfFinal - compFinal;
-    if (diff > 0) {
-      savingHtml = `<div class="more-expensive">Member saves $${diff.toFixed(2)}/mo with competitor</div>`;
-    } else if (diff < 0) {
-      savingHtml = `<div class="saving">HCF is $${Math.abs(diff).toFixed(2)}/mo cheaper ✓</div>`;
-    } else {
-      savingHtml = `<div>Same price</div>`;
+    if (diff > 0)      savingHtml = `<div class="more-expensive">Member saves $${diff.toFixed(2)}/mo switching to ${comp.fundName}</div>`;
+    else if (diff < 0) savingHtml = `<div class="saving">HCF is $${Math.abs(diff).toFixed(2)}/mo cheaper ✓</div>`;
+    else               savingHtml = `<div>Same price</div>`;
+  }
+
+  // PHIS source badge
+  const phisVerified  = phis.lastVerified ? freshnessLabel(phis.lastVerified) : null;
+  const phisUrlText   = phis.url
+    ? `<a href="${phis.url}" target="_blank" rel="noopener" style="color:#059669;font-size:10px">privatehealth.gov.au ↗</a>`
+    : '';
+
+  // Check if scraper price differs from PHIS price (>1% difference)
+  let phisDiffWarn = '';
+  if (phis.hospBase && comp.calc) {
+    const diff = Math.abs(comp.calc.hospitalBase - phis.hospBase);
+    if (diff > comp.calc.hospitalBase * 0.01) {
+      phisDiffWarn = `<span class="phis-warn">⚠ Fund price differs from Govt ref by $${diff.toFixed(2)}/mo</span>`;
     }
   }
 
-  const rebateLabels = { tier0: 'Tier 0 (full)', tier1: 'Tier 1', tier2: 'Tier 2', tier3: 'Tier 3 (none)' };
-  const ageLabels = { under65: 'Under 65', age6569: '65–69', age70plus: '70+' };
-  const rebateRate = getRebateRate(rebateTier, ageBand);
-
-  const hcfOffSale = hcf.hospital?.status === 'off-sale' || hcf.extras?.status === 'off-sale';
-  const compOffSale = comp.hospital?.status === 'off-sale' || comp.extras?.status === 'off-sale';
+  // Helper: format a comp premium cell
+  const compHospCell = comp.calc
+    ? fmt(comp.calc.hospitalBase)
+    : (comp.override ? `${fmt(comp.override)} <small>(manual)</small>` : '<span class="no-data">enter quoted price above</span>');
 
   const rows = [
     { section: 'Product' },
-    { label: 'Fund', hcfVal: 'HCF', compVal: comp.fundName },
-    { label: 'Hospital Product', hcfVal: hcf.hospital?.name || '—', compVal: comp.hospital?.name || '—' },
-    { label: 'Hospital Tier', hcfVal: hcf.hospital?.tier || '—', compVal: comp.hospital?.tier || '—' },
-    { label: 'Hospital Excess', hcfVal: hcf.excess ? (hcf.excess === '0' ? 'No excess' : '$' + hcf.excess) : '—', compVal: comp.excess ? (comp.excess === '0' ? 'No excess' : '$' + comp.excess) : '—' },
-    { label: 'Extras Product', hcfVal: hcf.extras?.name || '—', compVal: comp.extras?.name || '—' },
+    { label: 'Fund',
+      hcfVal: 'HCF',
+      compVal: comp.fundName,
+      phisVal: comp.hospital?.phis_url ? `${comp.fundName} <span class="phis-source-note">${phisUrlText}</span>` : '<span class="no-data">—</span>' },
+    { label: 'Hospital Product',
+      hcfVal: hcf.hospital?.name || '—',
+      compVal: comp.hospital?.name || '—',
+      phisVal: comp.hospital?.phis_premiums ? (comp.hospital.name) : '<span class="no-data">No PHIS data</span>' },
+    { label: 'Hospital Tier',
+      hcfVal: hcf.hospital?.tier || '—',
+      compVal: comp.hospital?.tier || '—',
+      phisVal: comp.hospital?.tier || '—' },
+    { label: 'Hospital Excess',
+      hcfVal:  hcf.excess  ? (hcf.excess  === '0' ? 'No excess' : '$' + hcf.excess)  : '—',
+      compVal: comp.excess ? (comp.excess === '0' ? 'No excess' : '$' + comp.excess) : '—',
+      phisVal: comp.excess ? (comp.excess === '0' ? 'No excess' : '$' + comp.excess) : '—' },
+    { label: 'Extras Product',
+      hcfVal: hcf.extras?.name || '—',
+      compVal: comp.extras?.name || '—',
+      phisVal: '—' },
 
     { section: 'Premium Breakdown' },
-    { label: 'Hospital (base)', hcfVal: hcf.calc ? fmt(hcf.calc.hospitalBase) : (hcf.override ? fmt(hcf.override) + ' <small>(manual)</small>' : '<span class="no-data">enter override above</span>'), compVal: comp.calc ? fmt(comp.calc.hospitalBase) : (comp.override ? fmt(comp.override) + ' <small>(manual)</small>' : '<span class="no-data">enter quoted price above</span>') },
-    { label: 'Extras (base)', hcfVal: hcf.calc ? fmt(hcf.calc.extrasBase) : '—', compVal: comp.calc ? fmt(comp.calc.extrasBase) : '—' },
-    { label: `LHC Loading (${avgLoading.toFixed(0)}%)`, hcfVal: hcf.calc ? fmt(hcf.calc.hospitalLoaded - hcf.calc.hospitalBase) : '—', compVal: comp.calc ? fmt(comp.calc.hospitalLoaded - comp.calc.hospitalBase) : '—' },
-    { label: `Rebate (${rebateLabels[rebateTier]}, ${ageLabels[ageBand]}, ${(rebateRate * 100).toFixed(2)}%)`, hcfVal: hcf.calc ? '-' + fmt(hcf.calc.rebateAmount) : '—', compVal: comp.calc ? '-' + fmt(comp.calc.rebateAmount) : '—' },
+    { label: 'Hospital (base)',
+      hcfVal: hcf.calc ? fmt(hcf.calc.hospitalBase) : (hcf.override ? fmt(hcf.override) + ' <small>(manual)</small>' : '<span class="no-data">enter override above</span>'),
+      compVal: compHospCell + phisDiffWarn,
+      phisVal: phis.hospBase
+        ? fmt(phis.hospBase) + (phisVerified ? `<span class="phis-source-note">Govt ref · verified ${phisVerified}</span>` : '')
+        : '<span class="no-data">—</span>' },
+    { label: 'Extras (base)',
+      hcfVal:  hcf.calc  ? fmt(hcf.calc.extrasBase)  : '—',
+      compVal: comp.calc ? fmt(comp.calc.extrasBase) : '—',
+      phisVal: phis.calc ? fmt(phis.extBase) : '—' },
+    { label: `LHC Loading (${avgLoading.toFixed(0)}%)`,
+      hcfVal:  hcf.calc  ? fmt(hcf.calc.hospitalLoaded  - hcf.calc.hospitalBase)  : '—',
+      compVal: comp.calc ? fmt(comp.calc.hospitalLoaded - comp.calc.hospitalBase) : '—',
+      phisVal: phis.calc ? fmt(phis.calc.hospitalLoaded - phis.calc.hospitalBase) : '—' },
+    { label: `Rebate (${rebateLabels[rebateTier]}, ${ageLabels[ageBand]}, ${(rebateRate*100).toFixed(2)}%)`,
+      hcfVal:  hcf.calc  ? '-' + fmt(hcf.calc.rebateAmount)  : '—',
+      compVal: comp.calc ? '-' + fmt(comp.calc.rebateAmount) : '—',
+      phisVal: phis.calc ? '-' + fmt(phis.calc.rebateAmount) : '—' },
 
-    { section: 'Final Cost', highlight: true },
-    { label: 'Monthly Premium', hcfVal: hcfFinal ? '<strong>$' + hcfFinal.toFixed(2) + '</strong>' : '<span class="no-data">—</span>', compVal: compFinal ? '<strong>$' + compFinal.toFixed(2) + '</strong>' : '<span class="no-data">—</span>', isFinal: true },
-    { label: 'Annual Cost', hcfVal: hcfFinal ? '<strong>$' + (hcfFinal * 12).toFixed(2) + '</strong>' : '<span class="no-data">—</span>', compVal: compFinal ? '<strong>$' + (compFinal * 12).toFixed(2) + '</strong>' : '<span class="no-data">—</span>', isFinal: true },
+    { section: 'Final Cost' },
+    { label: 'Monthly Premium',
+      hcfVal:  hcfFinal  ? `<strong>$${hcfFinal.toFixed(2)}</strong>`  : '<span class="no-data">—</span>',
+      compVal: compFinal ? `<strong>$${compFinal.toFixed(2)}</strong>` : '<span class="no-data">—</span>',
+      phisVal: phisFinal ? `<strong>$${phisFinal.toFixed(2)}</strong>` : '<span class="no-data">—</span>',
+      isFinal: true },
+    { label: 'Annual Cost',
+      hcfVal:  hcfFinal  ? `<strong>$${(hcfFinal * 12).toFixed(2)}</strong>`  : '<span class="no-data">—</span>',
+      compVal: compFinal ? `<strong>$${(compFinal * 12).toFixed(2)}</strong>` : '<span class="no-data">—</span>',
+      phisVal: phisFinal ? `<strong>$${(phisFinal * 12).toFixed(2)}</strong>` : '<span class="no-data">—</span>',
+      isFinal: true },
 
     { section: 'Extras Limits' },
-    { label: 'General Dental', hcfVal: fmtLimit(hcf.extras?.limits?.general_dental), compVal: fmtLimit(comp.extras?.limits?.general_dental) },
-    { label: 'Major Dental', hcfVal: fmtLimit(hcf.extras?.limits?.major_dental), compVal: fmtLimit(comp.extras?.limits?.major_dental) },
-    { label: 'Optical', hcfVal: fmtLimit(hcf.extras?.limits?.optical), compVal: fmtLimit(comp.extras?.limits?.optical) },
-    { label: 'Therapies', hcfVal: fmtLimit(hcf.extras?.limits?.therapies), compVal: fmtLimit(comp.extras?.limits?.therapies) },
+    { label: 'General Dental',
+      hcfVal: fmtLimit(hcf.extras?.limits?.general_dental),
+      compVal: fmtLimit(comp.extras?.limits?.general_dental),
+      phisVal: '—' },
+    { label: 'Major Dental',
+      hcfVal: fmtLimit(hcf.extras?.limits?.major_dental),
+      compVal: fmtLimit(comp.extras?.limits?.major_dental),
+      phisVal: '—' },
+    { label: 'Optical',
+      hcfVal: fmtLimit(hcf.extras?.limits?.optical),
+      compVal: fmtLimit(comp.extras?.limits?.optical),
+      phisVal: '—' },
+    { label: 'Therapies',
+      hcfVal: fmtLimit(hcf.extras?.limits?.therapies),
+      compVal: fmtLimit(comp.extras?.limits?.therapies),
+      phisVal: '—' },
   ];
 
   let html = `
@@ -926,6 +1261,7 @@ function renderResults(data) {
           <th></th>
           <th class="th-hcf">HCF</th>
           <th class="th-comp">${comp.fundName}</th>
+          <th class="th-phis">Govt Ref (PHIS)</th>
         </tr>
       </thead>
       <tbody>
@@ -933,14 +1269,15 @@ function renderResults(data) {
 
   rows.forEach(row => {
     if (row.section) {
-      html += `<tr class="row-section"><td colspan="3">${row.section}</td></tr>`;
+      html += `<tr class="row-section"><td colspan="4">${row.section}</td></tr>`;
     } else {
-      const rowClass = row.isFinal ? 'row-final' : '';
+      const rc = row.isFinal ? 'row-final' : '';
       html += `
-        <tr class="${rowClass}">
+        <tr class="${rc}">
           <td class="label">${row.label}</td>
           <td class="td-hcf">${row.hcfVal}</td>
           <td class="td-comp">${row.compVal}</td>
+          <td class="td-phis">${row.phisVal}</td>
         </tr>
       `;
     }
@@ -952,13 +1289,15 @@ function renderResults(data) {
     html += `<div style="text-align:right;margin-top:12px;font-size:15px">${savingHtml}</div>`;
   }
 
+  const hcfOffSale  = hcf.hospital?.status === 'off-sale' || hcf.extras?.status === 'off-sale';
+  const compOffSale = comp.hospital?.status === 'off-sale' || comp.extras?.status === 'off-sale';
   if (hcfOffSale || compOffSale) {
-    html += `<div class="off-sale-warn">⚠ One or more products shown are off-sale. Pricing data sourced from archived PDFs and may not reflect current rates. Verify directly with the fund before quoting.</div>`;
+    html += `<div class="off-sale-warn">⚠ One or more products shown are off-sale. Pricing sourced from archived data and may not reflect current rates. Verify directly with the fund before quoting.</div>`;
   }
 
   const missingData = (hcf.calc === null && hcf.override === 0) || (comp.calc === null && comp.override === 0);
   if (missingData) {
-    html += `<div class="missing-data-note">📋 Premium data for one or more products has not been loaded yet. Enter the quoted monthly price in the override field above, then compare again.</div>`;
+    html += `<div class="missing-data-note">📋 Premium data for one or more products has not been loaded yet. Enter the quoted monthly price in the override field above, or use ⚙ Update Data to upload a rate PDF.</div>`;
   }
 
   document.getElementById('resultsContent').innerHTML = html;
@@ -966,6 +1305,493 @@ function renderResults(data) {
   resultsEl.style.display = 'block';
   resultsEl.classList.add('visible');
   resultsEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+// ═══════════════════════════════════════════════════
+// ADMIN PANEL — TOGGLE
+// ═══════════════════════════════════════════════════
+function toggleAdmin() {
+  const panel = document.getElementById('adminPanel');
+  const btn   = document.getElementById('adminToggleBtn');
+  const open  = panel.style.display === 'none';
+  panel.style.display = open ? 'block' : 'none';
+  btn.classList.toggle('active', open);
+  if (open) panel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+// ═══════════════════════════════════════════════════
+// ADMIN — CREDENTIALS
+// ═══════════════════════════════════════════════════
+function saveCredentials() {
+  const anthropic = document.getElementById('adminAnthropicKey').value.trim();
+  const github    = document.getElementById('adminGithubToken').value.trim();
+  const status    = document.getElementById('credStatus');
+
+  if (!anthropic && !github) {
+    status.textContent = 'Enter at least one key.';
+    status.className   = 'cred-status err';
+    return;
+  }
+  if (anthropic) sessionStorage.setItem('ain_anthropic_key', anthropic);
+  if (github)    sessionStorage.setItem('ain_github_token',  github);
+
+  status.textContent = '✓ Saved for this session.';
+  status.className   = 'cred-status ok';
+  document.getElementById('adminAnthropicKey').value = '';
+  document.getElementById('adminGithubToken').value  = '';
+}
+
+function loadCredentials() {
+  // Pre-fill masked placeholders if keys are stored
+  const hasAnthropic = !!sessionStorage.getItem('ain_anthropic_key');
+  const hasGithub    = !!sessionStorage.getItem('ain_github_token');
+  const status       = document.getElementById('credStatus');
+  if (hasAnthropic || hasGithub) {
+    status.textContent = `✓ Keys loaded: ${[hasAnthropic && 'Anthropic', hasGithub && 'GitHub'].filter(Boolean).join(', ')}.`;
+    status.className   = 'cred-status ok';
+  }
+}
+
+// ═══════════════════════════════════════════════════
+// ADMIN — PRODUCT DROPDOWNS
+// ═══════════════════════════════════════════════════
+function populateAdminProducts() {
+  const fundKey = document.getElementById('adminFund').value;
+  const sel     = document.getElementById('adminProduct');
+  sel.innerHTML = '<option value="">— select product —</option>';
+  document.getElementById('adminExcess').innerHTML = '<option value="">— select product first —</option>';
+  document.getElementById('extractBtn').style.display = 'none';
+  document.getElementById('extractionArea').style.display = 'none';
+
+  if (!fundKey || !productsData) return;
+  const products = [
+    ...(productsData.funds[fundKey]?.hospital || []),
+    ...(productsData.funds[fundKey]?.extras   || [])
+  ];
+  products.forEach(p => {
+    const opt = document.createElement('option');
+    opt.value       = p.id;
+    opt.textContent = `${p.name} (${p.id.includes('extras') || p.excess_options === undefined ? 'extras' : 'hospital'})`;
+    opt.dataset.type = p.excess_options ? 'hospital' : 'extras';
+    sel.appendChild(opt);
+  });
+}
+
+function populateAdminExcess() {
+  const fundKey    = document.getElementById('adminFund').value;
+  const productId  = document.getElementById('adminProduct').value;
+  const excessSel  = document.getElementById('adminExcess');
+  const extractBtn = document.getElementById('extractBtn');
+  excessSel.innerHTML = '';
+  document.getElementById('extractionArea').style.display = 'none';
+
+  if (!fundKey || !productId || !productsData) {
+    extractBtn.style.display = 'none';
+    return;
+  }
+
+  const allProducts = [
+    ...(productsData.funds[fundKey]?.hospital || []),
+    ...(productsData.funds[fundKey]?.extras   || [])
+  ];
+  const product = allProducts.find(p => p.id === productId);
+
+  if (!product) { extractBtn.style.display = 'none'; return; }
+
+  if (product.excess_options && product.excess_options.length) {
+    product.excess_options.forEach(ex => {
+      const opt = document.createElement('option');
+      opt.value       = ex;
+      opt.textContent = ex === 0 ? 'No excess' : `$${ex} excess`;
+      excessSel.appendChild(opt);
+    });
+  } else {
+    const opt = document.createElement('option');
+    opt.value       = 'extras';
+    opt.textContent = 'Extras (no excess)';
+    excessSel.appendChild(opt);
+  }
+
+  // Show extract button only if a file is selected
+  const hasFile = document.getElementById('uploadFile').files.length > 0;
+  extractBtn.style.display = hasFile ? 'block' : 'none';
+}
+
+// ═══════════════════════════════════════════════════
+// ADMIN — FILE UPLOAD
+// ═══════════════════════════════════════════════════
+let uploadedFile = null;
+
+function handleFileSelected(file) {
+  if (!file) return;
+  uploadedFile = file;
+  const zone  = document.getElementById('uploadZone');
+  const label = document.getElementById('uploadZoneLabel');
+
+  zone.classList.add('has-file');
+  label.textContent = `✓ ${file.name} (${(file.size / 1024).toFixed(0)} KB)`;
+
+  // Show extract button if product is also selected
+  const hasProduct = !!document.getElementById('adminProduct').value;
+  const extractBtn = document.getElementById('extractBtn');
+  if (hasProduct) extractBtn.style.display = 'block';
+
+  document.getElementById('extractStatus').textContent = '';
+  document.getElementById('extractionArea').style.display = 'none';
+}
+
+// Drag and drop
+document.addEventListener('DOMContentLoaded', () => {
+  const zone = document.getElementById('uploadZone');
+  if (!zone) return;
+  zone.addEventListener('dragover',  e => { e.preventDefault(); zone.classList.add('drag-over'); });
+  zone.addEventListener('dragleave', ()  => zone.classList.remove('drag-over'));
+  zone.addEventListener('drop', e => {
+    e.preventDefault();
+    zone.classList.remove('drag-over');
+    const file = e.dataTransfer?.files[0];
+    if (file) handleFileSelected(file);
+  });
+});
+
+// ═══════════════════════════════════════════════════
+// ADMIN — AI EXTRACTION
+// ═══════════════════════════════════════════════════
+async function extractFromUpload() {
+  const apiKey = sessionStorage.getItem('ain_anthropic_key');
+  if (!apiKey) {
+    document.getElementById('extractStatus').textContent = '⚠ Enter your Anthropic API key first (above).';
+    document.getElementById('extractStatus').className = 'cred-status err';
+    return;
+  }
+  if (!uploadedFile) {
+    document.getElementById('extractStatus').textContent = '⚠ Upload a file first.';
+    document.getElementById('extractStatus').className = 'cred-status err';
+    return;
+  }
+
+  const fundKey   = document.getElementById('adminFund').value;
+  const productId = document.getElementById('adminProduct').value;
+  const excess    = document.getElementById('adminExcess').value;
+
+  if (!fundKey || !productId) {
+    document.getElementById('extractStatus').textContent = '⚠ Select a fund and product first.';
+    document.getElementById('extractStatus').className = 'cred-status err';
+    return;
+  }
+
+  const allProducts = [
+    ...(productsData.funds[fundKey]?.hospital || []),
+    ...(productsData.funds[fundKey]?.extras   || [])
+  ];
+  const product   = allProducts.find(p => p.id === productId);
+  const fundName  = productsData.funds[fundKey]?.name || fundKey;
+
+  const btn = document.getElementById('extractBtn');
+  const statusEl = document.getElementById('extractStatus');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span>Extracting…';
+  statusEl.textContent = '';
+
+  try {
+    // Read file as base64
+    const base64 = await fileToBase64(uploadedFile);
+    const isPdf  = uploadedFile.type === 'application/pdf' || uploadedFile.name.toLowerCase().endsWith('.pdf');
+    const mediaType = isPdf ? 'application/pdf' : (uploadedFile.type || 'image/jpeg');
+
+    const excessLabel = excess === 'extras' ? 'no excess' : `$${excess} excess`;
+    const prompt = `This is a health insurance rate document from ${fundName} in Australia.
+
+Find the monthly premium for the following product in NSW/ACT:
+- Product name: ${product?.name || productId}
+- Excess: ${excessLabel}
+- State: NSW or ACT
+
+Return ONLY a JSON object with these exact keys:
+{
+  "single": <monthly $ as number or null>,
+  "couple": <monthly $ as number or null>,
+  "family": <monthly $ as number or null>,
+  "single_parent_family": <monthly $ as number or null>,
+  "notes": "<any useful context about the prices found>"
+}
+
+Rules:
+- All amounts must be BASE monthly premiums BEFORE any government rebate
+- If the document shows prices with direct debit discount, remove it (divide by 0.96)
+- If the document shows annual prices, divide by 12
+- If the document shows fortnightly prices, multiply by 26 then divide by 12
+- Community rating: couple = 2 × single, family = 2 × single, single parent = single
+- If you cannot find the specific product, return nulls with a notes explanation`;
+
+    const body = {
+      model: 'claude-haiku-4-5-20251001',
+      max_tokens: 512,
+      messages: [{
+        role: 'user',
+        content: [
+          {
+            type: isPdf ? 'document' : 'image',
+            source: { type: 'base64', media_type: mediaType, data: base64 }
+          },
+          { type: 'text', text: prompt }
+        ]
+      }]
+    };
+
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': apiKey,
+        'anthropic-version': '2023-06-01',
+        'anthropic-dangerous-direct-browser-access': 'true'
+      },
+      body: JSON.stringify(body)
+    });
+
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(err.error?.message || `API error ${res.status}`);
+    }
+
+    const data   = await res.json();
+    let text     = data.content?.[0]?.text?.trim() || '{}';
+    if (text.startsWith('```')) {
+      text = text.split('```')[1] || text;
+      if (text.startsWith('json')) text = text.slice(4);
+      text = text.split('```')[0];
+    }
+    const extracted = JSON.parse(text.trim());
+
+    // Populate preview fields
+    document.getElementById('extSingle').value      = extracted.single      || '';
+    document.getElementById('extCouple').value      = extracted.couple      || '';
+    document.getElementById('extFamily').value      = extracted.family      || '';
+    document.getElementById('extSingleParent').value = extracted.single_parent_family || '';
+    document.getElementById('extNote').value        = uploadedFile.name;
+
+    document.getElementById('extractionArea').style.display = 'block';
+
+    if (extracted.notes) {
+      statusEl.textContent = `AI note: ${extracted.notes}`;
+      statusEl.className   = 'cred-status ok';
+    } else {
+      statusEl.textContent = '✓ Prices extracted — review and confirm below.';
+      statusEl.className   = 'cred-status ok';
+    }
+
+  } catch (e) {
+    console.error(e);
+    statusEl.textContent = `⚠ Extraction failed: ${e.message}`;
+    statusEl.className   = 'cred-status err';
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = '🤖 Extract prices with AI';
+  }
+}
+
+function fileToBase64(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload  = e => {
+      // Strip the data:...;base64, prefix
+      const b64 = e.target.result.split(',')[1];
+      resolve(b64);
+    };
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
+}
+
+// ═══════════════════════════════════════════════════
+// ADMIN — GITHUB SAVE
+// ═══════════════════════════════════════════════════
+async function saveToGithub() {
+  const githubToken = sessionStorage.getItem('ain_github_token');
+  if (!githubToken) {
+    document.getElementById('saveStatus').textContent = '⚠ Enter your GitHub token first (above).';
+    document.getElementById('saveStatus').className   = 'cred-status err';
+    return;
+  }
+
+  const fundKey   = document.getElementById('adminFund').value;
+  const productId = document.getElementById('adminProduct').value;
+  const excess    = document.getElementById('adminExcess').value;
+  const note      = document.getElementById('extNote').value.trim();
+
+  const single      = parseFloat(document.getElementById('extSingle').value)      || 0;
+  const couple      = parseFloat(document.getElementById('extCouple').value)      || 0;
+  const family      = parseFloat(document.getElementById('extFamily').value)      || 0;
+  const singleParent = parseFloat(document.getElementById('extSingleParent').value) || 0;
+
+  if (!single && !couple && !family) {
+    document.getElementById('saveStatus').textContent = '⚠ At least one premium value is required.';
+    document.getElementById('saveStatus').className   = 'cred-status err';
+    return;
+  }
+
+  const saveBtn  = document.getElementById('saveBtn');
+  const statusEl = document.getElementById('saveStatus');
+  saveBtn.disabled = true;
+  saveBtn.innerHTML = '<span class="spinner"></span>Saving…';
+  statusEl.textContent = '';
+
+  try {
+    const OWNER = 'nikfeao';
+    const REPO  = 'hcf-retention-tool';
+    const PATH  = 'data/products.json';
+    const META_PATH = 'data/meta.json';
+
+    // ── 1. Get current products.json SHA ──
+    const fileRes = await fetch(`https://api.github.com/repos/${OWNER}/${REPO}/contents/${PATH}`, {
+      headers: { 'Authorization': `token ${githubToken}`, 'Accept': 'application/vnd.github.v3+json' }
+    });
+    if (!fileRes.ok) throw new Error(`GitHub API ${fileRes.status}: ${await fileRes.text()}`);
+    const fileData = await fileRes.json();
+    const sha = fileData.sha;
+
+    // ── 2. Update in-memory productsData ──
+    const allProducts = [
+      ...(productsData.funds[fundKey]?.hospital || []),
+      ...(productsData.funds[fundKey]?.extras   || [])
+    ];
+    const product = allProducts.find(p => p.id === productId);
+    if (!product) throw new Error(`Product ${productId} not found in data`);
+
+    const today = new Date().toISOString().split('T')[0];
+
+    if (excess === 'extras') {
+      // Extras: premiums are flat per cover type
+      product.premiums.single              = single      || product.premiums.single;
+      product.premiums.couple              = couple      || product.premiums.couple;
+      product.premiums.family              = family      || product.premiums.family;
+      product.premiums.single_parent_family = singleParent || product.premiums.single_parent_family;
+    } else {
+      // Hospital: premiums keyed by excess
+      const excessKey = String(excess);
+      if (!product.premiums[excessKey]) {
+        product.premiums[excessKey] = { single: 0, couple: 0, family: 0, single_parent_family: 0 };
+      }
+      if (single)      product.premiums[excessKey].single              = single;
+      if (couple)      product.premiums[excessKey].couple              = couple;
+      if (family)      product.premiums[excessKey].family              = family;
+      if (singleParent) product.premiums[excessKey].single_parent_family = singleParent;
+    }
+
+    product.last_verified   = today;
+    product.source          = note ? `manual upload: ${note}` : 'manual upload';
+    product.last_uploaded   = today;
+    product.upload_source   = note || 'manual upload';
+
+    // Rebuild list assignment (products are objects so already mutated)
+
+    // ── 3. Commit products.json ──
+    const updatedContent = btoa(unescape(encodeURIComponent(JSON.stringify(productsData, null, 2))));
+    const commitRes = await fetch(`https://api.github.com/repos/${OWNER}/${REPO}/contents/${PATH}`, {
+      method: 'PUT',
+      headers: {
+        'Authorization': `token ${githubToken}`,
+        'Content-Type': 'application/json',
+        'Accept': 'application/vnd.github.v3+json'
+      },
+      body: JSON.stringify({
+        message: `Manual data update: ${product.name} (${fundKey}, ${today})`,
+        content: updatedContent,
+        sha: sha
+      })
+    });
+    if (!commitRes.ok) throw new Error(`GitHub commit ${commitRes.status}: ${await commitRes.text()}`);
+
+    // ── 4. Update meta.json upload_log ──
+    try {
+      const metaRes  = await fetch(`https://api.github.com/repos/${OWNER}/${REPO}/contents/${META_PATH}`, {
+        headers: { 'Authorization': `token ${githubToken}`, 'Accept': 'application/vnd.github.v3+json' }
+      });
+      if (metaRes.ok) {
+        const metaFile = await metaRes.json();
+        const metaSha  = metaFile.sha;
+
+        if (!metaData.upload_log) metaData.upload_log = [];
+        metaData.upload_log.unshift({
+          date:       today,
+          fund:       productsData.funds[fundKey]?.name || fundKey,
+          product:    product.name,
+          excess:     excess === 'extras' ? 'extras' : `$${excess}`,
+          single:     single || null,
+          couple:     couple || null,
+          source:     note || 'manual',
+        });
+        metaData.upload_log = metaData.upload_log.slice(0, 50); // keep last 50
+
+        const metaContent = btoa(unescape(encodeURIComponent(JSON.stringify(metaData, null, 2))));
+        await fetch(`https://api.github.com/repos/${OWNER}/${REPO}/contents/${META_PATH}`, {
+          method: 'PUT',
+          headers: {
+            'Authorization': `token ${githubToken}`,
+            'Content-Type': 'application/json',
+            'Accept': 'application/vnd.github.v3+json'
+          },
+          body: JSON.stringify({
+            message: `Update upload log (${today})`,
+            content: metaContent,
+            sha: metaSha
+          })
+        });
+        renderUploadLog();
+        updateStatusBar();
+      }
+    } catch (metaErr) {
+      console.warn('Could not update meta.json upload log:', metaErr);
+    }
+
+    statusEl.textContent = '✓ Saved! GitHub Pages will update in ~1 minute.';
+    statusEl.className   = 'cred-status ok';
+
+    // Reset upload UI
+    document.getElementById('extractionArea').style.display = 'none';
+    document.getElementById('uploadZone').classList.remove('has-file');
+    document.getElementById('uploadZoneLabel').textContent = 'Drop a PDF or screenshot here, or click to browse';
+    document.getElementById('uploadFile').value = '';
+    uploadedFile = null;
+
+  } catch (e) {
+    console.error(e);
+    statusEl.textContent = `⚠ Save failed: ${e.message}`;
+    statusEl.className   = 'cred-status err';
+  } finally {
+    saveBtn.disabled = false;
+    saveBtn.innerHTML = '✓ Save to GitHub';
+  }
+}
+
+// ═══════════════════════════════════════════════════
+// ADMIN — UPLOAD LOG
+// ═══════════════════════════════════════════════════
+function renderUploadLog() {
+  const container = document.getElementById('uploadLog');
+  if (!container) return;
+
+  const log = metaData?.upload_log || [];
+  if (!log.length) {
+    container.innerHTML = '<div class="upload-log-empty">No manual updates recorded yet.</div>';
+    return;
+  }
+
+  container.innerHTML = log.slice(0, 10).map(entry => `
+    <div class="log-entry">
+      <div class="log-entry-header">
+        <span class="log-entry-fund">${entry.fund} — ${entry.product}</span>
+        <span class="log-entry-date">${entry.date}</span>
+      </div>
+      <div class="log-entry-detail">
+        ${entry.excess ? entry.excess + ' · ' : ''}
+        ${entry.single ? `Single $${entry.single}` : ''}
+        ${entry.couple ? ` · Couple $${entry.couple}` : ''}
+        ${entry.source ? ` · <em>${entry.source}</em>` : ''}
+      </div>
+    </div>
+  `).join('');
 }
 
 // ── Start ──
