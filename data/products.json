@@ -282,10 +282,10 @@
           ],
           "premiums": {
             "500": {
-              "single": 0,
-              "couple": 0,
-              "family": 0,
-              "single_parent_family": 0
+              "single": 284.18,
+              "couple": 568.36,
+              "family": 568.36,
+              "single_parent_family": 284.18
             },
             "750": {
               "single": 0,
@@ -294,8 +294,18 @@
               "single_parent_family": 0
             }
           },
-          "source": "nib.com.au",
-          "last_verified": null
+          "phis_url": "https://www.privatehealth.gov.au/dynamic/Premium/PHIS/NIB/J46/NEOP10",
+          "phis_premiums": {
+            "500": {
+              "single": 284.18,
+              "couple": 568.36,
+              "family": 568.36,
+              "single_parent_family": 284.18
+            }
+          },
+          "phis_last_verified": "2026-04-17",
+          "source": "privatehealth.gov.au (NIB/J46/NEOP10 — NSW confirmed)",
+          "last_verified": "2026-04-17"
         },
         {
           "id": "nib-silver-500",
@@ -796,6 +806,17 @@
               "single_parent_family": 181.75
             }
           },
+          "phis_url": "https://www.privatehealth.gov.au/dynamic/Premium/PHIS/MBP/J110/NMRV10",
+          "phis_premiums": {
+            "500": {
+              "single": 291.30,
+              "couple": 582.60,
+              "family": 582.60,
+              "single_parent_family": 291.30,
+              "_note": "PHIS product: Medibank Silver Plus Advanced $500 — same tier, govt reference price"
+            }
+          },
+          "phis_last_verified": "2026-04-17",
           "source": "medibank.com.au (API)",
           "last_verified": "2026-04-16"
         },
@@ -834,6 +855,16 @@
               "single_parent_family": 388.55
             }
           },
+          "phis_url": "https://www.privatehealth.gov.au/dynamic/Premium/PHIS/MBP/J112/NMBF20",
+          "phis_premiums": {
+            "750": {
+              "single": 335.85,
+              "couple": 671.70,
+              "family": 671.70,
+              "single_parent_family": 335.85
+            }
+          },
+          "phis_last_verified": "2026-04-17",
           "source": "medibank.com.au (API)",
           "last_verified": "2026-04-16"
         }
@@ -997,10 +1028,10 @@
           ],
           "premiums": {
             "500": {
-              "single": 0,
-              "couple": 0,
-              "family": 0,
-              "single_parent_family": 0
+              "single": 142.30,
+              "couple": 284.60,
+              "family": 284.60,
+              "single_parent_family": 142.30
             },
             "750": {
               "single": 0,
@@ -1009,8 +1040,18 @@
               "single_parent_family": 0
             }
           },
-          "source": "ahm.com.au",
-          "last_verified": null
+          "phis_url": "https://www.privatehealth.gov.au/dynamic/Premium/PHIS/AHM/J120/NHBG20",
+          "phis_premiums": {
+            "500": {
+              "single": 142.30,
+              "couple": 284.60,
+              "family": 284.60,
+              "single_parent_family": 142.30
+            }
+          },
+          "phis_last_verified": "2026-04-17",
+          "source": "privatehealth.gov.au (AHM/J120/NHBG20 — NSW confirmed)",
+          "last_verified": "2026-04-17"
         },
         {
           "id": "ahm-bronze-500",
@@ -1184,10 +1225,10 @@
           ],
           "premiums": {
             "500": {
-              "single": 0,
-              "couple": 0,
-              "family": 0,
-              "single_parent_family": 0
+              "single": 289.05,
+              "couple": 578.10,
+              "family": 578.10,
+              "single_parent_family": 289.05
             },
             "750": {
               "single": 0,
@@ -1196,8 +1237,18 @@
               "single_parent_family": 0
             }
           },
-          "source": "australianunity.com.au",
-          "last_verified": null
+          "phis_url": "https://www.privatehealth.gov.au/dynamic/Premium/PHIS/AUF/J49/NBNC10",
+          "phis_premiums": {
+            "500": {
+              "single": 289.05,
+              "couple": 578.10,
+              "family": 578.10,
+              "single_parent_family": 289.05
+            }
+          },
+          "phis_last_verified": "2026-04-17",
+          "source": "privatehealth.gov.au (AUF/J49/NBNC10 — NSW confirmed)",
+          "last_verified": "2026-04-17"
         },
         {
           "id": "au-silver-500",
@@ -1216,14 +1267,24 @@
               "single_parent_family": 0
             },
             "750": {
-              "single": 0,
-              "couple": 0,
-              "family": 0,
-              "single_parent_family": 0
+              "single": 219.05,
+              "couple": 438.10,
+              "family": 438.10,
+              "single_parent_family": 219.05
             }
           },
-          "source": "australianunity.com.au",
-          "last_verified": null
+          "phis_url": "https://www.privatehealth.gov.au/dynamic/Premium/PHIS/AUF/J53/NBXK2D",
+          "phis_premiums": {
+            "750": {
+              "single": 219.05,
+              "couple": 438.10,
+              "family": 438.10,
+              "single_parent_family": 219.05
+            }
+          },
+          "phis_last_verified": "2026-04-17",
+          "source": "privatehealth.gov.au (AUF/J53/NBXK2D — NSW confirmed)",
+          "last_verified": "2026-04-17"
         },
         {
           "id": "au-bronze-plus-500",
