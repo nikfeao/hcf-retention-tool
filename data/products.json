@@ -45,13 +45,13 @@
             },
             "750": {
               "single": 494.25,
-              "couple": 0,
-              "family": 0,
-              "single_parent_family": 0
+              "couple": 988.50,
+              "family": 988.50,
+              "single_parent_family": 494.25
             }
           },
-          "source": "privatehealth.gov.au",
-          "last_verified": "2026-04-16"
+          "source": "privatehealth.gov.au (single verified). Couple/family/SPF community-rating-derived (2× single).",
+          "last_verified": "2026-04-17"
         },
         {
           "id": "hcf-silver-plus-500",
@@ -65,9 +65,9 @@
           "premiums": {
             "500": {
               "single": 275.47,
-              "couple": 0,
-              "family": 0,
-              "single_parent_family": 0
+              "couple": 550.94,
+              "family": 550.94,
+              "single_parent_family": 275.47
             },
             "750": {
               "single": 0,
@@ -76,8 +76,8 @@
               "single_parent_family": 0
             }
           },
-          "source": "privatehealth.gov.au",
-          "last_verified": "2026-04-16"
+          "source": "privatehealth.gov.au (single verified). Couple/family/SPF community-rating-derived (2× single).",
+          "last_verified": "2026-04-17"
         },
         {
           "id": "hcf-standard-silver-plus-750",
@@ -90,13 +90,14 @@
           "premiums": {
             "750": {
               "single": 165.99,
-              "couple": 425.78,
-              "family": 0,
-              "single_parent_family": 0
+              "couple": 331.98,
+              "family": 331.98,
+              "single_parent_family": 165.99,
+              "_note": "Couple corrected to community-rating-derived (2×$165.99). Previous $425.78 was from HCF/H31G/NMAF20 — a $250pp excess NSW couples product, not this $750 excess product."
             }
           },
-          "source": "privatehealth.gov.au",
-          "last_verified": "2026-04-01"
+          "source": "privatehealth.gov.au (single verified). Couple/family/SPF community-rating-derived (2× single).",
+          "last_verified": "2026-04-17"
         },
         {
           "id": "hcf-bronze-plus-750",
@@ -172,10 +173,10 @@
           "name": "Mid Extras",
           "status": "current",
           "premiums": {
-            "single": 49.4,
-            "couple": 0,
-            "family": 0,
-            "single_parent_family": 0
+            "single": 49.40,
+            "couple": 98.80,
+            "family": 98.80,
+            "single_parent_family": 49.40
           },
           "limits": {
             "general_dental": 700,
@@ -217,9 +218,9 @@
           "status": "current",
           "premiums": {
             "single": 23.94,
-            "couple": 0,
-            "family": 0,
-            "single_parent_family": 0
+            "couple": 47.88,
+            "family": 47.88,
+            "single_parent_family": 23.94
           },
           "limits": {
             "general_dental": 0,
