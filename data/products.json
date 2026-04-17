@@ -229,7 +229,7 @@
             "chiro_osteo": 0,
             "orthodontics": 0
           },
-          "limits_note": "Starter Extras \u2014 limited basic cover. Limits to be populated from product summary PDF.",
+          "limits_note": "Starter Extras — limited basic cover. Limits to be populated from product summary PDF.",
           "source": "privatehealth.gov.au",
           "last_verified": "2026-04-16"
         }
@@ -363,10 +363,10 @@
               "couple": 393.62,
               "family": 393.62,
               "single_parent_family": 196.81,
-              "_note": "VIC-sourced (privatehealth.gov.au NIB/J51/VGGS10). NSW verify needed \u2014 scraper will update."
+              "_note": "VIC-sourced (privatehealth.gov.au NIB/J51/VGGS10). NSW verify needed — scraper will update."
             }
           },
-          "source": "privatehealth.gov.au (NIB/J51/VGGS10 \u2014 VIC single)",
+          "source": "privatehealth.gov.au (NIB/J51/VGGS10 — VIC single)",
           "last_verified": "2026-04-16"
         },
         {
@@ -566,14 +566,14 @@
           "phis_url": "https://www.privatehealth.gov.au/dynamic/Premium/PHIS/BUP/H48C/NMQQ10",
           "phis_premiums": {
             "750": {
-              "single": 131.80,
-              "couple": 263.60,
-              "family": 263.60,
-              "single_parent_family": 131.80
+              "single": 131.8,
+              "couple": 263.6,
+              "family": 263.6,
+              "single_parent_family": 131.8
             }
           },
           "phis_last_verified": "2026-04-16",
-          "source": "privatehealth.gov.au (BUP/H48C/NMQQ10 \u2014 NSW confirmed)",
+          "source": "privatehealth.gov.au (BUP/H48C/NMQQ10 — NSW confirmed)",
           "last_verified": "2026-04-16"
         },
         {
@@ -690,13 +690,15 @@
           "name": "Basic Accident and Ambulance",
           "tier": "Basic",
           "status": "current",
-          "excess_options": [0],
+          "excess_options": [
+            0
+          ],
           "premiums": {
             "0": {
-              "single": 111.60,
-              "couple": 223.20,
-              "family": 223.20,
-              "single_parent_family": 111.60
+              "single": 111.6,
+              "couple": 223.2,
+              "family": 223.2,
+              "single_parent_family": 111.6
             }
           },
           "source": "medibank.com.au (API)",
@@ -707,12 +709,14 @@
           "name": "Basic Plus Select",
           "tier": "Basic Plus",
           "status": "current",
-          "excess_options": [750],
+          "excess_options": [
+            750
+          ],
           "premiums": {
             "750": {
               "single": 118.85,
-              "couple": 237.70,
-              "family": 237.70,
+              "couple": 237.7,
+              "family": 237.7,
               "single_parent_family": 118.85
             }
           },
@@ -724,13 +728,15 @@
           "name": "Bronze Plus Value",
           "tier": "Bronze Plus",
           "status": "current",
-          "excess_options": [750],
+          "excess_options": [
+            750
+          ],
           "premiums": {
             "750": {
-              "single": 127.30,
-              "couple": 254.60,
-              "family": 254.60,
-              "single_parent_family": 127.30
+              "single": 127.3,
+              "couple": 254.6,
+              "family": 254.6,
+              "single_parent_family": 127.3
             }
           },
           "source": "medibank.com.au (API)",
@@ -741,12 +747,14 @@
           "name": "Bronze Plus Support",
           "tier": "Bronze Plus",
           "status": "current",
-          "excess_options": [500],
+          "excess_options": [
+            500
+          ],
           "premiums": {
             "500": {
               "single": 140.15,
-              "couple": 280.30,
-              "family": 280.30,
+              "couple": 280.3,
+              "family": 280.3,
               "single_parent_family": 140.15
             }
           },
@@ -758,12 +766,14 @@
           "name": "Silver Plus Core",
           "tier": "Silver Plus",
           "status": "current",
-          "excess_options": [750],
+          "excess_options": [
+            750
+          ],
           "premiums": {
             "750": {
               "single": 157.65,
-              "couple": 315.30,
-              "family": 315.30,
+              "couple": 315.3,
+              "family": 315.3,
               "single_parent_family": 157.65
             }
           },
@@ -775,12 +785,14 @@
           "name": "Silver Plus Support",
           "tier": "Silver Plus",
           "status": "current",
-          "excess_options": [500],
+          "excess_options": [
+            500
+          ],
           "premiums": {
             "500": {
               "single": 181.75,
-              "couple": 363.50,
-              "family": 363.50,
+              "couple": 363.5,
+              "family": 363.5,
               "single_parent_family": 181.75
             }
           },
@@ -792,12 +804,14 @@
           "name": "Silver Plus Secure",
           "tier": "Silver Plus",
           "status": "current",
-          "excess_options": [250],
+          "excess_options": [
+            250
+          ],
           "premiums": {
             "250": {
               "single": 249.55,
-              "couple": 499.10,
-              "family": 499.10,
+              "couple": 499.1,
+              "family": 499.1,
               "single_parent_family": 249.55
             }
           },
@@ -809,12 +823,14 @@
           "name": "Gold Protect",
           "tier": "Gold",
           "status": "current",
-          "excess_options": [750],
+          "excess_options": [
+            750
+          ],
           "premiums": {
             "750": {
               "single": 388.55,
-              "couple": 777.10,
-              "family": 777.10,
+              "couple": 777.1,
+              "family": 777.1,
               "single_parent_family": 388.55
             }
           },
@@ -1025,20 +1041,20 @@
               "couple": 260.5,
               "family": 260.5,
               "single_parent_family": 130.25,
-              "_note": "QLD-sourced (privatehealth.gov.au AHM/J9A/QELV10). NSW verify needed \u2014 scraper will update."
+              "_note": "QLD-sourced (privatehealth.gov.au AHM/J9A/QELV10). NSW verify needed — scraper will update."
             }
           },
           "phis_url": "https://www.privatehealth.gov.au/dynamic/Premium/PHIS/AHM/J9A/NELG1Y",
           "phis_premiums": {
             "500": {
-              "single": 243.90,
-              "couple": 487.80,
-              "family": 487.80,
-              "single_parent_family": 243.90
+              "single": 243.9,
+              "couple": 487.8,
+              "family": 487.8,
+              "single_parent_family": 243.9
             }
           },
           "phis_last_verified": "2026-04-16",
-          "source": "privatehealth.gov.au (AHM/J9A \u2014 $500 NSW confirmed, $750 QLD)",
+          "source": "privatehealth.gov.au (AHM/J9A — $500 NSW confirmed, $750 QLD)",
           "last_verified": "2026-04-16"
         },
         {
@@ -1230,13 +1246,13 @@
           "phis_premiums": {
             "750": {
               "single": 173.55,
-              "couple": 347.10,
-              "family": 347.10,
+              "couple": 347.1,
+              "family": 347.1,
               "single_parent_family": 173.55
             }
           },
           "phis_last_verified": "2026-04-16",
-          "source": "privatehealth.gov.au (AUF/J52/NCAS20 \u2014 NSW confirmed)",
+          "source": "privatehealth.gov.au (AUF/J52/NCAS20 — NSW confirmed)",
           "last_verified": "2026-04-16"
         },
         {
