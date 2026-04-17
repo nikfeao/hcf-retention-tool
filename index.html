@@ -497,7 +497,7 @@
     <h1>HCF Retention Comparison Tool</h1>
     <div class="sub">New A.I.N. — Internal agent tool</div>
   </div>
-  <button class="admin-toggle-btn" id="adminToggleBtn" onclick="toggleAdmin()">⚙ Update Data</button>
+  <button class="admin-toggle-btn" id="adminToggleBtn" onclick="toggleAdmin()" style="display:none">⚙ Update Data</button>
 </div>
 
 <div class="status-bar" id="statusBar">
@@ -780,6 +780,10 @@ let sel = {
 // INIT
 // ═══════════════════════════════════════════════════
 async function init() {
+  if (new URLSearchParams(window.location.search).has('admin')) {
+    document.getElementById('adminToggleBtn').style.display = '';
+  }
+
   const hasVoice = ('SpeechRecognition' in window || 'webkitSpeechRecognition' in window);
   if (!hasVoice) document.querySelectorAll('.mic-btn').forEach(b => b.classList.add('hidden'));
 
