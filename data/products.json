@@ -45,8 +45,8 @@
             },
             "750": {
               "single": 494.25,
-              "couple": 988.50,
-              "family": 988.50,
+              "couple": 988.5,
+              "family": 988.5,
               "single_parent_family": 494.25
             }
           },
@@ -173,10 +173,10 @@
           "name": "Mid Extras",
           "status": "current",
           "premiums": {
-            "single": 49.40,
-            "couple": 98.80,
-            "family": 98.80,
-            "single_parent_family": 49.40
+            "single": 49.4,
+            "couple": 98.8,
+            "family": 98.8,
+            "single_parent_family": 49.4
           },
           "limits": {
             "general_dental": 700,
@@ -810,10 +810,10 @@
           "phis_url": "https://www.privatehealth.gov.au/dynamic/Premium/PHIS/MBP/J110/NMRV10",
           "phis_premiums": {
             "500": {
-              "single": 291.30,
-              "couple": 582.60,
-              "family": 582.60,
-              "single_parent_family": 291.30,
+              "single": 291.3,
+              "couple": 582.6,
+              "family": 582.6,
+              "single_parent_family": 291.3,
               "_note": "PHIS product: Medibank Silver Plus Advanced $500 — same tier, govt reference price"
             }
           },
@@ -860,8 +860,8 @@
           "phis_premiums": {
             "750": {
               "single": 335.85,
-              "couple": 671.70,
-              "family": 671.70,
+              "couple": 671.7,
+              "family": 671.7,
               "single_parent_family": 335.85
             }
           },
@@ -1029,10 +1029,10 @@
           ],
           "premiums": {
             "500": {
-              "single": 142.30,
-              "couple": 284.60,
-              "family": 284.60,
-              "single_parent_family": 142.30
+              "single": 142.3,
+              "couple": 284.6,
+              "family": 284.6,
+              "single_parent_family": 142.3
             },
             "750": {
               "single": 0,
@@ -1044,10 +1044,10 @@
           "phis_url": "https://www.privatehealth.gov.au/dynamic/Premium/PHIS/AHM/J120/NHBG20",
           "phis_premiums": {
             "500": {
-              "single": 142.30,
-              "couple": 284.60,
-              "family": 284.60,
-              "single_parent_family": 142.30
+              "single": 142.3,
+              "couple": 284.6,
+              "family": 284.6,
+              "single_parent_family": 142.3
             }
           },
           "phis_last_verified": "2026-04-17",
@@ -1227,8 +1227,8 @@
           "premiums": {
             "500": {
               "single": 289.05,
-              "couple": 578.10,
-              "family": 578.10,
+              "couple": 578.1,
+              "family": 578.1,
               "single_parent_family": 289.05
             },
             "750": {
@@ -1242,8 +1242,8 @@
           "phis_premiums": {
             "500": {
               "single": 289.05,
-              "couple": 578.10,
-              "family": 578.10,
+              "couple": 578.1,
+              "family": 578.1,
               "single_parent_family": 289.05
             }
           },
@@ -1269,8 +1269,8 @@
             },
             "750": {
               "single": 219.05,
-              "couple": 438.10,
-              "family": 438.10,
+              "couple": 438.1,
+              "family": 438.1,
               "single_parent_family": 219.05
             }
           },
@@ -1278,8 +1278,8 @@
           "phis_premiums": {
             "750": {
               "single": 219.05,
-              "couple": 438.10,
-              "family": 438.10,
+              "couple": 438.1,
+              "family": 438.1,
               "single_parent_family": 219.05
             }
           },
