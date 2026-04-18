@@ -50,7 +50,7 @@
               "single_parent_family": 494.25
             }
           },
-          "source": "privatehealth.gov.au (single verified). Couple/family/SPF community-rating-derived (2\u00d7 single).",
+          "source": "privatehealth.gov.au (single verified). Couple/family/SPF community-rating-derived (2× single).",
           "last_verified": "2026-04-17"
         },
         {
@@ -76,7 +76,7 @@
               "single_parent_family": 0
             }
           },
-          "source": "privatehealth.gov.au (single verified). Couple/family/SPF community-rating-derived (2\u00d7 single).",
+          "source": "privatehealth.gov.au (single verified). Couple/family/SPF community-rating-derived (2× single).",
           "last_verified": "2026-04-17"
         },
         {
@@ -93,10 +93,10 @@
               "couple": 331.98,
               "family": 331.98,
               "single_parent_family": 165.99,
-              "_note": "Couple corrected to community-rating-derived (2\u00d7$165.99). Previous $425.78 was from HCF/H31G/NMAF20 \u2014 a $250pp excess NSW couples product, not this $750 excess product."
+              "_note": "Couple corrected to community-rating-derived (2×$165.99). Previous $425.78 was from HCF/H31G/NMAF20 — a $250pp excess NSW couples product, not this $750 excess product."
             }
           },
-          "source": "privatehealth.gov.au (single verified). Couple/family/SPF community-rating-derived (2\u00d7 single).",
+          "source": "privatehealth.gov.au (single verified). Couple/family/SPF community-rating-derived (2× single).",
           "last_verified": "2026-04-17"
         },
         {
@@ -230,7 +230,7 @@
             "chiro_osteo": 0,
             "orthodontics": 0
           },
-          "limits_note": "Starter Extras \u2014 limited basic cover. Limits to be populated from product summary PDF.",
+          "limits_note": "Starter Extras — limited basic cover. Limits to be populated from product summary PDF.",
           "source": "privatehealth.gov.au",
           "last_verified": "2026-04-16"
         }
@@ -1179,7 +1179,7 @@
             }
           },
           "phis_last_verified": "2026-04-17",
-          "source": "privatehealth.gov.au (AUF/J49/NBNC10 \u2014 NSW confirmed)",
+          "source": "privatehealth.gov.au (AUF/J49/NBNC10 — NSW confirmed)",
           "last_verified": "2026-04-17"
         },
         {
@@ -1215,7 +1215,7 @@
             }
           },
           "phis_last_verified": "2026-04-17",
-          "source": "privatehealth.gov.au (AUF/J53/NBXK2D \u2014 NSW confirmed)",
+          "source": "privatehealth.gov.au (AUF/J53/NBXK2D — NSW confirmed)",
           "last_verified": "2026-04-17"
         },
         {
@@ -1245,7 +1245,7 @@
             }
           },
           "phis_last_verified": "2026-04-16",
-          "source": "privatehealth.gov.au (AUF/J52/NCAS20 \u2014 NSW confirmed)",
+          "source": "privatehealth.gov.au (AUF/J52/NCAS20 — NSW confirmed)",
           "last_verified": "2026-04-16"
         },
         {

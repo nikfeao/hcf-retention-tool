@@ -1,42 +1,42 @@
 {
-  "last_updated": "2026-04-18T06:35:09.907730+10:00",
+  "last_updated": "2026-04-19T06:25:10.866212+10:00",
   "upload_log": [],
   "sources": [
     {
       "fund": "HCF",
       "url": "hcf.com.au",
       "status": "skipped",
-      "note": "Direct scrape from hcf.com.au on 2026-04-18"
+      "note": "Direct scrape from hcf.com.au on 2026-04-19"
     },
     {
       "fund": "nib",
       "url": "nib.com.au",
       "status": "no_data",
-      "note": "Direct scrape from nib.com.au on 2026-04-18"
+      "note": "Direct scrape from nib.com.au on 2026-04-19"
     },
     {
       "fund": "Bupa",
       "url": "bupa.com.au",
       "status": "no_data",
-      "note": "Direct scrape from bupa.com.au on 2026-04-18"
+      "note": "Direct scrape from bupa.com.au on 2026-04-19"
     },
     {
       "fund": "Medibank",
       "url": "medibank.com.au",
       "status": "no_data",
-      "note": "Direct scrape from medibank.com.au on 2026-04-18"
+      "note": "Direct scrape from medibank.com.au on 2026-04-19"
     },
     {
       "fund": "ahm",
       "url": "ahm.com.au",
       "status": "no_data",
-      "note": "Direct scrape from ahm.com.au on 2026-04-18"
+      "note": "Direct scrape from ahm.com.au on 2026-04-19"
     },
     {
       "fund": "Australian Unity",
       "url": "australianunity.com.au",
       "status": "no_data",
-      "note": "Direct scrape from australianunity.com.au on 2026-04-18"
+      "note": "Direct scrape from australianunity.com.au on 2026-04-19"
     }
   ]
 }
