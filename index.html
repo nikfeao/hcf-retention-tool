@@ -488,6 +488,163 @@
       #results { display: block !important; }
       .comparison-table th { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
     }
+
+  /* ═══════════════════════════════════════════════════
+     AI CHAT WIDGET
+  ═══════════════════════════════════════════════════ */
+  #chat-fab {
+    position: fixed;
+    bottom: 28px;
+    right: 28px;
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: var(--hcf-blue);
+    color: #fff;
+    border: none;
+    cursor: pointer;
+    font-size: 24px;
+    box-shadow: 0 4px 16px rgba(0,0,0,.25);
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background .2s, transform .15s;
+  }
+  #chat-fab:hover { background: #004ab0; transform: scale(1.07); }
+  #chat-fab .chat-badge {
+    position: absolute;
+    top: 2px; right: 2px;
+    background: #e53e3e;
+    color: #fff;
+    border-radius: 50%;
+    width: 18px; height: 18px;
+    font-size: 11px;
+    display: none;
+    align-items: center;
+    justify-content: center;
+  }
+
+  #chat-panel {
+    position: fixed;
+    bottom: 96px;
+    right: 28px;
+    width: 380px;
+    max-height: 540px;
+    background: #fff;
+    border-radius: 16px;
+    box-shadow: 0 8px 32px rgba(0,0,0,.18);
+    z-index: 1000;
+    display: none;
+    flex-direction: column;
+    overflow: hidden;
+    border: 1px solid #e2e8f0;
+  }
+  #chat-panel.open { display: flex; }
+
+  #chat-header {
+    background: var(--hcf-blue);
+    color: #fff;
+    padding: 14px 16px;
+    font-weight: 600;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-shrink: 0;
+  }
+  #chat-header span { opacity: .75; font-size: 12px; font-weight: 400; }
+  #chat-close {
+    background: none;
+    border: none;
+    color: #fff;
+    font-size: 18px;
+    cursor: pointer;
+    opacity: .8;
+    padding: 0 2px;
+  }
+  #chat-close:hover { opacity: 1; }
+
+  #chat-plan-banner {
+    background: #f0fff4;
+    border-bottom: 1px solid #c6f6d5;
+    padding: 10px 14px;
+    font-size: 12px;
+    color: #276749;
+    display: none;
+    flex-shrink: 0;
+  }
+  #chat-plan-banner strong { display: block; font-size: 13px; margin-bottom: 2px; }
+
+  #chat-messages {
+    flex: 1;
+    overflow-y: auto;
+    padding: 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .chat-msg {
+    max-width: 88%;
+    padding: 9px 13px;
+    border-radius: 12px;
+    font-size: 13px;
+    line-height: 1.45;
+    word-break: break-word;
+  }
+  .chat-msg.user {
+    align-self: flex-end;
+    background: var(--hcf-blue);
+    color: #fff;
+    border-bottom-right-radius: 4px;
+  }
+  .chat-msg.assistant {
+    align-self: flex-start;
+    background: #f1f5f9;
+    color: #1a202c;
+    border-bottom-left-radius: 4px;
+  }
+  .chat-msg.loading { color: #718096; font-style: italic; }
+
+  #chat-input-row {
+    display: flex;
+    gap: 8px;
+    padding: 12px;
+    border-top: 1px solid #e2e8f0;
+    flex-shrink: 0;
+    background: #fff;
+  }
+  #chat-input {
+    flex: 1;
+    border: 1px solid #cbd5e0;
+    border-radius: 20px;
+    padding: 8px 14px;
+    font-size: 13px;
+    outline: none;
+    font-family: inherit;
+    resize: none;
+    height: 36px;
+    line-height: 1.4;
+  }
+  #chat-input:focus { border-color: var(--hcf-blue); }
+  #chat-send {
+    background: var(--hcf-blue);
+    color: #fff;
+    border: none;
+    border-radius: 50%;
+    width: 36px;
+    height: 36px;
+    cursor: pointer;
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: background .2s;
+  }
+  #chat-send:hover { background: #004ab0; }
+  #chat-send:disabled { background: #a0aec0; cursor: not-allowed; }
   </style>
 </head>
 <body>
@@ -1584,6 +1741,176 @@ function renderUploadLog() {
 
 // ── Start ──
 init();
+</script>
+
+<!-- ═══════════════════════════════════════════════════
+     AI CHAT WIDGET
+═══════════════════════════════════════════════════ -->
+<button id="chat-fab" onclick="toggleChat()" title="AI Plan Lookup">
+  💬
+  <span class="chat-badge" id="chat-badge"></span>
+</button>
+
+<div id="chat-panel">
+  <div id="chat-header">
+    <div>
+      AI Plan Lookup
+      <span>— nib plan identifier</span>
+    </div>
+    <button id="chat-close" onclick="toggleChat()" title="Close">✕</button>
+  </div>
+
+  <div id="chat-plan-banner">
+    <strong id="chat-plan-name"></strong>
+    <span id="chat-plan-detail"></span>
+    <span style="float:right;cursor:pointer;font-weight:600" onclick="applyPlanToComparison()">Apply ↓</span>
+  </div>
+
+  <div id="chat-messages"></div>
+
+  <div id="chat-input-row">
+    <input id="chat-input" type="text" placeholder="e.g. nib plan $57.16/week…"
+           onkeydown="if(event.key==='Enter')sendChat()" autocomplete="off" />
+    <button id="chat-send" onclick="sendChat()" title="Send">➤</button>
+  </div>
+</div>
+
+<script>
+// ═══════════════════════════════════════════════════
+// CHAT WIDGET
+// Update CHAT_WORKER_URL after deploying the Cloudflare Worker.
+// ═══════════════════════════════════════════════════
+const CHAT_WORKER_URL = 'https://hcf-retention-chat.YOUR-ACCOUNT.workers.dev/chat';
+
+let chatHistory = [];      // [{role, content}] passed to worker for context
+let lastPlan    = null;    // most recently identified nib plan
+
+function toggleChat() {
+  const panel = document.getElementById('chat-panel');
+  const open  = !panel.classList.contains('open');
+  panel.classList.toggle('open', open);
+
+  if (open) {
+    document.getElementById('chat-badge').style.display = 'none';
+    if (chatHistory.length === 0) addAssistantMsg("Hi! Tell me the member's nib weekly price and I'll identify the plan.");
+    document.getElementById('chat-input').focus();
+  }
+}
+
+function addMsg(role, text) {
+  const msgs = document.getElementById('chat-messages');
+  const div  = document.createElement('div');
+  div.className = `chat-msg ${role}`;
+  div.textContent = text;
+  msgs.appendChild(div);
+  msgs.scrollTop = msgs.scrollHeight;
+  return div;
+}
+
+function addAssistantMsg(text) {
+  addMsg('assistant', text);
+}
+
+function showLoading() {
+  const msgs = document.getElementById('chat-messages');
+  const div  = document.createElement('div');
+  div.className = 'chat-msg assistant loading';
+  div.id = 'chat-loading';
+  div.textContent = 'Looking up…';
+  msgs.appendChild(div);
+  msgs.scrollTop = msgs.scrollHeight;
+}
+
+function removeLoading() {
+  const el = document.getElementById('chat-loading');
+  if (el) el.remove();
+}
+
+function showPlanBanner(plan) {
+  lastPlan = plan;
+  document.getElementById('chat-plan-name').textContent = plan.name;
+  document.getElementById('chat-plan-detail').textContent =
+    `$${plan.price_weekly.toFixed(2)}/wk  ·  $${plan.price_monthly.toFixed(2)}/mo  ·  $${plan.excess} excess`;
+  document.getElementById('chat-plan-banner').style.display = 'block';
+
+  // Show badge if chat is closed
+  if (!document.getElementById('chat-panel').classList.contains('open')) {
+    const badge = document.getElementById('chat-badge');
+    badge.style.display = 'flex';
+    badge.textContent = '!';
+  }
+}
+
+function applyPlanToComparison() {
+  if (!lastPlan) return;
+
+  // 1. Set competitor fund to nib + fire change event (clears any prior comp selection)
+  const fundSel = document.getElementById('compFund');
+  fundSel.value = 'nib';
+  fundSel.dispatchEvent(new Event('change'));
+
+  // 2. Set price override (monthly base rate)
+  document.getElementById('compPriceOverride').value = lastPlan.price_monthly.toFixed(2);
+
+  // 3. Set excess — inject the option since no product is selected
+  const excessSel = document.getElementById('compExcess');
+  excessSel.innerHTML = `<option value="${lastPlan.excess}">$${lastPlan.excess}</option>`;
+  excessSel.value = lastPlan.excess;
+
+  // 4. Run comparison
+  runComparison();
+
+  // 5. Close chat and scroll to results
+  document.getElementById('chat-panel').classList.remove('open');
+}
+
+async function sendChat() {
+  const input = document.getElementById('chat-input');
+  const text  = input.value.trim();
+  if (!text) return;
+
+  input.value = '';
+  document.getElementById('chat-send').disabled = true;
+
+  addMsg('user', text);
+  chatHistory.push({ role: 'user', content: text });
+
+  showLoading();
+
+  try {
+    const resp = await fetch(CHAT_WORKER_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ message: text, history: chatHistory.slice(-10) }),
+    });
+
+    removeLoading();
+
+    if (!resp.ok) {
+      addAssistantMsg('⚠ Error reaching the AI service. Check your internet connection.');
+      return;
+    }
+
+    const data = await resp.json();
+
+    if (data.reply) {
+      addAssistantMsg(data.reply);
+      chatHistory.push({ role: 'assistant', content: data.reply });
+    }
+
+    if (data.plan) {
+      showPlanBanner(data.plan);
+    }
+
+  } catch (e) {
+    removeLoading();
+    addAssistantMsg('⚠ Could not connect to AI service. Is the worker deployed?');
+    console.error(e);
+  } finally {
+    document.getElementById('chat-send').disabled = false;
+    input.focus();
+  }
+}
 </script>
 </body>
 </html>

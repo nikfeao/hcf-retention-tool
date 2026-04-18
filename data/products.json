@@ -50,7 +50,7 @@
               "single_parent_family": 494.25
             }
           },
-          "source": "privatehealth.gov.au (single verified). Couple/family/SPF community-rating-derived (2× single).",
+          "source": "privatehealth.gov.au (single verified). Couple/family/SPF community-rating-derived (2\u00d7 single).",
           "last_verified": "2026-04-17"
         },
         {
@@ -76,7 +76,7 @@
               "single_parent_family": 0
             }
           },
-          "source": "privatehealth.gov.au (single verified). Couple/family/SPF community-rating-derived (2× single).",
+          "source": "privatehealth.gov.au (single verified). Couple/family/SPF community-rating-derived (2\u00d7 single).",
           "last_verified": "2026-04-17"
         },
         {
@@ -93,10 +93,10 @@
               "couple": 331.98,
               "family": 331.98,
               "single_parent_family": 165.99,
-              "_note": "Couple corrected to community-rating-derived (2×$165.99). Previous $425.78 was from HCF/H31G/NMAF20 — a $250pp excess NSW couples product, not this $750 excess product."
+              "_note": "Couple corrected to community-rating-derived (2\u00d7$165.99). Previous $425.78 was from HCF/H31G/NMAF20 \u2014 a $250pp excess NSW couples product, not this $750 excess product."
             }
           },
-          "source": "privatehealth.gov.au (single verified). Couple/family/SPF community-rating-derived (2× single).",
+          "source": "privatehealth.gov.au (single verified). Couple/family/SPF community-rating-derived (2\u00d7 single).",
           "last_verified": "2026-04-17"
         },
         {
@@ -230,7 +230,7 @@
             "chiro_osteo": 0,
             "orthodontics": 0
           },
-          "limits_note": "Starter Extras — limited basic cover. Limits to be populated from product summary PDF.",
+          "limits_note": "Starter Extras \u2014 limited basic cover. Limits to be populated from product summary PDF.",
           "source": "privatehealth.gov.au",
           "last_verified": "2026-04-16"
         }
@@ -240,174 +240,99 @@
       "name": "nib",
       "hospital": [
         {
-          "id": "nib-gold-500",
-          "name": "Gold Hospital",
-          "tier": "Gold",
+          "id": "nib-basic-care-hospital-plus",
+          "name": "Basic Care Hospital Plus",
+          "tier": "Basic Plus",
           "status": "current",
           "excess_options": [
-            0,
-            500,
-            750
+            "750"
           ],
           "premiums": {
-            "500": {
-              "single": 0,
-              "couple": 0,
-              "family": 0,
-              "single_parent_family": 0
-            },
             "750": {
-              "single": 0,
-              "couple": 0,
-              "family": 0,
-              "single_parent_family": 0
-            },
-            "0": {
-              "single": 0,
-              "couple": 0,
-              "family": 0,
-              "single_parent_family": 0
+              "single": 117.78,
+              "couple": 235.56,
+              "family": 235.56,
+              "single_parent_family": 117.78
             }
           },
-          "source": "nib.com.au",
-          "last_verified": null
+          "factsheet_url": "https://my.nib.com.au/product-collateral/2785",
+          "source": "nib-scraper-pipeline"
         },
         {
-          "id": "nib-silver-plus-500",
-          "name": "Silver Plus Hospital",
-          "tier": "Silver Plus",
-          "status": "current",
-          "excess_options": [
-            500,
-            750
-          ],
-          "premiums": {
-            "500": {
-              "single": 284.18,
-              "couple": 568.36,
-              "family": 568.36,
-              "single_parent_family": 284.18
-            },
-            "750": {
-              "single": 0,
-              "couple": 0,
-              "family": 0,
-              "single_parent_family": 0
-            }
-          },
-          "phis_url": "https://www.privatehealth.gov.au/dynamic/Premium/PHIS/NIB/J46/NEOP10",
-          "phis_premiums": {
-            "500": {
-              "single": 284.18,
-              "couple": 568.36,
-              "family": 568.36,
-              "single_parent_family": 284.18
-            }
-          },
-          "phis_last_verified": "2026-04-17",
-          "source": "privatehealth.gov.au (NIB/J46/NEOP10 — NSW confirmed)",
-          "last_verified": "2026-04-17"
-        },
-        {
-          "id": "nib-silver-500",
-          "name": "Silver Hospital",
-          "tier": "Silver",
-          "status": "current",
-          "excess_options": [
-            500,
-            750
-          ],
-          "premiums": {
-            "500": {
-              "single": 0,
-              "couple": 0,
-              "family": 0,
-              "single_parent_family": 0
-            },
-            "750": {
-              "single": 0,
-              "couple": 0,
-              "family": 0,
-              "single_parent_family": 0
-            }
-          },
-          "source": "nib.com.au",
-          "last_verified": null
-        },
-        {
-          "id": "nib-bronze-plus-500",
-          "name": "Bronze Plus Hospital",
+          "id": "nib-bronze-protect-hospital-plus",
+          "name": "Bronze Protect Hospital Plus",
           "tier": "Bronze Plus",
           "status": "current",
           "excess_options": [
-            500,
-            750
+            "750"
           ],
           "premiums": {
-            "500": {
-              "single": 0,
-              "couple": 0,
-              "family": 0,
-              "single_parent_family": 0
-            },
             "750": {
-              "single": 0,
-              "couple": 0,
-              "family": 0,
-              "single_parent_family": 0
+              "single": 131.73,
+              "couple": 263.46,
+              "family": 263.46,
+              "single_parent_family": 131.73
             }
           },
-          "source": "nib.com.au",
-          "last_verified": null
+          "factsheet_url": "https://my.nib.com.au/product-collateral/2786",
+          "source": "nib-scraper-pipeline"
         },
         {
-          "id": "nib-bronze-500",
-          "name": "Bronze Starter Hospital Plus",
-          "tier": "Bronze",
+          "id": "nib-silver-secure-hospital-plus",
+          "name": "Silver Secure Hospital Plus",
+          "tier": "Silver Plus",
           "status": "current",
           "excess_options": [
-            500
+            "750"
           ],
           "premiums": {
-            "500": {
-              "single": 196.81,
-              "couple": 393.62,
-              "family": 393.62,
-              "single_parent_family": 196.81,
-              "_note": "VIC-sourced (privatehealth.gov.au NIB/J51/VGGS10). NSW verify needed — scraper will update."
+            "750": {
+              "single": 167.01,
+              "couple": 334.02,
+              "family": 334.02,
+              "single_parent_family": 167.01
             }
           },
-          "source": "privatehealth.gov.au (NIB/J51/VGGS10 — VIC single)",
-          "last_verified": "2026-04-16"
+          "factsheet_url": "https://my.nib.com.au/product-collateral/2787",
+          "source": "nib-scraper-pipeline"
         },
         {
-          "id": "nib-basic-750",
-          "name": "Basic Essential Hospital Plus",
-          "tier": "Basic",
+          "id": "nib-mid-hospital---silver-plus",
+          "name": "Mid Hospital - Silver Plus",
+          "tier": "Silver Plus",
           "status": "current",
           "excess_options": [
-            750
+            "750"
           ],
           "premiums": {
             "750": {
-              "single": 129.04,
-              "couple": 258.08,
-              "family": 258.08,
-              "single_parent_family": 129.04
+              "single": 236.51,
+              "couple": 473.02,
+              "family": 473.02,
+              "single_parent_family": 236.51
             }
           },
-          "phis_url": "https://www.privatehealth.gov.au/dynamic/Premium/PHIS/NIB/J35/NKIR10",
-          "phis_premiums": {
+          "factsheet_url": "https://my.nib.com.au/product-collateral/53",
+          "source": "nib-scraper-pipeline"
+        },
+        {
+          "id": "nib-silver-select-hospital-plus",
+          "name": "Silver Select Hospital Plus",
+          "tier": "Silver Plus",
+          "status": "current",
+          "excess_options": [
+            "750"
+          ],
+          "premiums": {
             "750": {
-              "single": 129.04,
-              "couple": 258.08,
-              "family": 258.08,
-              "single_parent_family": 129.04
+              "single": 253.11,
+              "couple": 506.22,
+              "family": 506.22,
+              "single_parent_family": 253.11
             }
           },
-          "phis_last_verified": "2026-04-16",
-          "source": "privatehealth.gov.au (NIB/J35/NKIR10 — NSW confirmed)",
-          "last_verified": "2026-04-16"
+          "factsheet_url": "https://my.nib.com.au/product-collateral/729",
+          "source": "nib-scraper-pipeline"
         }
       ],
       "extras": [
@@ -474,163 +399,133 @@
       "name": "Bupa",
       "hospital": [
         {
-          "id": "bupa-gold-500",
-          "name": "Gold Hospital",
-          "tier": "Gold",
-          "status": "current",
-          "excess_options": [
-            0,
-            500,
-            750
-          ],
-          "premiums": {
-            "500": {
-              "single": 0,
-              "couple": 0,
-              "family": 0,
-              "single_parent_family": 0
-            },
-            "750": {
-              "single": 0,
-              "couple": 0,
-              "family": 0,
-              "single_parent_family": 0
-            },
-            "0": {
-              "single": 0,
-              "couple": 0,
-              "family": 0,
-              "single_parent_family": 0
-            }
-          },
-          "source": "bupa.com.au",
-          "last_verified": null
-        },
-        {
-          "id": "bupa-silver-plus-500",
-          "name": "Silver Plus Hospital",
-          "tier": "Silver Plus",
-          "status": "current",
+          "name": "Basic Accident Only Hospital",
+          "tier": "Basic",
           "excess_options": [
             500,
             750
           ],
           "premiums": {
-            "500": {
-              "single": 0,
-              "couple": 0,
-              "family": 0,
-              "single_parent_family": 0
-            },
             "750": {
-              "single": 0,
-              "couple": 0,
-              "family": 0,
-              "single_parent_family": 0
+              "single": 110.37,
+              "couple": 220.74,
+              "family": 220.74,
+              "single_parent_family": 110.37
             }
-          },
-          "source": "bupa.com.au",
-          "last_verified": null
+          }
         },
         {
-          "id": "bupa-silver-500",
-          "name": "Silver Hospital",
-          "tier": "Silver",
-          "status": "current",
+          "name": "Basic Plus Starter Hospital",
+          "tier": "Basic Plus",
           "excess_options": [
             500,
             750
           ],
           "premiums": {
-            "500": {
-              "single": 0,
-              "couple": 0,
-              "family": 0,
-              "single_parent_family": 0
-            },
             "750": {
-              "single": 0,
-              "couple": 0,
-              "family": 0,
-              "single_parent_family": 0
+              "single": 119.73,
+              "couple": 239.46,
+              "family": 239.46,
+              "single_parent_family": 119.73
             }
-          },
-          "source": "bupa.com.au",
-          "last_verified": null
+          }
         },
         {
-          "id": "bupa-bronze-plus-500",
-          "name": "Bronze Plus Simple Hospital",
-          "tier": "Bronze Plus",
-          "status": "current",
-          "excess_options": [
-            750
-          ],
-          "premiums": {
-            "750": {
-              "single": 131.8,
-              "couple": 263.6,
-              "family": 263.6,
-              "single_parent_family": 131.8
-            }
-          },
-          "phis_url": "https://www.privatehealth.gov.au/dynamic/Premium/PHIS/BUP/H48C/NMQQ10",
-          "phis_premiums": {
-            "750": {
-              "single": 131.8,
-              "couple": 263.6,
-              "family": 263.6,
-              "single_parent_family": 131.8
-            }
-          },
-          "phis_last_verified": "2026-04-16",
-          "source": "privatehealth.gov.au (BUP/H48C/NMQQ10 — NSW confirmed)",
-          "last_verified": "2026-04-16"
-        },
-        {
-          "id": "bupa-bronze-500",
           "name": "Bronze Hospital",
           "tier": "Bronze",
-          "status": "current",
           "excess_options": [
             500,
             750
           ],
           "premiums": {
-            "500": {
-              "single": 0,
-              "couple": 0,
-              "family": 0,
-              "single_parent_family": 0
-            },
             "750": {
-              "single": 0,
-              "couple": 0,
-              "family": 0,
-              "single_parent_family": 0
+              "single": 125.8,
+              "couple": 251.6,
+              "family": 251.6,
+              "single_parent_family": 125.8
             }
-          },
-          "source": "bupa.com.au",
-          "last_verified": null
+          }
         },
         {
-          "id": "bupa-basic-750",
-          "name": "Basic Hospital",
-          "tier": "Basic",
-          "status": "current",
+          "name": "Bronze Plus Select Hospital",
+          "tier": "Bronze Plus",
           "excess_options": [
+            500,
             750
           ],
           "premiums": {
             "750": {
-              "single": 0,
-              "couple": 0,
-              "family": 0,
-              "single_parent_family": 0
+              "single": 132.82,
+              "couple": 265.64,
+              "family": 265.64,
+              "single_parent_family": 132.82
             }
-          },
-          "source": "bupa.com.au",
-          "last_verified": null
+          }
+        },
+        {
+          "name": "Bronze Plus Advantage Hospital",
+          "tier": "Bronze Plus",
+          "excess_options": [
+            500,
+            750
+          ],
+          "premiums": {
+            "750": {
+              "single": 144.39,
+              "couple": 288.78,
+              "family": 288.78,
+              "single_parent_family": 144.39
+            }
+          }
+        },
+        {
+          "name": "Silver Plus Classic Hospital",
+          "tier": "Silver Plus",
+          "excess_options": [
+            500,
+            750
+          ],
+          "premiums": {
+            "750": {
+              "single": 160.94,
+              "couple": 321.88,
+              "family": 321.88,
+              "single_parent_family": 160.94
+            }
+          }
+        },
+        {
+          "name": "Silver Plus Advanced Hospital",
+          "tier": "Silver Plus",
+          "excess_options": [
+            250,
+            500,
+            750
+          ],
+          "premiums": {
+            "750": {
+              "single": 254.5,
+              "couple": 509.0,
+              "family": 509.0,
+              "single_parent_family": 254.5
+            }
+          }
+        },
+        {
+          "name": "Gold Comprehensive Hospital",
+          "tier": "Gold",
+          "excess_options": [
+            500,
+            750
+          ],
+          "premiums": {
+            "750": {
+              "single": 417.17,
+              "couple": 834.34,
+              "family": 834.34,
+              "single_parent_family": 417.17
+            }
+          }
         }
       ],
       "extras": [
@@ -712,7 +607,7 @@
               "single_parent_family": 111.6
             }
           },
-          "source": "medibank.com.au (API)",
+          "source": "medibank-scraper-pipeline",
           "last_verified": "2026-04-16"
         },
         {
@@ -731,7 +626,7 @@
               "single_parent_family": 118.85
             }
           },
-          "source": "medibank.com.au (API)",
+          "source": "medibank-scraper-pipeline",
           "last_verified": "2026-04-16"
         },
         {
@@ -750,7 +645,7 @@
               "single_parent_family": 127.3
             }
           },
-          "source": "medibank.com.au (API)",
+          "source": "medibank-scraper-pipeline",
           "last_verified": "2026-04-16"
         },
         {
@@ -769,7 +664,7 @@
               "single_parent_family": 140.15
             }
           },
-          "source": "medibank.com.au (API)",
+          "source": "medibank-scraper-pipeline",
           "last_verified": "2026-04-16"
         },
         {
@@ -788,7 +683,7 @@
               "single_parent_family": 157.65
             }
           },
-          "source": "medibank.com.au (API)",
+          "source": "medibank-scraper-pipeline",
           "last_verified": "2026-04-16"
         },
         {
@@ -818,7 +713,7 @@
             }
           },
           "phis_last_verified": "2026-04-17",
-          "source": "medibank.com.au (API)",
+          "source": "medibank-scraper-pipeline",
           "last_verified": "2026-04-16"
         },
         {
@@ -837,7 +732,7 @@
               "single_parent_family": 249.55
             }
           },
-          "source": "medibank.com.au (API)",
+          "source": "medibank-scraper-pipeline",
           "last_verified": "2026-04-16"
         },
         {
@@ -866,7 +761,7 @@
             }
           },
           "phis_last_verified": "2026-04-17",
-          "source": "medibank.com.au (API)",
+          "source": "medibank-scraper-pipeline",
           "last_verified": "2026-04-16"
         }
       ],
@@ -934,37 +829,23 @@
       "name": "ahm",
       "hospital": [
         {
-          "id": "ahm-gold-500",
-          "name": "Gold Hospital",
-          "tier": "Gold",
+          "id": "core-hospital-basic-plus",
+          "name": "Core Hospital Basic Plus",
+          "tier": "Basic Plus",
           "status": "current",
           "excess_options": [
-            0,
-            500,
-            750
+            "750"
           ],
           "premiums": {
-            "500": {
-              "single": 0,
-              "couple": 0,
-              "family": 0,
-              "single_parent_family": 0
-            },
             "750": {
-              "single": 0,
-              "couple": 0,
-              "family": 0,
-              "single_parent_family": 0
-            },
-            "0": {
-              "single": 0,
-              "couple": 0,
-              "family": 0,
-              "single_parent_family": 0
+              "single": 88.85,
+              "couple": 177.7,
+              "family": 177.7,
+              "single_parent_family": 88.85
             }
           },
-          "source": "ahm.com.au",
-          "last_verified": null
+          "factsheet_url": "https://www.ahm.com.au/health-insurance/hospital-cover/core-hospital-basic-plus",
+          "source": "ahm-scraper-pipeline"
         },
         {
           "id": "ahm-silver-plus-500",
@@ -1055,68 +936,118 @@
           "last_verified": "2026-04-17"
         },
         {
-          "id": "ahm-bronze-500",
+          "id": "starter-bronze",
           "name": "Starter Bronze",
           "tier": "Bronze",
           "status": "current",
           "excess_options": [
-            0,
-            500,
-            750
+            "750"
           ],
           "premiums": {
-            "0": {
-              "single": 0,
-              "couple": 0,
-              "family": 0,
-              "single_parent_family": 0
-            },
-            "500": {
-              "single": 243.9,
-              "couple": 487.8,
-              "family": 487.8,
-              "single_parent_family": 243.9,
-              "_note": "NSW single parent family = single (community rating). Source: privatehealth.gov.au AHM/J9A/NELG1Y"
-            },
             "750": {
-              "single": 130.25,
-              "couple": 260.5,
-              "family": 260.5,
-              "single_parent_family": 130.25,
-              "_note": "QLD-sourced (privatehealth.gov.au AHM/J9A/QELV10). NSW verify needed — scraper will update."
+              "single": 92.5,
+              "couple": 185.0,
+              "family": 185.0,
+              "single_parent_family": 92.5
             }
           },
-          "phis_url": "https://www.privatehealth.gov.au/dynamic/Premium/PHIS/AHM/J9A/NELG1Y",
-          "phis_premiums": {
-            "500": {
-              "single": 243.9,
-              "couple": 487.8,
-              "family": 487.8,
-              "single_parent_family": 243.9
-            }
-          },
-          "phis_last_verified": "2026-04-16",
-          "source": "privatehealth.gov.au (AHM/J9A — $500 NSW confirmed, $750 QLD)",
-          "last_verified": "2026-04-16"
+          "factsheet_url": "https://www.ahm.com.au/health-insurance/hospital-cover/starter-bronze",
+          "source": "ahm-scraper-pipeline"
         },
         {
-          "id": "ahm-basic-750",
-          "name": "Basic Hospital",
-          "tier": "Basic",
+          "id": "simple-bronze-plus",
+          "name": "Simple Bronze Plus",
+          "tier": "Bronze Plus",
           "status": "current",
           "excess_options": [
-            750
+            "750"
           ],
           "premiums": {
             "750": {
-              "single": 0,
-              "couple": 0,
-              "family": 0,
-              "single_parent_family": 0
+              "single": 97.8,
+              "couple": 195.6,
+              "family": 195.6,
+              "single_parent_family": 97.8
             }
           },
-          "source": "ahm.com.au",
-          "last_verified": null
+          "factsheet_url": "https://www.ahm.com.au/health-insurance/hospital-cover/simple-bronze-plus",
+          "source": "ahm-scraper-pipeline"
+        },
+        {
+          "id": "core-bronze-plus",
+          "name": "Core Bronze Plus",
+          "tier": "Bronze Plus",
+          "status": "current",
+          "excess_options": [
+            "750"
+          ],
+          "premiums": {
+            "750": {
+              "single": 118.35,
+              "couple": 236.7,
+              "family": 236.7,
+              "single_parent_family": 118.35
+            }
+          },
+          "factsheet_url": "https://www.ahm.com.au/health-insurance/hospital-cover/core-bronze-plus",
+          "source": "ahm-scraper-pipeline"
+        },
+        {
+          "id": "essentials-silver-plus",
+          "name": "Essentials Silver Plus",
+          "tier": "Silver Plus",
+          "status": "current",
+          "excess_options": [
+            "750"
+          ],
+          "premiums": {
+            "750": {
+              "single": 119.35,
+              "couple": 238.7,
+              "family": 238.7,
+              "single_parent_family": 119.35
+            }
+          },
+          "factsheet_url": "https://www.ahm.com.au/health-insurance/hospital-cover/essentials-silver-plus",
+          "source": "ahm-scraper-pipeline"
+        },
+        {
+          "id": "core-silver-plus",
+          "name": "Core Silver Plus",
+          "tier": "Silver Plus",
+          "status": "current",
+          "excess_options": [
+            "750"
+          ],
+          "premiums": {
+            "750": {
+              "single": 180.15,
+              "couple": 360.3,
+              "family": 360.3,
+              "single_parent_family": 180.15
+            }
+          },
+          "factsheet_url": "https://www.ahm.com.au/health-insurance/hospital-cover/core-silver-plus",
+          "source": "ahm-scraper-pipeline"
+        },
+        {
+          "id": "advanced-hospital-gold",
+          "name": "Advanced Hospital Gold",
+          "tier": "Gold",
+          "status": "current",
+          "excess_options": [
+            "750"
+          ],
+          "premiums": {
+            "750": {
+              "single": 362.8,
+              "couple": 725.6,
+              "family": 725.6,
+              "single_parent_family": 362.8
+            }
+          },
+          "factsheet_url": "https://www.ahm.com.au/health-insurance/hospital-cover/advanced-hospital-gold",
+          "source": "ahm-scraper-pipeline"
         }
       ],
       "extras": [
@@ -1248,7 +1179,7 @@
             }
           },
           "phis_last_verified": "2026-04-17",
-          "source": "privatehealth.gov.au (AUF/J49/NBNC10 — NSW confirmed)",
+          "source": "privatehealth.gov.au (AUF/J49/NBNC10 \u2014 NSW confirmed)",
           "last_verified": "2026-04-17"
         },
         {
@@ -1284,7 +1215,7 @@
             }
           },
           "phis_last_verified": "2026-04-17",
-          "source": "privatehealth.gov.au (AUF/J53/NBXK2D — NSW confirmed)",
+          "source": "privatehealth.gov.au (AUF/J53/NBXK2D \u2014 NSW confirmed)",
           "last_verified": "2026-04-17"
         },
         {
@@ -1314,7 +1245,7 @@
             }
           },
           "phis_last_verified": "2026-04-16",
-          "source": "privatehealth.gov.au (AUF/J52/NCAS20 — NSW confirmed)",
+          "source": "privatehealth.gov.au (AUF/J52/NCAS20 \u2014 NSW confirmed)",
           "last_verified": "2026-04-16"
         },
         {
