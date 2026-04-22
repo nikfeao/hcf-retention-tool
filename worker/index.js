@@ -129,20 +129,17 @@ function findBestPlan(plans, { weekly_price, tier_keywords }) {
 
 const SYSTEM = `You are an AI assistant for HCF health insurance retention agents during live member calls.
 
-Your job: identify which competitor health fund plan the member is considering. Work with whatever the agent gives you — a price, a plan name fragment, a tier name, or a document.
+You have two jobs:
+1. IDENTIFY a competitor plan from whatever the agent gives you (price, fund + tier, plan name fragment, document).
+2. SAVE rate data to products.json when the agent uploads a rate sheet and asks to update or add the data. Funds supported for saving: hcf, nib, bupa, medibank, ahm, australian_unity.
 
-Tools at your disposal:
-- lookup_plan: use when you know the fund AND have at least a price OR a tier keyword. Supported funds: "nib", "bupa". For other funds use tier_keywords only (no pricing data available).
-- analyze_document: use when a document has been uploaded and you need to extract plan details from it.
+Tools:
+- lookup_plan: identify a nib or Bupa plan by price and/or tier keywords.
+- extract_rates: when a document is attached AND the user's message indicates SAVE intent (e.g. "save this", "update HCF", "add this plan", "this is the new …"). Returns structured premiums + a diff preview; never commits — the user confirms in the UI.
 
-Strategy:
-1. Extract fund name from the agent's message (nib, Bupa, Medibank, ahm, etc.)
-2. Extract price if mentioned ($X/week or $X/month)
-3. Extract tier keywords (gold, silver, silver plus, bronze, basic, etc.)
-4. Call lookup_plan with what you have. If fund is nib or bupa and you have a price or tier, call it.
-5. If a document is present, call analyze_document first to extract the details.
+When intent is unclear with a document attached, default to IDENTIFY (no tool call needed — just read the doc and answer). Only call extract_rates if the agent explicitly asks to save/update/add.
 
-Response style: 1-2 short sentences. Confirm the plan if found. If unsure, name the candidates. The agent is on a live call — keep it fast.`;
+Response style: 1-2 short sentences. The agent is on a live call — keep it fast.`;
 
 const TOOLS = [
   {
@@ -161,14 +158,30 @@ const TOOLS = [
     },
   },
   {
-    name: "analyze_document",
-    description: "Extract health insurance plan details (fund, plan name, price, excess) from an uploaded document or image.",
+    name: "extract_rates",
+    description: "Extract structured rate data from an attached document so it can be saved to products.json. Only call when the agent's intent is to SAVE/UPDATE/ADD data, not to identify a plan. Document must already be attached in the conversation.",
     input_schema: {
       type: "object",
       properties: {
-        instruction: { type: "string", description: "What to look for in the document" },
+        fund_key:     { type: "string", enum: ["hcf", "nib", "bupa", "medibank", "ahm", "australian_unity"], description: "Which fund's product this is." },
+        product_name: { type: "string", description: "Exact product name from the document (e.g. 'Hospital Optimal Gold', 'Top Extras')." },
+        kind:         { type: "string", enum: ["hospital", "extras"], description: "Hospital or extras product." },
+        tier:         { type: "string", description: "Tier for hospital products: Basic, Basic Plus, Bronze, Bronze Plus, Silver, Silver Plus, Gold. Omit for extras." },
+        excess:       { type: "string", description: "Excess amount for hospital, e.g. '500' or '750'. Omit for extras." },
+        premiums: {
+          type: "object",
+          description: "Monthly premiums BEFORE government rebate. Use null for values not found in the document.",
+          properties: {
+            single:               { type: ["number", "null"] },
+            couple:               { type: ["number", "null"] },
+            family:               { type: ["number", "null"] },
+            single_parent_family: { type: ["number", "null"] },
+          },
+          required: ["single", "couple", "family", "single_parent_family"],
+        },
+        source_note:  { type: "string", description: "Brief label for where this data came from, e.g. 'HCF rate sheet 2026-04-23'." },
       },
-      required: [],
+      required: ["fund_key", "product_name", "kind", "premiums"],
     },
   },
 ];
@@ -228,6 +241,180 @@ async function executeLookupPlan({ fund, weekly_price, tier_keywords, excess = "
   };
 }
 
+// ── GitHub Contents API ───────────────────────────────────────────────────────
+
+const GH_OWNER = "nikfeao";
+const GH_REPO  = "hcf-retention-tool";
+const GH_PATH  = "data/products.json";
+const GH_API   = `https://api.github.com/repos/${GH_OWNER}/${GH_REPO}/contents/${GH_PATH}`;
+
+async function ghReadProducts(token) {
+  const resp = await fetch(GH_API, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+      Accept: "application/vnd.github+json",
+      "User-Agent": "hcf-retention-chat-worker",
+    },
+  });
+  if (!resp.ok) throw new Error(`GitHub read ${resp.status}: ${await resp.text()}`);
+  const meta = await resp.json();
+  const json = JSON.parse(atob(meta.content.replace(/\n/g, "")));
+  return { json, sha: meta.sha };
+}
+
+async function ghWriteProducts(token, json, sha, message) {
+  const content = btoa(unescape(encodeURIComponent(JSON.stringify(json, null, 2) + "\n")));
+  const resp = await fetch(GH_API, {
+    method: "PUT",
+    headers: {
+      Authorization: `Bearer ${token}`,
+      Accept: "application/vnd.github+json",
+      "Content-Type": "application/json",
+      "User-Agent": "hcf-retention-chat-worker",
+    },
+    body: JSON.stringify({ message, content, sha, branch: "main" }),
+  });
+  if (!resp.ok) throw new Error(`GitHub write ${resp.status}: ${await resp.text()}`);
+  return resp.json(); // { content, commit: { html_url, ... } }
+}
+
+// ── Upsert logic ──────────────────────────────────────────────────────────────
+
+function slugifyId(fundKey, productName, excess) {
+  const slug = productName.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+  return excess ? `${fundKey}-${slug}-${excess}` : `${fundKey}-${slug}`;
+}
+
+function findProduct(fund, productName, kind) {
+  const list = fund[kind] || [];
+  const norm = s => s.toLowerCase().replace(/\s+/g, " ").trim();
+  const target = norm(productName);
+  return list.find(p => norm(p.name) === target)
+      || list.find(p => norm(p.name).includes(target) || target.includes(norm(p.name)))
+      || null;
+}
+
+function buildPreview(productsJson, payload) {
+  const { fund_key, product_name, kind, tier, excess, premiums, source_note } = payload;
+  const fund = productsJson.funds?.[fund_key];
+  if (!fund) throw new Error(`Unknown fund '${fund_key}'. Add the fund skeleton to products.json first.`);
+
+  const existing = findProduct(fund, product_name, kind);
+  const today = new Date().toISOString().split("T")[0];
+  const normNum = v => (v == null ? null : Math.round(Number(v) * 100) / 100);
+  const pNew = {
+    single:               normNum(premiums.single),
+    couple:               normNum(premiums.couple),
+    family:               normNum(premiums.family),
+    single_parent_family: normNum(premiums.single_parent_family),
+  };
+
+  // Community-rating derivation when values missing
+  if (pNew.single && !pNew.couple) pNew.couple = Math.round(pNew.single * 2 * 100) / 100;
+  if (pNew.single && !pNew.family) pNew.family = pNew.couple;
+  if (pNew.single && !pNew.single_parent_family) pNew.single_parent_family = pNew.single;
+
+  let action, existingPremiums = null;
+
+  if (kind === "hospital") {
+    if (!existing) {
+      action = "create_product";
+    } else if (!excess || !existing.premiums?.[excess]) {
+      action = "create_excess";
+      existingPremiums = null;
+    } else {
+      action = "update_excess";
+      existingPremiums = existing.premiums[excess];
+    }
+  } else {
+    if (!existing) {
+      action = "create_product";
+    } else {
+      action = "update_excess"; // reuse key — extras has flat premiums
+      existingPremiums = existing.premiums;
+    }
+  }
+
+  const labelMap = {
+    single: "Single",
+    couple: "Couple",
+    family: "Family",
+    single_parent_family: "Single parent family",
+  };
+  const changes = ["single", "couple", "family", "single_parent_family"]
+    .filter(k => pNew[k] != null)
+    .map(k => ({
+      label: labelMap[k],
+      old: existingPremiums ? `$${existingPremiums[k] || 0}` : null,
+      new: `$${pNew[k]}`,
+    }));
+
+  return {
+    action,
+    fund_key,
+    fund_name: fund.name || fund_key,
+    product_name: existing ? existing.name : product_name,
+    product_id: existing ? existing.id : slugifyId(fund_key, product_name, kind === "hospital" ? excess : null),
+    kind,
+    tier: tier || existing?.tier || null,
+    excess: kind === "hospital" ? (excess || null) : null,
+    premiums: pNew,
+    source_note: source_note || `chat upload ${today}`,
+    changes,
+  };
+}
+
+function applyPreviewToJson(productsJson, preview) {
+  const { fund_key, product_id, product_name, kind, tier, excess, premiums, source_note, action } = preview;
+  const fund = productsJson.funds[fund_key];
+  const list = fund[kind] || (fund[kind] = []);
+  const today = new Date().toISOString().split("T")[0];
+
+  let product = list.find(p => p.id === product_id) || list.find(p => p.name === product_name);
+
+  if (!product) {
+    product = kind === "hospital"
+      ? {
+          id: product_id,
+          name: product_name,
+          tier: tier || "",
+          status: "current",
+          excess_options: excess ? [Number(excess)] : [],
+          premiums: {},
+        }
+      : {
+          id: product_id,
+          name: product_name,
+          status: "current",
+          premiums: { single: 0, couple: 0, family: 0, single_parent_family: 0 },
+        };
+    list.push(product);
+  }
+
+  if (kind === "hospital") {
+    if (excess) {
+      const ek = String(excess);
+      if (!product.premiums[ek]) product.premiums[ek] = { single: 0, couple: 0, family: 0, single_parent_family: 0 };
+      for (const k of Object.keys(premiums)) if (premiums[k] != null) product.premiums[ek][k] = premiums[k];
+      if (!product.excess_options?.includes(Number(excess))) {
+        product.excess_options = [...(product.excess_options || []), Number(excess)].sort((a, b) => a - b);
+      }
+    }
+  } else {
+    for (const k of Object.keys(premiums)) if (premiums[k] != null) product.premiums[k] = premiums[k];
+  }
+
+  product.source        = `chat upload: ${source_note}`;
+  product.last_verified = today;
+  product.last_uploaded = today;
+  product.upload_source = source_note;
+
+  // Meta log
+  if (!productsJson.meta) productsJson.meta = {};
+  // meta lives in a separate file; skip here — process_upload.py handles meta for the PDF workflow.
+  return productsJson;
+}
+
 // ── Request handler ───────────────────────────────────────────────────────────
 
 const CORS = {
@@ -236,82 +423,126 @@ const CORS = {
   "Access-Control-Allow-Headers": "Content-Type",
 };
 
+function jsonResponse(obj, status = 200) {
+  return new Response(JSON.stringify(obj), {
+    status,
+    headers: { ...CORS, "content-type": "application/json" },
+  });
+}
+
+async function handleChat(body, env) {
+  const { message, history = [], document: doc } = body;
+  if (!message && !doc) return jsonResponse({ error: "message required" }, 400);
+
+  let identifiedPlan = null;
+  let identifiedFund = null;
+  let preview = null;
+  let betaHeader = null;
+
+  // Build the user message content — include document if provided. Cache the doc
+  // so follow-up turns on the same doc are cheap.
+  let userContent;
+  if (doc) {
+    const isPdf = doc.mediaType === "application/pdf";
+    if (isPdf) betaHeader = "pdfs-2024-09-25";
+    userContent = [
+      {
+        ...(isPdf
+          ? { type: "document", source: { type: "base64", media_type: doc.mediaType, data: doc.data } }
+          : { type: "image",    source: { type: "base64", media_type: doc.mediaType, data: doc.data } }),
+        cache_control: { type: "ephemeral" },
+      },
+      { type: "text", text: message || "Please analyze this document and identify the health insurance plan details." },
+    ];
+  } else {
+    userContent = message;
+  }
+
+  const messages = [...history, { role: "user", content: userContent }];
+  let claudeData = await callClaude(env.ANTHROPIC_API_KEY, messages, TOOLS, betaHeader);
+  let running = messages;
+
+  // Tool loop (max 3 rounds — extract_rates may follow a think step)
+  for (let round = 0; round < 3; round++) {
+    if (claudeData.stop_reason !== "tool_use") break;
+
+    const toolUse = claudeData.content.find(b => b.type === "tool_use");
+    if (!toolUse) break;
+
+    let toolResultText = "";
+
+    if (toolUse.name === "lookup_plan") {
+      const result = await executeLookupPlan(toolUse.input);
+      toolResultText = result.text;
+      if (result.plan) { identifiedPlan = result.plan; identifiedFund = result.fund; }
+      if (!identifiedFund && result.fund) identifiedFund = result.fund;
+    } else if (toolUse.name === "extract_rates") {
+      if (!env.GITHUB_TOKEN) {
+        toolResultText = "GITHUB_TOKEN is not configured on the Worker — cannot read products.json to build a preview.";
+      } else {
+        try {
+          const { json: productsJson } = await ghReadProducts(env.GITHUB_TOKEN);
+          preview = buildPreview(productsJson, toolUse.input);
+          toolResultText = `Preview built: ${preview.action} for ${preview.fund_name} · ${preview.product_name}${preview.excess ? ` ($${preview.excess} excess)` : ""}. Tell the user what will change and ask them to confirm — the UI will show a preview card with a Commit button.`;
+        } catch (e) {
+          toolResultText = `Could not build preview: ${e.message}`;
+        }
+      }
+    }
+
+    running = [
+      ...running,
+      { role: "assistant", content: claudeData.content },
+      { role: "user", content: [{ type: "tool_result", tool_use_id: toolUse.id, content: toolResultText }] },
+    ];
+    claudeData = await callClaude(env.ANTHROPIC_API_KEY, running, TOOLS, betaHeader);
+  }
+
+  const replyText = claudeData.content?.find(b => b.type === "text")?.text || "I couldn't process that. Try again.";
+
+  return jsonResponse({ reply: replyText, plan: identifiedPlan, fund: identifiedFund, preview });
+}
+
+async function handleCommit(body, env) {
+  if (!body.admin) return jsonResponse({ error: "admin flag required" }, 403);
+  if (!env.GITHUB_TOKEN) return jsonResponse({ error: "GITHUB_TOKEN not configured on Worker" }, 500);
+
+  const preview = body.payload;
+  if (!preview || !preview.fund_key || !preview.product_name) {
+    return jsonResponse({ error: "payload missing fund_key / product_name" }, 400);
+  }
+
+  // Read → apply → write, with one retry on 409 (concurrent commit).
+  for (let attempt = 0; attempt < 2; attempt++) {
+    try {
+      const { json: productsJson, sha } = await ghReadProducts(env.GITHUB_TOKEN);
+      applyPreviewToJson(productsJson, preview);
+      const msg = `Chat upload: ${preview.action} ${preview.fund_name} · ${preview.product_name}${preview.excess ? ` ($${preview.excess})` : ""}`;
+      const result = await ghWriteProducts(env.GITHUB_TOKEN, productsJson, sha, msg);
+      return jsonResponse({ ok: true, commit_url: result?.commit?.html_url || null });
+    } catch (e) {
+      if (attempt === 0 && /409/.test(e.message)) continue;
+      console.error(e);
+      return jsonResponse({ error: e.message }, 500);
+    }
+  }
+}
+
 export default {
   async fetch(request, env) {
     if (request.method === "OPTIONS") return new Response(null, { headers: CORS });
     if (request.method !== "POST") return new Response("Method Not Allowed", { status: 405, headers: CORS });
 
+    const url = new URL(request.url);
     let body;
-    try { body = await request.json(); }
-    catch { return new Response(JSON.stringify({ error: "Invalid JSON" }), { status: 400, headers: { ...CORS, "content-type": "application/json" } }); }
-
-    const { message, history = [], document: doc } = body;
-    if (!message && !doc) {
-      return new Response(JSON.stringify({ error: "message required" }), { status: 400, headers: { ...CORS, "content-type": "application/json" } });
-    }
-
-    let identifiedPlan = null;
-    let identifiedFund = null;
-    let betaHeader = null;
+    try { body = await request.json(); } catch { return jsonResponse({ error: "Invalid JSON" }, 400); }
 
     try {
-      // Build the user message content — include document if provided
-      let userContent;
-      if (doc) {
-        const isPdf = doc.mediaType === "application/pdf";
-        if (isPdf) betaHeader = "pdfs-2024-09-25";
-        userContent = [
-          isPdf
-            ? { type: "document", source: { type: "base64", media_type: doc.mediaType, data: doc.data } }
-            : { type: "image",    source: { type: "base64", media_type: doc.mediaType, data: doc.data } },
-          { type: "text", text: message || "Please analyze this document and identify the health insurance plan details." },
-        ];
-      } else {
-        userContent = message;
-      }
-
-      const messages = [...history, { role: "user", content: userContent }];
-      let claudeData = await callClaude(env.ANTHROPIC_API_KEY, messages, TOOLS, betaHeader);
-
-      // Handle tool use loop (max 2 rounds)
-      for (let round = 0; round < 2; round++) {
-        if (claudeData.stop_reason !== "tool_use") break;
-
-        const toolUse = claudeData.content.find(b => b.type === "tool_use");
-        if (!toolUse) break;
-
-        let toolResultText = "";
-
-        if (toolUse.name === "lookup_plan") {
-          const result = await executeLookupPlan(toolUse.input);
-          toolResultText = result.text;
-          if (result.plan) { identifiedPlan = result.plan; identifiedFund = result.fund; }
-          if (!identifiedFund && result.fund) identifiedFund = result.fund;
-        } else if (toolUse.name === "analyze_document") {
-          toolResultText = "Document analysis: please extract fund name, plan name, weekly/monthly premium, and excess amount from the document content already provided in this conversation.";
-        }
-
-        const messagesWithTool = [
-          ...messages,
-          { role: "assistant", content: claudeData.content },
-          { role: "user", content: [{ type: "tool_result", tool_use_id: toolUse.id, content: toolResultText }] },
-        ];
-        claudeData = await callClaude(env.ANTHROPIC_API_KEY, messagesWithTool, TOOLS, betaHeader);
-      }
-
-      const replyText = claudeData.content?.find(b => b.type === "text")?.text || "I couldn't process that. Try again.";
-
-      return new Response(
-        JSON.stringify({ reply: replyText, plan: identifiedPlan, fund: identifiedFund }),
-        { headers: { ...CORS, "content-type": "application/json" } }
-      );
-
+      if (url.pathname === "/commit") return await handleCommit(body, env);
+      return await handleChat(body, env);   // default / "/chat"
     } catch (e) {
       console.error(e);
-      return new Response(
-        JSON.stringify({ error: e.message }),
-        { status: 500, headers: { ...CORS, "content-type": "application/json" } }
-      );
+      return jsonResponse({ error: e.message }, 500);
     }
   },
 };

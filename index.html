@@ -574,6 +574,80 @@
     transition: background 0.15s;
   }
   .ai-apply-btn:hover { background: #15803d; }
+
+  /* Session doc chip */
+  .ai-doc-chip {
+    display: none;
+    align-items: center;
+    gap: 6px;
+    margin: 0 14px 8px;
+    padding: 6px 10px;
+    background: #f0f9ff;
+    border: 1px solid #bae6fd;
+    border-radius: 6px;
+    font-size: 12px;
+    color: #075985;
+  }
+  .ai-doc-chip.visible { display: inline-flex; width: fit-content; }
+  .ai-doc-chip strong { font-weight: 600; }
+  .ai-doc-chip .ai-doc-clear {
+    background: none;
+    border: none;
+    color: #0369a1;
+    cursor: pointer;
+    font-size: 14px;
+    padding: 0 2px;
+    line-height: 1;
+  }
+  .ai-doc-chip .ai-doc-clear:hover { color: #0c4a6e; }
+
+  /* Preview card (upsert) */
+  .ai-preview {
+    margin: 0 14px 10px;
+    background: #fffbeb;
+    border: 1px solid #fcd34d;
+    border-radius: 8px;
+    padding: 10px 12px;
+    font-size: 12px;
+    color: #78350f;
+  }
+  .ai-preview-title {
+    font-weight: 700;
+    font-size: 13px;
+    margin-bottom: 6px;
+    color: #78350f;
+  }
+  .ai-preview-row {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 2px 0;
+    border-bottom: 1px dashed #fde68a;
+  }
+  .ai-preview-row:last-of-type { border-bottom: none; }
+  .ai-preview-row .old { color: #9ca3af; text-decoration: line-through; }
+  .ai-preview-row .new { color: #166534; font-weight: 600; }
+  .ai-preview-actions {
+    display: flex;
+    gap: 6px;
+    margin-top: 10px;
+    justify-content: flex-end;
+  }
+  .ai-preview-actions button {
+    border: none;
+    border-radius: 6px;
+    padding: 6px 12px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+  }
+  .ai-commit-btn    { background: #16a34a; color: #fff; }
+  .ai-commit-btn:hover    { background: #15803d; }
+  .ai-commit-btn:disabled { background: #9ca3af; cursor: not-allowed; }
+  .ai-discard-btn   { background: #fff; color: #78350f; border: 1px solid #fcd34d !important; }
+  .ai-discard-btn:hover   { background: #fef3c7; }
+  .ai-preview-note  { font-size: 11px; color: #92400e; margin-top: 6px; font-style: italic; }
+
   .ai-input-row {
     display: flex;
     gap: 6px;
@@ -715,6 +789,13 @@
         <button class="ai-apply-btn" onclick="aiApplyToComparison()">Apply to comparison ↓</button>
       </div>
     </div>
+
+    <div class="ai-doc-chip" id="aiDocChip">
+      📄 <strong id="aiDocChipName"></strong>
+      <button type="button" class="ai-doc-clear" onclick="aiClearDoc()" title="Clear document">✕</button>
+    </div>
+
+    <div id="aiPreviewContainer"></div>
 
     <div class="ai-input-row">
       <button class="ai-upload-btn" title="Upload document (PDF, image)">
@@ -1830,12 +1911,16 @@ init();
 // INLINE AI ASSISTANT
 // Set WORKER_URL after deploying the Cloudflare Worker.
 // ═══════════════════════════════════════════════════
-const WORKER_URL = 'https://hcf-retention-chat.nikfeao.workers.dev/chat';
+const WORKER_BASE = 'https://hcf-retention-chat.nikfeao.workers.dev';
+const WORKER_URL  = WORKER_BASE + '/chat';
+const COMMIT_URL  = WORKER_BASE + '/commit';
+const IS_ADMIN    = new URLSearchParams(window.location.search).has('admin');
 
 let aiHistory  = [];   // [{role, content}] conversation history
 let aiLastPlan = null; // most recently identified plan
 let aiLastFund = null; // most recently identified fund
-let aiPendingDoc = null; // { mediaType, data } for next send
+let aiSessionDoc = null; // { mediaType, data, filename } — persists across turns until cleared
+let aiPendingPreview = null; // most recent upsert payload awaiting commit
 
 // ── Init greeting ─────────────────────────────────────────────────────────────
 (function aiInit() {
@@ -1922,20 +2007,29 @@ function aiHandleFile(input) {
   const reader = new FileReader();
   reader.onload = e => {
     const data = e.target.result.split(',')[1];
-    aiPendingDoc = { mediaType: file.type, data };
+    aiSessionDoc = { mediaType: file.type, data, filename: file.name };
+    aiShowDocChip(file.name);
 
-    // Update stamp
     const now = new Date();
     localStorage.setItem('aiLastDocUpload', now.toISOString());
     localStorage.setItem('aiLastDocName', file.name);
     aiUpdateDocStamp(now, file.name);
 
-    // Show file name in input placeholder
-    document.getElementById('aiInput').placeholder = `📄 ${file.name} attached — add context or just press Send`;
     document.getElementById('aiInput').focus();
   };
   reader.readAsDataURL(file);
   input.value = ''; // reset so same file can be re-selected
+}
+
+function aiShowDocChip(name) {
+  const chip = document.getElementById('aiDocChip');
+  document.getElementById('aiDocChipName').textContent = name;
+  chip.classList.add('visible');
+}
+
+function aiClearDoc() {
+  aiSessionDoc = null;
+  document.getElementById('aiDocChip').classList.remove('visible');
 }
 
 function aiUpdateDocStamp(date, name) {
@@ -1960,27 +2054,32 @@ async function aiSend() {
   const input  = document.getElementById('aiInput');
   const sendBtn = document.getElementById('aiSendBtn');
   const text   = input.value.trim();
-  const doc    = aiPendingDoc;
+  const doc    = aiSessionDoc;           // kept across turns until aiClearDoc()
+  const isFirstDocTurn = doc && !aiHistory.some(m => m._hadDoc);
 
   if (!text && !doc) return;
 
   input.value = '';
   input.placeholder = "e.g. Customer wants to leave, signed up with Bupa paying $28 a week…";
   sendBtn.disabled  = true;
-  aiPendingDoc = null;
 
-  const displayText = text || (doc ? `[Document uploaded]` : '');
+  const displayText = text || (doc ? `[Analyzing document]` : '');
   aiAddMsg('user', displayText);
-  aiHistory.push({ role: 'user', content: text || 'Please analyze this document.' });
+  aiHistory.push({
+    role: 'user',
+    content: text || 'Please analyze this document.',
+    _hadDoc: !!doc,                      // tag turns where the doc was attached
+  });
 
   aiShowLoading();
 
   try {
     const body = {
       message: text || 'Please analyze the attached document and identify the health insurance plan.',
-      history: aiHistory.slice(-8),
+      history: aiHistory.slice(-8).map(({ _hadDoc, ...m }) => m),
+      admin: IS_ADMIN,
     };
-    if (doc) body.document = doc;
+    if (doc) body.document = { mediaType: doc.mediaType, data: doc.data };
 
     const resp = await fetch(WORKER_URL, {
       method: 'POST',
@@ -2003,6 +2102,7 @@ async function aiSend() {
     }
 
     if (data.plan) aiShowPlanBanner(data.plan, data.fund);
+    if (data.preview) aiShowPreview(data.preview);
 
   } catch (e) {
     aiRemoveLoading();
@@ -2011,6 +2111,79 @@ async function aiSend() {
   } finally {
     sendBtn.disabled = false;
     input.focus();
+  }
+}
+
+// ── Preview + commit ──────────────────────────────────────────────────────────
+function aiShowPreview(preview) {
+  aiPendingPreview = preview;
+  const container = document.getElementById('aiPreviewContainer');
+  const changes = (preview.changes || []).map(c => `
+    <div class="ai-preview-row">
+      <span>${c.label}</span>
+      <span>
+        ${c.old != null ? `<span class="old">${c.old}</span> → ` : ''}
+        <span class="new">${c.new}</span>
+      </span>
+    </div>`).join('');
+
+  const actionLabel = preview.action === 'create_product'
+    ? 'Create new product'
+    : preview.action === 'create_excess'
+      ? 'Add new excess level'
+      : 'Update existing premiums';
+
+  const commitBtn = IS_ADMIN
+    ? `<button class="ai-commit-btn" onclick="aiCommit()">Commit ↑</button>`
+    : '';
+  const note = IS_ADMIN
+    ? ''
+    : `<div class="ai-preview-note">Preview only — ask Client B to commit this change.</div>`;
+
+  container.innerHTML = `
+    <div class="ai-preview" id="aiPreviewCard">
+      <div class="ai-preview-title">
+        ${actionLabel}: ${preview.fund_name} · ${preview.product_name}${preview.excess ? ` · $${preview.excess} excess` : ''}
+      </div>
+      ${changes}
+      <div class="ai-preview-actions">
+        <button class="ai-discard-btn" onclick="aiDiscardPreview()">Discard</button>
+        ${commitBtn}
+      </div>
+      ${note}
+    </div>`;
+}
+
+function aiDiscardPreview() {
+  aiPendingPreview = null;
+  document.getElementById('aiPreviewContainer').innerHTML = '';
+}
+
+async function aiCommit() {
+  if (!aiPendingPreview) return;
+  const btn = document.querySelector('.ai-commit-btn');
+  if (btn) { btn.disabled = true; btn.textContent = 'Committing…'; }
+
+  try {
+    const resp = await fetch(COMMIT_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ admin: true, payload: aiPendingPreview }),
+    });
+    const data = await resp.json();
+
+    if (!resp.ok || !data.ok) {
+      aiAddMsg('assistant', `⚠ Commit failed: ${data.error || resp.statusText}`);
+      if (btn) { btn.disabled = false; btn.textContent = 'Commit ↑'; }
+      return;
+    }
+
+    aiAddMsg('assistant', `✅ Committed to products.json. ${data.commit_url ? `[view commit](${data.commit_url})` : ''}`.trim());
+    aiDiscardPreview();
+  } catch (e) {
+    aiAddMsg('assistant', '⚠ Commit request failed — check connection.');
+    if (btn) { btn.disabled = false; btn.textContent = 'Commit ↑'; }
+    console.error(e);
   }
 }
 </script>
