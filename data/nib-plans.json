@@ -1,0 +1,51 @@
+{
+  "plans": [
+    {
+      "name": "Basic Care Hospital Plus",
+      "price_weekly": 27.18,
+      "price_monthly": 117.78,
+      "excess": "750",
+      "factsheet_url": "https://my.nib.com.au/product-collateral/2785",
+      "tier": "Basic Plus",
+      "pid": 2785
+    },
+    {
+      "name": "Bronze Protect Hospital Plus",
+      "price_weekly": 30.4,
+      "price_monthly": 131.73,
+      "excess": "750",
+      "factsheet_url": "https://my.nib.com.au/product-collateral/2786",
+      "tier": "Bronze Plus",
+      "pid": 2786
+    },
+    {
+      "name": "Silver Secure Hospital Plus",
+      "price_weekly": 38.54,
+      "price_monthly": 167.01,
+      "excess": "750",
+      "factsheet_url": "https://my.nib.com.au/product-collateral/2787",
+      "tier": "Silver Plus",
+      "pid": 2787
+    },
+    {
+      "name": "Mid Hospital - Silver Plus",
+      "price_weekly": 54.58,
+      "price_monthly": 236.51,
+      "excess": "750",
+      "factsheet_url": "https://my.nib.com.au/product-collateral/53",
+      "tier": "Silver Plus",
+      "pid": 53
+    },
+    {
+      "name": "Silver Select Hospital Plus",
+      "price_weekly": 58.41,
+      "price_monthly": 253.11,
+      "excess": "750",
+      "factsheet_url": "https://my.nib.com.au/product-collateral/729",
+      "tier": "Silver Plus",
+      "pid": 729
+    }
+  ],
+  "state": "NSW",
+  "excess": "750"
+}

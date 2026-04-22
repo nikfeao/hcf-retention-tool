@@ -8,3 +8,10 @@
 __pycache__/
 *.pyc
 .venv/
+
+# Claude Code local config
+.claude/
+
+# Cloudflare Worker local state — contains live API token
+worker/.dev.vars
+worker/.wrangler/

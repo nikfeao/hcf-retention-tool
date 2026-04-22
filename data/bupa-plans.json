@@ -1,0 +1,122 @@
+{
+  "excess": "750",
+  "state": "NSW",
+  "rebate": "none",
+  "rebate_rate_used": 0.24608,
+  "note": "Base prices back-calculated from Bupa hospital-cover page. Rebated prices use 24.608% govt rebate (base tier \u2264$93k single, under 65, 2025-26 FY). State: NSW | Single | Default excess: $750.",
+  "plans": [
+    {
+      "name": "Basic Accident Only Hospital",
+      "tier": "Basic",
+      "price_weekly": 25.47,
+      "price_monthly": 110.37,
+      "price_weekly_rebated": 19.2,
+      "price_monthly_rebated": 83.2,
+      "excess": "750",
+      "excess_options": [
+        "500",
+        "750"
+      ],
+      "factsheet_url": "https://www.bupa.com.au/health-insurance/cover/basic-accident-only-hospital"
+    },
+    {
+      "name": "Basic Plus Starter Hospital",
+      "tier": "Basic Plus",
+      "price_weekly": 27.63,
+      "price_monthly": 119.73,
+      "price_weekly_rebated": 20.83,
+      "price_monthly_rebated": 90.26,
+      "excess": "750",
+      "excess_options": [
+        "500",
+        "750"
+      ],
+      "factsheet_url": "https://www.bupa.com.au/health-insurance/cover/basic-plus-starter-hospital"
+    },
+    {
+      "name": "Bronze Hospital",
+      "tier": "Bronze",
+      "price_weekly": 29.03,
+      "price_monthly": 125.8,
+      "price_weekly_rebated": 21.89,
+      "price_monthly_rebated": 94.86,
+      "excess": "750",
+      "excess_options": [
+        "500",
+        "750"
+      ],
+      "factsheet_url": "https://www.bupa.com.au/health-insurance/cover/bronze-hospital"
+    },
+    {
+      "name": "Bronze Plus Select Hospital",
+      "tier": "Bronze Plus",
+      "price_weekly": 30.65,
+      "price_monthly": 132.82,
+      "price_weekly_rebated": 23.11,
+      "price_monthly_rebated": 100.14,
+      "excess": "750",
+      "excess_options": [
+        "500",
+        "750"
+      ],
+      "factsheet_url": "https://www.bupa.com.au/health-insurance/cover/bronze-plus-select-hospital"
+    },
+    {
+      "name": "Bronze Plus Advantage Hospital",
+      "tier": "Bronze Plus",
+      "price_weekly": 33.32,
+      "price_monthly": 144.39,
+      "price_weekly_rebated": 25.12,
+      "price_monthly_rebated": 108.85,
+      "excess": "750",
+      "excess_options": [
+        "500",
+        "750"
+      ],
+      "factsheet_url": "https://www.bupa.com.au/health-insurance/cover/bronze-plus-advantage-hospital"
+    },
+    {
+      "name": "Silver Plus Classic Hospital",
+      "tier": "Silver Plus",
+      "price_weekly": 37.14,
+      "price_monthly": 160.94,
+      "price_weekly_rebated": 28.0,
+      "price_monthly_rebated": 121.33,
+      "excess": "750",
+      "excess_options": [
+        "500",
+        "750"
+      ],
+      "factsheet_url": "https://www.bupa.com.au/health-insurance/cover/silver-plus-classic-hospital"
+    },
+    {
+      "name": "Silver Plus Advanced Hospital",
+      "tier": "Silver Plus",
+      "price_weekly": 58.73,
+      "price_monthly": 254.5,
+      "price_weekly_rebated": 44.28,
+      "price_monthly_rebated": 191.88,
+      "excess": "750",
+      "excess_options": [
+        "250",
+        "500",
+        "750"
+      ],
+      "factsheet_url": "https://www.bupa.com.au/health-insurance/cover/silver-plus-advanced-hospital"
+    },
+    {
+      "name": "Gold Comprehensive Hospital",
+      "tier": "Gold",
+      "price_weekly": 96.27,
+      "price_monthly": 417.17,
+      "price_weekly_rebated": 72.58,
+      "price_monthly_rebated": 314.51,
+      "excess": "750",
+      "excess_options": [
+        "500",
+        "750"
+      ],
+      "factsheet_url": "https://www.bupa.com.au/health-insurance/cover/gold-comprehensive-hospital"
+    }
+  ]
+}

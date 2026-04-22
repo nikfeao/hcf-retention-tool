@@ -1,0 +1,69 @@
+{
+  "plans": [
+    {
+      "id": "core-hospital-basic-plus",
+      "name": "Core Hospital Basic Plus",
+      "tier": "Basic Plus",
+      "price_weekly": 20.4,
+      "price_monthly": 88.85,
+      "excess": "750",
+      "factsheet_url": "https://www.ahm.com.au/health-insurance/hospital-cover/core-hospital-basic-plus"
+    },
+    {
+      "id": "starter-bronze",
+      "name": "Starter Bronze",
+      "tier": "Bronze",
+      "price_weekly": 21.25,
+      "price_monthly": 92.5,
+      "excess": "750",
+      "factsheet_url": "https://www.ahm.com.au/health-insurance/hospital-cover/starter-bronze"
+    },
+    {
+      "id": "simple-bronze-plus",
+      "name": "Simple Bronze Plus",
+      "tier": "Bronze Plus",
+      "price_weekly": 22.45,
+      "price_monthly": 97.8,
+      "excess": "750",
+      "factsheet_url": "https://www.ahm.com.au/health-insurance/hospital-cover/simple-bronze-plus"
+    },
+    {
+      "id": "core-bronze-plus",
+      "name": "Core Bronze Plus",
+      "tier": "Bronze Plus",
+      "price_weekly": 27.2,
+      "price_monthly": 118.35,
+      "excess": "750",
+      "factsheet_url": "https://www.ahm.com.au/health-insurance/hospital-cover/core-bronze-plus"
+    },
+    {
+      "id": "essentials-silver-plus",
+      "name": "Essentials Silver Plus",
+      "tier": "Silver Plus",
+      "price_weekly": 27.45,
+      "price_monthly": 119.35,
+      "excess": "750",
+      "factsheet_url": "https://www.ahm.com.au/health-insurance/hospital-cover/essentials-silver-plus"
+    },
+    {
+      "id": "core-silver-plus",
+      "name": "Core Silver Plus",
+      "tier": "Silver Plus",
+      "price_weekly": 41.4,
+      "price_monthly": 180.15,
+      "excess": "750",
+      "factsheet_url": "https://www.ahm.com.au/health-insurance/hospital-cover/core-silver-plus"
+    },
+    {
+      "id": "advanced-hospital-gold",
+      "name": "Advanced Hospital Gold",
+      "tier": "Gold",
+      "price_weekly": 83.4,
+      "price_monthly": 362.8,
+      "excess": "750",
+      "factsheet_url": "https://www.ahm.com.au/health-insurance/hospital-cover/advanced-hospital-gold"
+    }
+  ],
+  "state": "NSW",
+  "excess": "750"
+}

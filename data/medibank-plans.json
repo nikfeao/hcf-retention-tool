@@ -1,0 +1,77 @@
+{
+  "plans": [
+    {
+      "id": "medibank-basic-accident-and-ambulance",
+      "name": "Basic Accident and Ambulance",
+      "tier": "Basic",
+      "price_weekly": 25.75,
+      "price_monthly": 111.6,
+      "excess": 0,
+      "plan_url": "https://www.medibank.com.au/health-insurance/hospital/basic-accident-and-ambulance"
+    },
+    {
+      "id": "medibank-basic-plus-select",
+      "name": "Basic Plus Select",
+      "tier": "Basic Plus",
+      "price_weekly": 27.43,
+      "price_monthly": 118.85,
+      "excess": 750,
+      "plan_url": "https://www.medibank.com.au/health-insurance/hospital/basic-plus-select"
+    },
+    {
+      "id": "medibank-bronze-plus-value",
+      "name": "Bronze Plus Value",
+      "tier": "Bronze Plus",
+      "price_weekly": 29.38,
+      "price_monthly": 127.3,
+      "excess": 750,
+      "plan_url": "https://www.medibank.com.au/health-insurance/hospital/bronze-plus-value"
+    },
+    {
+      "id": "medibank-bronze-plus-support",
+      "name": "Bronze Plus Support",
+      "tier": "Bronze Plus",
+      "price_weekly": 32.34,
+      "price_monthly": 140.15,
+      "excess": 500,
+      "plan_url": "https://www.medibank.com.au/health-insurance/hospital/bronze-plus-support"
+    },
+    {
+      "id": "medibank-silver-plus-core",
+      "name": "Silver Plus Core",
+      "tier": "Silver Plus",
+      "price_weekly": 36.38,
+      "price_monthly": 157.65,
+      "excess": 750,
+      "plan_url": "https://www.medibank.com.au/health-insurance/hospital/silver-plus-core"
+    },
+    {
+      "id": "medibank-silver-plus-support",
+      "name": "Silver Plus Support",
+      "tier": "Silver Plus",
+      "price_weekly": 41.94,
+      "price_monthly": 181.75,
+      "excess": 500,
+      "plan_url": "https://www.medibank.com.au/health-insurance/hospital/silver-plus-support"
+    },
+    {
+      "id": "medibank-silver-plus-secure",
+      "name": "Silver Plus Secure",
+      "tier": "Silver Plus",
+      "price_weekly": 57.59,
+      "price_monthly": 249.55,
+      "excess": 250,
+      "plan_url": "https://www.medibank.com.au/health-insurance/hospital/silver-plus-secure"
+    },
+    {
+      "id": "medibank-gold-protect",
+      "name": "Gold Protect",
+      "tier": "Gold",
+      "price_weekly": 89.67,
+      "price_monthly": 388.55,
+      "excess": 750,
+      "plan_url": "https://www.medibank.com.au/health-insurance/hospital/gold-protect"
+    }
+  ],
+  "state": "NSW"
+}

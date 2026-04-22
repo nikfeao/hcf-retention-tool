@@ -490,7 +490,148 @@
     }
 
   /* ═══════════════════════════════════════════════════
-     AI CHAT WIDGET
+     INLINE AI ASSISTANT (top of main)
+  ═══════════════════════════════════════════════════ */
+  .ai-card {
+    background: #fff;
+    border: 1px solid var(--border);
+    border-top: 3px solid var(--hcf-blue);
+    border-radius: var(--radius);
+    margin-bottom: 16px;
+    overflow: hidden;
+  }
+  .ai-card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 14px 8px;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .ai-card-title {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    color: var(--hcf-blue);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .ai-doc-stamp {
+    font-size: 11px;
+    color: var(--muted);
+    display: none;
+    gap: 5px;
+    align-items: center;
+  }
+  .ai-doc-stamp.visible { display: flex; }
+  .ai-doc-stamp-dot { width: 6px; height: 6px; border-radius: 50%; background: #22c55e; flex-shrink: 0; }
+  .ai-messages {
+    max-height: 180px;
+    overflow-y: auto;
+    padding: 0 14px 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .ai-msg {
+    font-size: 13px;
+    line-height: 1.45;
+    padding: 7px 11px;
+    border-radius: 10px;
+    max-width: 85%;
+  }
+  .ai-msg.assistant { background: var(--hcf-light); color: var(--text); align-self: flex-start; border-bottom-left-radius: 3px; }
+  .ai-msg.user      { background: var(--hcf-blue); color: #fff; align-self: flex-end; border-bottom-right-radius: 3px; }
+  .ai-msg.loading   { opacity: 0.6; }
+  .ai-plan-banner {
+    margin: 0 14px 10px;
+    background: #f0fff4;
+    border: 1px solid #86efac;
+    border-radius: 7px;
+    padding: 9px 12px;
+    display: none;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+  .ai-plan-banner.visible { display: flex; }
+  .ai-plan-info { font-size: 12px; color: #166534; }
+  .ai-plan-info strong { display: block; font-size: 13px; font-weight: 700; margin-bottom: 2px; }
+  .ai-apply-btn {
+    background: #16a34a;
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    padding: 6px 14px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    white-space: nowrap;
+    flex-shrink: 0;
+    transition: background 0.15s;
+  }
+  .ai-apply-btn:hover { background: #15803d; }
+  .ai-input-row {
+    display: flex;
+    gap: 6px;
+    padding: 10px 14px 12px;
+    border-top: 1px solid #f1f5f9;
+    align-items: center;
+  }
+  .ai-upload-btn {
+    background: none;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    width: 34px;
+    height: 34px;
+    cursor: pointer;
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    color: var(--muted);
+    transition: border-color 0.15s, color 0.15s;
+    position: relative;
+  }
+  .ai-upload-btn:hover { border-color: var(--hcf-blue); color: var(--hcf-blue); }
+  .ai-upload-btn input[type="file"] { position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%; }
+  #aiInput {
+    flex: 1;
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 7px 13px;
+    font-size: 13px;
+    font-family: var(--font);
+    color: var(--text);
+    outline: none;
+    transition: border-color 0.15s;
+  }
+  #aiInput:focus { border-color: var(--hcf-blue); }
+  #aiInput::placeholder { color: var(--muted); }
+  .ai-send-btn {
+    background: var(--hcf-blue);
+    color: #fff;
+    border: none;
+    border-radius: 50%;
+    width: 34px;
+    height: 34px;
+    cursor: pointer;
+    font-size: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: background 0.15s;
+  }
+  .ai-send-btn:hover { background: #004ab0; }
+  .ai-send-btn:disabled { background: #a0aec0; cursor: not-allowed; }
+
+  /* ═══════════════════════════════════════════════════
+     AI CHAT WIDGET (floating — kept for scroll-to-top shortcut)
   ═══════════════════════════════════════════════════ */
   #chat-fab {
     position: fixed;
@@ -525,126 +666,6 @@
     justify-content: center;
   }
 
-  #chat-panel {
-    position: fixed;
-    bottom: 96px;
-    right: 28px;
-    width: 380px;
-    max-height: 540px;
-    background: #fff;
-    border-radius: 16px;
-    box-shadow: 0 8px 32px rgba(0,0,0,.18);
-    z-index: 1000;
-    display: none;
-    flex-direction: column;
-    overflow: hidden;
-    border: 1px solid #e2e8f0;
-  }
-  #chat-panel.open { display: flex; }
-
-  #chat-header {
-    background: var(--hcf-blue);
-    color: #fff;
-    padding: 14px 16px;
-    font-weight: 600;
-    font-size: 14px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    flex-shrink: 0;
-  }
-  #chat-header span { opacity: .75; font-size: 12px; font-weight: 400; }
-  #chat-close {
-    background: none;
-    border: none;
-    color: #fff;
-    font-size: 18px;
-    cursor: pointer;
-    opacity: .8;
-    padding: 0 2px;
-  }
-  #chat-close:hover { opacity: 1; }
-
-  #chat-plan-banner {
-    background: #f0fff4;
-    border-bottom: 1px solid #c6f6d5;
-    padding: 10px 14px;
-    font-size: 12px;
-    color: #276749;
-    display: none;
-    flex-shrink: 0;
-  }
-  #chat-plan-banner strong { display: block; font-size: 13px; margin-bottom: 2px; }
-
-  #chat-messages {
-    flex: 1;
-    overflow-y: auto;
-    padding: 14px;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-  }
-
-  .chat-msg {
-    max-width: 88%;
-    padding: 9px 13px;
-    border-radius: 12px;
-    font-size: 13px;
-    line-height: 1.45;
-    word-break: break-word;
-  }
-  .chat-msg.user {
-    align-self: flex-end;
-    background: var(--hcf-blue);
-    color: #fff;
-    border-bottom-right-radius: 4px;
-  }
-  .chat-msg.assistant {
-    align-self: flex-start;
-    background: #f1f5f9;
-    color: #1a202c;
-    border-bottom-left-radius: 4px;
-  }
-  .chat-msg.loading { color: #718096; font-style: italic; }
-
-  #chat-input-row {
-    display: flex;
-    gap: 8px;
-    padding: 12px;
-    border-top: 1px solid #e2e8f0;
-    flex-shrink: 0;
-    background: #fff;
-  }
-  #chat-input {
-    flex: 1;
-    border: 1px solid #cbd5e0;
-    border-radius: 20px;
-    padding: 8px 14px;
-    font-size: 13px;
-    outline: none;
-    font-family: inherit;
-    resize: none;
-    height: 36px;
-    line-height: 1.4;
-  }
-  #chat-input:focus { border-color: var(--hcf-blue); }
-  #chat-send {
-    background: var(--hcf-blue);
-    color: #fff;
-    border: none;
-    border-radius: 50%;
-    width: 36px;
-    height: 36px;
-    cursor: pointer;
-    font-size: 16px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-    transition: background .2s;
-  }
-  #chat-send:hover { background: #004ab0; }
-  #chat-send:disabled { background: #a0aec0; cursor: not-allowed; }
   </style>
 </head>
 <body>
@@ -663,6 +684,50 @@
 </div>
 
 <div class="main">
+
+  <!-- ── AI Assistant (inline, top of page) ── -->
+  <div class="ai-card">
+    <div class="ai-card-header">
+      <div class="ai-card-title">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l2 2"/></svg>
+        AI Assistant — Plan Lookup
+      </div>
+      <div class="ai-doc-stamp" id="aiDocStamp">
+        <span class="ai-doc-stamp-dot"></span>
+        Last document: <span id="aiDocTime">—</span>
+      </div>
+    </div>
+
+    <div class="ai-messages" id="aiMessages"></div>
+
+    <div class="ai-plan-banner" id="aiPlanBanner">
+      <div class="ai-plan-info">
+        <strong id="aiPlanName"></strong>
+        <span id="aiPlanDetail"></span>
+      </div>
+      <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+        <a id="aiPlanPdfLink" href="#" target="_blank" rel="noopener"
+           style="display:none;align-items:center;gap:4px;font-size:12px;font-weight:600;
+                  color:#065f46;background:#ecfdf5;border:1px solid #6ee7b7;
+                  border-radius:6px;padding:6px 12px;text-decoration:none;">
+          📄 View fact sheet →
+        </a>
+        <button class="ai-apply-btn" onclick="aiApplyToComparison()">Apply to comparison ↓</button>
+      </div>
+    </div>
+
+    <div class="ai-input-row">
+      <button class="ai-upload-btn" title="Upload document (PDF, image)">
+        📎
+        <input type="file" id="aiFileInput" accept=".pdf,.png,.jpg,.jpeg,.webp" onchange="aiHandleFile(this)">
+      </button>
+      <input id="aiInput" type="text"
+             placeholder="e.g. Customer wants to leave, signed up with Bupa paying $28 a week…"
+             onkeydown="if(event.key==='Enter' && !event.shiftKey){event.preventDefault();aiSend()}"
+             autocomplete="off">
+      <button class="ai-send-btn" id="aiSendBtn" onclick="aiSend()" title="Send">➤</button>
+    </div>
+  </div>
 
   <div class="data-notice" id="dataNotice">
     ⚠ Some product premiums are not yet populated. Enter the quoted price manually in the override field below.
@@ -763,13 +828,9 @@
 
       <div class="field">
         <label>Hospital Product</label>
-        <div class="field-row">
-          <div class="autocomplete-wrap">
-            <input type="text" id="hcfHospitalInput" placeholder="Search product name..." autocomplete="off">
-            <ul class="autocomplete-list" id="hcfHospitalList" style="display:none"></ul>
-          </div>
-          <button class="mic-btn" id="mic-hcfHospitalInput" title="Voice input" onclick="startVoice('hcfHospitalInput')">🎙</button>
-        </div>
+        <select id="hcfHospitalSelect">
+          <option value="">— select product —</option>
+        </select>
       </div>
 
       <div class="field">
@@ -781,13 +842,9 @@
 
       <div class="field">
         <label>Extras Product</label>
-        <div class="field-row">
-          <div class="autocomplete-wrap">
-            <input type="text" id="hcfExtrasInput" placeholder="Search extras product..." autocomplete="off">
-            <ul class="autocomplete-list" id="hcfExtrasList" style="display:none"></ul>
-          </div>
-          <button class="mic-btn" id="mic-hcfExtrasInput" title="Voice input" onclick="startVoice('hcfExtrasInput')">🎙</button>
-        </div>
+        <select id="hcfExtrasSelect">
+          <option value="">— select product —</option>
+        </select>
       </div>
 
       <div class="field">
@@ -1035,12 +1092,30 @@ function freshnessLabel(lastVerified) {
 // AUTOCOMPLETE
 // ═══════════════════════════════════════════════════
 function wireAutocomplete() {
-  setupAC('hcfHospitalInput', 'hcfHospitalList', 'hcf', 'hospital', p => {
+  const hcfHospSel = document.getElementById('hcfHospitalSelect');
+  (productsData.funds.hcf?.hospital || []).forEach(p => {
+    const opt = document.createElement('option');
+    opt.value = p.name;
+    opt.textContent = p.name + (p.status === 'off-sale' ? ' (Off-sale)' : '');
+    opt.dataset.idx = productsData.funds.hcf.hospital.indexOf(p);
+    hcfHospSel.appendChild(opt);
+  });
+  hcfHospSel.addEventListener('change', () => {
+    const p = productsData.funds.hcf.hospital.find(x => x.name === hcfHospSel.value) || null;
     sel.hcfHospital = p;
     populateExcess('hcfExcess', p);
   });
-  setupAC('hcfExtrasInput', 'hcfExtrasList', 'hcf', 'extras', p => {
-    sel.hcfExtras = p;
+
+  const hcfExtSel = document.getElementById('hcfExtrasSelect');
+  hcfExtSel.innerHTML = '<option value="">— none —</option>';
+  (productsData.funds.hcf?.extras || []).forEach(p => {
+    const opt = document.createElement('option');
+    opt.value = p.name;
+    opt.textContent = p.name + (p.status === 'off-sale' ? ' (Off-sale)' : '');
+    hcfExtSel.appendChild(opt);
+  });
+  hcfExtSel.addEventListener('change', () => {
+    sel.hcfExtras = productsData.funds.hcf.extras.find(x => x.name === hcfExtSel.value) || null;
   });
   setupAC('compHospitalInput', 'compHospitalList', null, 'hospital', p => {
     sel.compHospital = p;
@@ -1746,168 +1821,195 @@ init();
 <!-- ═══════════════════════════════════════════════════
      AI CHAT WIDGET
 ═══════════════════════════════════════════════════ -->
-<button id="chat-fab" onclick="toggleChat()" title="AI Plan Lookup">
+<button id="chat-fab" onclick="document.querySelector('.ai-card').scrollIntoView({behavior:'smooth',block:'start'}); document.getElementById('aiInput').focus();" title="AI Assistant — scroll to top">
   💬
-  <span class="chat-badge" id="chat-badge"></span>
 </button>
-
-<div id="chat-panel">
-  <div id="chat-header">
-    <div>
-      AI Plan Lookup
-      <span>— nib plan identifier</span>
-    </div>
-    <button id="chat-close" onclick="toggleChat()" title="Close">✕</button>
-  </div>
-
-  <div id="chat-plan-banner">
-    <strong id="chat-plan-name"></strong>
-    <span id="chat-plan-detail"></span>
-    <span style="float:right;cursor:pointer;font-weight:600" onclick="applyPlanToComparison()">Apply ↓</span>
-  </div>
-
-  <div id="chat-messages"></div>
-
-  <div id="chat-input-row">
-    <input id="chat-input" type="text" placeholder="e.g. nib plan $57.16/week…"
-           onkeydown="if(event.key==='Enter')sendChat()" autocomplete="off" />
-    <button id="chat-send" onclick="sendChat()" title="Send">➤</button>
-  </div>
-</div>
 
 <script>
 // ═══════════════════════════════════════════════════
-// CHAT WIDGET
-// Update CHAT_WORKER_URL after deploying the Cloudflare Worker.
+// INLINE AI ASSISTANT
+// Set WORKER_URL after deploying the Cloudflare Worker.
 // ═══════════════════════════════════════════════════
-const CHAT_WORKER_URL = 'https://hcf-retention-chat.YOUR-ACCOUNT.workers.dev/chat';
+const WORKER_URL = 'https://hcf-retention-chat.nikfeao.workers.dev/chat';
 
-let chatHistory = [];      // [{role, content}] passed to worker for context
-let lastPlan    = null;    // most recently identified nib plan
+let aiHistory  = [];   // [{role, content}] conversation history
+let aiLastPlan = null; // most recently identified plan
+let aiLastFund = null; // most recently identified fund
+let aiPendingDoc = null; // { mediaType, data } for next send
 
-function toggleChat() {
-  const panel = document.getElementById('chat-panel');
-  const open  = !panel.classList.contains('open');
-  panel.classList.toggle('open', open);
+// ── Init greeting ─────────────────────────────────────────────────────────────
+(function aiInit() {
+  aiAddMsg('assistant', "Describe the member's situation and I'll identify the plan — price, fund name, tier keywords, or upload a document.");
+  aiRestoreDocStamp();
+})();
 
-  if (open) {
-    document.getElementById('chat-badge').style.display = 'none';
-    if (chatHistory.length === 0) addAssistantMsg("Hi! Tell me the member's nib weekly price and I'll identify the plan.");
-    document.getElementById('chat-input').focus();
-  }
-}
-
-function addMsg(role, text) {
-  const msgs = document.getElementById('chat-messages');
+// ── Message rendering ─────────────────────────────────────────────────────────
+function aiAddMsg(role, text) {
+  const wrap = document.getElementById('aiMessages');
   const div  = document.createElement('div');
-  div.className = `chat-msg ${role}`;
+  div.className = `ai-msg ${role}`;
   div.textContent = text;
-  msgs.appendChild(div);
-  msgs.scrollTop = msgs.scrollHeight;
+  wrap.appendChild(div);
+  wrap.scrollTop = wrap.scrollHeight;
   return div;
 }
 
-function addAssistantMsg(text) {
-  addMsg('assistant', text);
+function aiShowLoading() {
+  const div = aiAddMsg('assistant', 'Looking up…');
+  div.classList.add('loading');
+  div.id = 'aiLoading';
 }
 
-function showLoading() {
-  const msgs = document.getElementById('chat-messages');
-  const div  = document.createElement('div');
-  div.className = 'chat-msg assistant loading';
-  div.id = 'chat-loading';
-  div.textContent = 'Looking up…';
-  msgs.appendChild(div);
-  msgs.scrollTop = msgs.scrollHeight;
-}
-
-function removeLoading() {
-  const el = document.getElementById('chat-loading');
+function aiRemoveLoading() {
+  const el = document.getElementById('aiLoading');
   if (el) el.remove();
 }
 
-function showPlanBanner(plan) {
-  lastPlan = plan;
-  document.getElementById('chat-plan-name').textContent = plan.name;
-  document.getElementById('chat-plan-detail').textContent =
-    `$${plan.price_weekly.toFixed(2)}/wk  ·  $${plan.price_monthly.toFixed(2)}/mo  ·  $${plan.excess} excess`;
-  document.getElementById('chat-plan-banner').style.display = 'block';
-
-  // Show badge if chat is closed
-  if (!document.getElementById('chat-panel').classList.contains('open')) {
-    const badge = document.getElementById('chat-badge');
-    badge.style.display = 'flex';
-    badge.textContent = '!';
+// ── Plan banner ───────────────────────────────────────────────────────────────
+function aiShowPlanBanner(plan, fund) {
+  aiLastPlan = plan;
+  aiLastFund = fund;
+  document.getElementById('aiPlanName').textContent = plan.name;
+  const rebated = plan.price_weekly_rebated != null
+    ? ` · ~$${plan.price_weekly_rebated.toFixed(2)}/wk on website`
+    : '';
+  document.getElementById('aiPlanDetail').textContent =
+    `Base: $${plan.price_weekly.toFixed(2)}/wk ($${plan.price_monthly.toFixed(2)}/mo) · $${plan.excess} excess${rebated}`;
+  document.getElementById('aiPlanBanner').classList.add('visible');
+  const pdfLink = document.getElementById('aiPlanPdfLink');
+  if (plan.factsheet_url) {
+    pdfLink.href = plan.factsheet_url;
+    pdfLink.style.display = 'inline-flex';
+  } else {
+    pdfLink.style.display = 'none';
   }
 }
 
-function applyPlanToComparison() {
-  if (!lastPlan) return;
+function aiApplyToComparison() {
+  if (!aiLastPlan) return;
 
-  // 1. Set competitor fund to nib + fire change event (clears any prior comp selection)
   const fundSel = document.getElementById('compFund');
-  fundSel.value = 'nib';
-  fundSel.dispatchEvent(new Event('change'));
+  if (aiLastFund && fundSel.querySelector(`option[value="${aiLastFund}"]`)) {
+    fundSel.value = aiLastFund;
+    fundSel.dispatchEvent(new Event('change'));
+  }
 
-  // 2. Set price override (monthly base rate)
-  document.getElementById('compPriceOverride').value = lastPlan.price_monthly.toFixed(2);
+  // Set monthly price override (base rate)
+  document.getElementById('compPriceOverride').value = aiLastPlan.price_monthly.toFixed(2);
 
-  // 3. Set excess — inject the option since no product is selected
+  // Set excess
   const excessSel = document.getElementById('compExcess');
-  excessSel.innerHTML = `<option value="${lastPlan.excess}">$${lastPlan.excess}</option>`;
-  excessSel.value = lastPlan.excess;
+  const excess = aiLastPlan.excess || '750';
+  if (!excessSel.querySelector(`option[value="${excess}"]`)) {
+    const opt = document.createElement('option');
+    opt.value = excess; opt.textContent = `$${excess}`;
+    excessSel.appendChild(opt);
+  }
+  excessSel.value = excess;
 
-  // 4. Run comparison
   runComparison();
 
-  // 5. Close chat and scroll to results
-  document.getElementById('chat-panel').classList.remove('open');
+  // Scroll to results
+  const results = document.getElementById('results');
+  if (results) results.scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 
-async function sendChat() {
-  const input = document.getElementById('chat-input');
-  const text  = input.value.trim();
-  if (!text) return;
+// ── File upload ───────────────────────────────────────────────────────────────
+function aiHandleFile(input) {
+  const file = input.files[0];
+  if (!file) return;
+
+  const reader = new FileReader();
+  reader.onload = e => {
+    const data = e.target.result.split(',')[1];
+    aiPendingDoc = { mediaType: file.type, data };
+
+    // Update stamp
+    const now = new Date();
+    localStorage.setItem('aiLastDocUpload', now.toISOString());
+    localStorage.setItem('aiLastDocName', file.name);
+    aiUpdateDocStamp(now, file.name);
+
+    // Show file name in input placeholder
+    document.getElementById('aiInput').placeholder = `📄 ${file.name} attached — add context or just press Send`;
+    document.getElementById('aiInput').focus();
+  };
+  reader.readAsDataURL(file);
+  input.value = ''; // reset so same file can be re-selected
+}
+
+function aiUpdateDocStamp(date, name) {
+  const stamp = document.getElementById('aiDocStamp');
+  const timeEl = document.getElementById('aiDocTime');
+  const isToday = date.toDateString() === new Date().toDateString();
+  const timeStr = date.toLocaleTimeString('en-AU', { hour: '2-digit', minute: '2-digit' });
+  const dateStr = isToday ? `Today ${timeStr}` : `${date.toLocaleDateString('en-AU', { day: 'numeric', month: 'short' })} ${timeStr}`;
+  timeEl.textContent = name ? `${dateStr} — ${name}` : dateStr;
+  stamp.classList.add('visible');
+}
+
+function aiRestoreDocStamp() {
+  const raw = localStorage.getItem('aiLastDocUpload');
+  if (!raw) return;
+  const name = localStorage.getItem('aiLastDocName') || '';
+  try { aiUpdateDocStamp(new Date(raw), name); } catch {}
+}
+
+// ── Send ──────────────────────────────────────────────────────────────────────
+async function aiSend() {
+  const input  = document.getElementById('aiInput');
+  const sendBtn = document.getElementById('aiSendBtn');
+  const text   = input.value.trim();
+  const doc    = aiPendingDoc;
+
+  if (!text && !doc) return;
 
   input.value = '';
-  document.getElementById('chat-send').disabled = true;
+  input.placeholder = "e.g. Customer wants to leave, signed up with Bupa paying $28 a week…";
+  sendBtn.disabled  = true;
+  aiPendingDoc = null;
 
-  addMsg('user', text);
-  chatHistory.push({ role: 'user', content: text });
+  const displayText = text || (doc ? `[Document uploaded]` : '');
+  aiAddMsg('user', displayText);
+  aiHistory.push({ role: 'user', content: text || 'Please analyze this document.' });
 
-  showLoading();
+  aiShowLoading();
 
   try {
-    const resp = await fetch(CHAT_WORKER_URL, {
+    const body = {
+      message: text || 'Please analyze the attached document and identify the health insurance plan.',
+      history: aiHistory.slice(-8),
+    };
+    if (doc) body.document = doc;
+
+    const resp = await fetch(WORKER_URL, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ message: text, history: chatHistory.slice(-10) }),
+      body: JSON.stringify(body),
     });
 
-    removeLoading();
+    aiRemoveLoading();
 
     if (!resp.ok) {
-      addAssistantMsg('⚠ Error reaching the AI service. Check your internet connection.');
+      aiAddMsg('assistant', '⚠ Error reaching the AI service. Check connection or worker deployment.');
       return;
     }
 
     const data = await resp.json();
 
     if (data.reply) {
-      addAssistantMsg(data.reply);
-      chatHistory.push({ role: 'assistant', content: data.reply });
+      aiAddMsg('assistant', data.reply);
+      aiHistory.push({ role: 'assistant', content: data.reply });
     }
 
-    if (data.plan) {
-      showPlanBanner(data.plan);
-    }
+    if (data.plan) aiShowPlanBanner(data.plan, data.fund);
 
   } catch (e) {
-    removeLoading();
-    addAssistantMsg('⚠ Could not connect to AI service. Is the worker deployed?');
+    aiRemoveLoading();
+    aiAddMsg('assistant', '⚠ Could not connect to AI service. Is the worker deployed?');
     console.error(e);
   } finally {
-    document.getElementById('chat-send').disabled = false;
+    sendBtn.disabled = false;
     input.focus();
   }
 }
