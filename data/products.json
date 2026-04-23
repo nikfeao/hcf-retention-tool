@@ -712,7 +712,7 @@
               "_note": "PHIS product: Medibank Silver Plus Advanced $500 — same tier, govt reference price"
             }
           },
-          "phis_last_verified": "2026-04-17",
+          "phis_last_verified": "2026-04-24",
           "source": "medibank-scraper-pipeline",
           "last_verified": "2026-04-16"
         },
@@ -760,7 +760,7 @@
               "single_parent_family": 335.85
             }
           },
-          "phis_last_verified": "2026-04-17",
+          "phis_last_verified": "2026-04-24",
           "source": "medibank-scraper-pipeline",
           "last_verified": "2026-04-16"
         }
@@ -931,7 +931,7 @@
               "single_parent_family": 142.3
             }
           },
-          "phis_last_verified": "2026-04-17",
+          "phis_last_verified": "2026-04-24",
           "source": "privatehealth.gov.au (AHM/J120/NHBG20 — NSW confirmed)",
           "last_verified": "2026-04-17"
         },
@@ -1178,7 +1178,7 @@
               "single_parent_family": 289.05
             }
           },
-          "phis_last_verified": "2026-04-17",
+          "phis_last_verified": "2026-04-24",
           "source": "privatehealth.gov.au (AUF/J49/NBNC10 — NSW confirmed)",
           "last_verified": "2026-04-17"
         },
@@ -1214,7 +1214,7 @@
               "single_parent_family": 219.05
             }
           },
-          "phis_last_verified": "2026-04-17",
+          "phis_last_verified": "2026-04-24",
           "source": "privatehealth.gov.au (AUF/J53/NBXK2D — NSW confirmed)",
           "last_verified": "2026-04-17"
         },
@@ -1244,7 +1244,7 @@
               "single_parent_family": 173.55
             }
           },
-          "phis_last_verified": "2026-04-16",
+          "phis_last_verified": "2026-04-24",
           "source": "privatehealth.gov.au (AUF/J52/NCAS20 — NSW confirmed)",
           "last_verified": "2026-04-16"
         },

@@ -40,10 +40,10 @@ jobs:
       - name: Install Playwright browsers
         run: playwright install chromium
 
-      - name: Run scraper
+      - name: Run Pass 1 — PHIS refresher
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
-        run: python scraper/scrape.py
+        run: python scraper/pass1_phis.py
 
       - name: Commit updated data files
         run: |
