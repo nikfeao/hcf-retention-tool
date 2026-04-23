@@ -867,14 +867,15 @@
           ],
           "premiums": {
             "750": {
-              "single": 88.85,
-              "couple": 177.7,
-              "family": 177.7,
-              "single_parent_family": 88.85
+              "single": 116.5,
+              "couple": 233.0,
+              "family": 233.0,
+              "single_parent_family": 116.5
             }
           },
           "factsheet_url": "https://www.ahm.com.au/health-insurance/hospital-cover/core-hospital-basic-plus",
-          "source": "ahm-scraper-pipeline"
+          "source": "firecrawl",
+          "last_verified": "2026-04-24"
         },
         {
           "id": "ahm-silver-plus-500",
@@ -974,14 +975,15 @@
           ],
           "premiums": {
             "750": {
-              "single": 92.5,
-              "couple": 185.0,
-              "family": 185.0,
-              "single_parent_family": 92.5
+              "single": 121.35,
+              "couple": 242.7,
+              "family": 242.7,
+              "single_parent_family": 121.35
             }
           },
           "factsheet_url": "https://www.ahm.com.au/health-insurance/hospital-cover/starter-bronze",
-          "source": "ahm-scraper-pipeline"
+          "source": "firecrawl",
+          "last_verified": "2026-04-24"
         },
         {
           "id": "simple-bronze-plus",
@@ -993,14 +995,15 @@
           ],
           "premiums": {
             "750": {
-              "single": 97.8,
-              "couple": 195.6,
-              "family": 195.6,
-              "single_parent_family": 97.8
+              "single": 128.2,
+              "couple": 256.4,
+              "family": 256.4,
+              "single_parent_family": 128.2
             }
           },
           "factsheet_url": "https://www.ahm.com.au/health-insurance/hospital-cover/simple-bronze-plus",
-          "source": "ahm-scraper-pipeline"
+          "source": "firecrawl",
+          "last_verified": "2026-04-24"
         },
         {
           "id": "core-bronze-plus",
@@ -1012,14 +1015,15 @@
           ],
           "premiums": {
             "750": {
-              "single": 118.35,
-              "couple": 236.7,
-              "family": 236.7,
-              "single_parent_family": 118.35
+              "single": 155.33,
+              "couple": 310.66,
+              "family": 310.66,
+              "single_parent_family": 155.33
             }
           },
           "factsheet_url": "https://www.ahm.com.au/health-insurance/hospital-cover/core-bronze-plus",
-          "source": "ahm-scraper-pipeline"
+          "source": "firecrawl",
+          "last_verified": "2026-04-24"
         },
         {
           "id": "essentials-silver-plus",
@@ -1031,14 +1035,15 @@
           ],
           "premiums": {
             "750": {
-              "single": 119.35,
-              "couple": 238.7,
-              "family": 238.7,
-              "single_parent_family": 119.35
+              "single": 156.76,
+              "couple": 313.52,
+              "family": 313.52,
+              "single_parent_family": 156.76
             }
           },
           "factsheet_url": "https://www.ahm.com.au/health-insurance/hospital-cover/essentials-silver-plus",
-          "source": "ahm-scraper-pipeline"
+          "source": "firecrawl",
+          "last_verified": "2026-04-24"
         },
         {
           "id": "core-silver-plus",
@@ -1050,14 +1055,15 @@
           ],
           "premiums": {
             "750": {
-              "single": 180.15,
-              "couple": 360.3,
-              "family": 360.3,
-              "single_parent_family": 180.15
+              "single": 236.42,
+              "couple": 472.84,
+              "family": 472.84,
+              "single_parent_family": 236.42
             }
           },
           "factsheet_url": "https://www.ahm.com.au/health-insurance/hospital-cover/core-silver-plus",
-          "source": "ahm-scraper-pipeline"
+          "source": "firecrawl",
+          "last_verified": "2026-04-24"
         },
         {
           "id": "advanced-hospital-gold",
@@ -1069,14 +1075,35 @@
           ],
           "premiums": {
             "750": {
-              "single": 362.8,
-              "couple": 725.6,
-              "family": 725.6,
-              "single_parent_family": 362.8
+              "single": 476.27,
+              "couple": 952.54,
+              "family": 952.54,
+              "single_parent_family": 476.27
             }
           },
           "factsheet_url": "https://www.ahm.com.au/health-insurance/hospital-cover/advanced-hospital-gold",
-          "source": "ahm-scraper-pipeline"
+          "source": "firecrawl",
+          "last_verified": "2026-04-24"
+        },
+        {
+          "id": "ambulance-basic",
+          "name": "ambulance hospital (basic)",
+          "tier": "Basic",
+          "status": "current",
+          "excess_options": [
+            "750"
+          ],
+          "premiums": {
+            "750": {
+              "single": 102.22,
+              "couple": 204.44,
+              "family": 204.44,
+              "single_parent_family": 102.22
+            }
+          },
+          "factsheet_url": "https://www.ahm.com.au/health-insurance/hospital-cover/ambulance-basic",
+          "last_verified": "2026-04-24",
+          "source": "firecrawl"
         }
       ],
       "extras": [

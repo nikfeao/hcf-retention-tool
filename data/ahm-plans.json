@@ -1,69 +1,57 @@
 {
+  "excess": "750",
+  "state": "NSW",
+  "rebate": "base_tier_under_65",
+  "rebate_rate_used": 0.24118,
+  "note": "Scraped from ahm /all page via Firecrawl + Claude extraction. Prices on page are rebated; base back-calculated.",
   "plans": [
     {
-      "id": "core-hospital-basic-plus",
-      "name": "Core Hospital Basic Plus",
+      "name": "ambulance hospital (basic)",
+      "tier": "Basic",
+      "slug": "ambulance-basic",
+      "price_weekly_rebated": 17.9
+    },
+    {
+      "name": "core hospital (basic+)",
       "tier": "Basic Plus",
-      "price_weekly": 20.4,
-      "price_monthly": 88.85,
-      "excess": "750",
-      "factsheet_url": "https://www.ahm.com.au/health-insurance/hospital-cover/core-hospital-basic-plus"
+      "slug": "core-hospital-basic-plus",
+      "price_weekly_rebated": 20.4
     },
     {
-      "id": "starter-bronze",
-      "name": "Starter Bronze",
+      "name": "starter bronze",
       "tier": "Bronze",
-      "price_weekly": 21.25,
-      "price_monthly": 92.5,
-      "excess": "750",
-      "factsheet_url": "https://www.ahm.com.au/health-insurance/hospital-cover/starter-bronze"
+      "slug": "starter-bronze",
+      "price_weekly_rebated": 21.25
     },
     {
-      "id": "simple-bronze-plus",
-      "name": "Simple Bronze Plus",
+      "name": "simple bronze plus",
       "tier": "Bronze Plus",
-      "price_weekly": 22.45,
-      "price_monthly": 97.8,
-      "excess": "750",
-      "factsheet_url": "https://www.ahm.com.au/health-insurance/hospital-cover/simple-bronze-plus"
+      "slug": "simple-bronze-plus",
+      "price_weekly_rebated": 22.45
     },
     {
-      "id": "core-bronze-plus",
-      "name": "Core Bronze Plus",
+      "name": "core bronze plus",
       "tier": "Bronze Plus",
-      "price_weekly": 27.2,
-      "price_monthly": 118.35,
-      "excess": "750",
-      "factsheet_url": "https://www.ahm.com.au/health-insurance/hospital-cover/core-bronze-plus"
+      "slug": "core-bronze-plus",
+      "price_weekly_rebated": 27.2
     },
     {
-      "id": "essentials-silver-plus",
-      "name": "Essentials Silver Plus",
+      "name": "essentials silver plus",
       "tier": "Silver Plus",
-      "price_weekly": 27.45,
-      "price_monthly": 119.35,
-      "excess": "750",
-      "factsheet_url": "https://www.ahm.com.au/health-insurance/hospital-cover/essentials-silver-plus"
+      "slug": "essentials-silver-plus",
+      "price_weekly_rebated": 27.45
     },
     {
-      "id": "core-silver-plus",
-      "name": "Core Silver Plus",
+      "name": "core silver plus",
       "tier": "Silver Plus",
-      "price_weekly": 41.4,
-      "price_monthly": 180.15,
-      "excess": "750",
-      "factsheet_url": "https://www.ahm.com.au/health-insurance/hospital-cover/core-silver-plus"
+      "slug": "core-silver-plus",
+      "price_weekly_rebated": 41.4
     },
     {
-      "id": "advanced-hospital-gold",
-      "name": "Advanced Hospital Gold",
+      "name": "advanced hospital gold",
       "tier": "Gold",
-      "price_weekly": 83.4,
-      "price_monthly": 362.8,
-      "excess": "750",
-      "factsheet_url": "https://www.ahm.com.au/health-insurance/hospital-cover/advanced-hospital-gold"
+      "slug": "advanced-hospital-gold",
+      "price_weekly_rebated": 83.4
     }
-  ],
-  "state": "NSW",
-  "excess": "750"
+  ]
 }

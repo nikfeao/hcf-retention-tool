@@ -1,5 +1,5 @@
 {
-  "last_updated": "2026-04-24T04:26:02+10:00",
+  "last_updated": "2026-04-24T04:47:30+10:00",
   "upload_log": [],
   "sources": [
     {
@@ -63,7 +63,29 @@
       "last_updated": "2026-04-24T04:26:02+10:00",
       "source": "firecrawl",
       "rebate_rate_used": 0.24608,
-      "errors": []
+      "errors": [
+        {
+          "plan": "Basic Plus Starter Hospital",
+          "reason": "firecrawl: HTTP 502 from Firecrawl: Bad Gateway"
+        }
+      ]
+    },
+    "ahm": {
+      "status": "success",
+      "plans_found": 8,
+      "plans_failed": 0,
+      "plans_added": 1,
+      "last_updated": "2026-04-24T04:47:30+10:00",
+      "source": "firecrawl + haiku",
+      "rebate_rate_used": 0.24118,
+      "errors": [],
+      "new_plans": [
+        {
+          "plan_name": "ambulance hospital (basic)",
+          "tier": "Basic",
+          "slug": "ambulance-basic"
+        }
+      ]
     }
   }
 }
