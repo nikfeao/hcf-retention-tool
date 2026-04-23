@@ -1,5 +1,5 @@
 {
-  "last_updated": "2026-04-24T04:08:41+10:00",
+  "last_updated": "2026-04-24T04:17:06+10:00",
   "upload_log": [],
   "sources": [
     {
@@ -45,14 +45,14 @@
     "plans_failed": 0,
     "plans_skipped": 0,
     "errors": [],
-    "last_updated": "2026-04-24T04:08:34+10:00"
+    "last_updated": "2026-04-24T04:17:01+10:00"
   },
   "funds": {
     "nib": {
       "status": "success",
       "plans_found": 5,
       "plans_failed": 0,
-      "last_updated": "2026-04-24T04:08:35+10:00",
+      "last_updated": "2026-04-24T04:17:02+10:00",
       "source": "nib-pricing-api",
       "errors": []
     },
@@ -60,7 +60,7 @@
       "status": "failed",
       "plans_found": 0,
       "plans_failed": 8,
-      "last_updated": "2026-04-24T04:08:41+10:00",
+      "last_updated": "2026-04-24T04:17:06+10:00",
       "source": "firecrawl",
       "rebate_rate_used": 0.24608,
       "errors": [
