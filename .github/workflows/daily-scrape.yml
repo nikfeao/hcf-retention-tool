@@ -52,13 +52,20 @@ jobs:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
         run: python scraper/funds/nib.py
 
+      - name: Run Pass 2 — Bupa
+        if: always()
+        env:
+          FIRECRAWL_API_KEY: ${{ secrets.FIRECRAWL_API_KEY }}
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        run: python scraper/funds/bupa.py
+
       - name: Commit updated data files
         id: commit
         if: always()
         run: |
           git config user.name "New A.I.N. Bot"
           git config user.email "nikfeao@gmail.com"
-          git add data/products.json data/meta.json data/nib-plans.json
+          git add data/products.json data/meta.json data/nib-plans.json data/bupa-plans.json
           if git diff --staged --quiet; then
             echo "No changes to commit."
             echo "committed=false" >> "$GITHUB_OUTPUT"

@@ -1,5 +1,5 @@
 {
-  "last_updated": "2026-04-24T03:39:31+10:00",
+  "last_updated": "2026-04-24T04:02:23+10:00",
   "upload_log": [],
   "sources": [
     {
@@ -54,6 +54,15 @@
       "plans_failed": 0,
       "last_updated": "2026-04-24T03:39:31+10:00",
       "source": "nib-pricing-api",
+      "errors": []
+    },
+    "bupa": {
+      "status": "success",
+      "plans_found": 8,
+      "plans_failed": 0,
+      "last_updated": "2026-04-24T04:02:23+10:00",
+      "source": "firecrawl",
+      "rebate_rate_used": 0.24608,
       "errors": []
     }
   }

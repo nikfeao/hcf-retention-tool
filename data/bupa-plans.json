@@ -1,9 +1,9 @@
 {
   "excess": "750",
   "state": "NSW",
-  "rebate": "none",
+  "rebate": "base_tier_under_65",
   "rebate_rate_used": 0.24608,
-  "note": "Base prices back-calculated from Bupa hospital-cover page. Rebated prices use 24.608% govt rebate (base tier \u2264$93k single, under 65, 2025-26 FY). State: NSW | Single | Default excess: $750.",
+  "note": "Scraped from Bupa plan pages via Firecrawl. Prices on page are rebated; base prices back-calculated using 24.608% rebate.",
   "plans": [
     {
       "name": "Basic Accident Only Hospital",
@@ -98,7 +98,6 @@
       "price_monthly_rebated": 191.88,
       "excess": "750",
       "excess_options": [
-        "250",
         "500",
         "750"
       ],

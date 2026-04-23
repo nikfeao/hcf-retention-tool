@@ -412,12 +412,15 @@
           ],
           "premiums": {
             "750": {
-              "single": 110.37,
-              "couple": 220.74,
-              "family": 220.74,
-              "single_parent_family": 110.37
+              "single": 110.36,
+              "couple": 220.72,
+              "family": 220.72,
+              "single_parent_family": 110.36
             }
-          }
+          },
+          "factsheet_url": "https://www.bupa.com.au/health-insurance/cover/basic-accident-only-hospital",
+          "last_verified": "2026-04-24",
+          "source": "firecrawl"
         },
         {
           "name": "Basic Plus Starter Hospital",
@@ -433,7 +436,10 @@
               "family": 239.46,
               "single_parent_family": 119.73
             }
-          }
+          },
+          "factsheet_url": "https://www.bupa.com.au/health-insurance/cover/basic-plus-starter-hospital",
+          "last_verified": "2026-04-24",
+          "source": "firecrawl"
         },
         {
           "name": "Bronze Hospital",
@@ -444,12 +450,15 @@
           ],
           "premiums": {
             "750": {
-              "single": 125.8,
-              "couple": 251.6,
-              "family": 251.6,
-              "single_parent_family": 125.8
+              "single": 125.82,
+              "couple": 251.64,
+              "family": 251.64,
+              "single_parent_family": 125.82
             }
-          }
+          },
+          "factsheet_url": "https://www.bupa.com.au/health-insurance/cover/bronze-hospital",
+          "last_verified": "2026-04-24",
+          "source": "firecrawl"
         },
         {
           "name": "Bronze Plus Select Hospital",
@@ -460,12 +469,15 @@
           ],
           "premiums": {
             "750": {
-              "single": 132.82,
-              "couple": 265.64,
-              "family": 265.64,
-              "single_parent_family": 132.82
+              "single": 132.83,
+              "couple": 265.66,
+              "family": 265.66,
+              "single_parent_family": 132.83
             }
-          }
+          },
+          "factsheet_url": "https://www.bupa.com.au/health-insurance/cover/bronze-plus-select-hospital",
+          "last_verified": "2026-04-24",
+          "source": "firecrawl"
         },
         {
           "name": "Bronze Plus Advantage Hospital",
@@ -476,12 +488,15 @@
           ],
           "premiums": {
             "750": {
-              "single": 144.39,
-              "couple": 288.78,
-              "family": 288.78,
-              "single_parent_family": 144.39
+              "single": 144.38,
+              "couple": 288.76,
+              "family": 288.76,
+              "single_parent_family": 144.38
             }
-          }
+          },
+          "factsheet_url": "https://www.bupa.com.au/health-insurance/cover/bronze-plus-advantage-hospital",
+          "last_verified": "2026-04-24",
+          "source": "firecrawl"
         },
         {
           "name": "Silver Plus Classic Hospital",
@@ -497,7 +512,10 @@
               "family": 321.88,
               "single_parent_family": 160.94
             }
-          }
+          },
+          "factsheet_url": "https://www.bupa.com.au/health-insurance/cover/silver-plus-classic-hospital",
+          "last_verified": "2026-04-24",
+          "source": "firecrawl"
         },
         {
           "name": "Silver Plus Advanced Hospital",
@@ -509,12 +527,15 @@
           ],
           "premiums": {
             "750": {
-              "single": 254.5,
-              "couple": 509.0,
-              "family": 509.0,
-              "single_parent_family": 254.5
+              "single": 254.51,
+              "couple": 509.02,
+              "family": 509.02,
+              "single_parent_family": 254.51
             }
-          }
+          },
+          "factsheet_url": "https://www.bupa.com.au/health-insurance/cover/silver-plus-advanced-hospital",
+          "last_verified": "2026-04-24",
+          "source": "firecrawl"
         },
         {
           "name": "Gold Comprehensive Hospital",
@@ -530,7 +551,10 @@
               "family": 834.34,
               "single_parent_family": 417.17
             }
-          }
+          },
+          "factsheet_url": "https://www.bupa.com.au/health-insurance/cover/gold-comprehensive-hospital",
+          "last_verified": "2026-04-24",
+          "source": "firecrawl"
         }
       ],
       "extras": [
