@@ -15,9 +15,17 @@ from datetime import datetime, timedelta, timezone
 AEST = timezone(timedelta(hours=10))
 
 SCRIPT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-DATA_DIR = os.path.join(SCRIPT_DIR, "..", "data")
+DATA_DIR = os.path.abspath(os.path.join(SCRIPT_DIR, "..", "data"))
 PRODUCTS_FILE = os.path.join(DATA_DIR, "products.json")
 META_FILE = os.path.join(DATA_DIR, "meta.json")
+
+
+def fund_plans_file(fund_key: str) -> str:
+    return os.path.join(DATA_DIR, f"{fund_key}-plans.json")
+
+
+def write_json_atomic(path: str, data: dict) -> None:
+    _write_json_atomic(path, data)
 
 
 def _read_json(path: str) -> dict:

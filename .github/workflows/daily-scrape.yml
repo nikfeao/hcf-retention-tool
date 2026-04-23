@@ -45,10 +45,17 @@ jobs:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
         run: python scraper/pass1_phis.py
 
+      - name: Run Pass 2 — nib
+        if: always()
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        run: python scraper/funds/nib.py
+
       - name: Commit updated data files
+        if: always()
         run: |
           git config user.name "New A.I.N. Bot"
           git config user.email "nikfeao@gmail.com"
-          git add data/products.json data/meta.json
+          git add data/products.json data/meta.json data/nib-plans.json
           git diff --staged --quiet && echo "No changes to commit." || git commit -m "Daily product data update $(date +%Y-%m-%d)"
           git push

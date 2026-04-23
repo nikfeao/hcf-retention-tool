@@ -256,7 +256,8 @@
             }
           },
           "factsheet_url": "https://my.nib.com.au/product-collateral/2785",
-          "source": "nib-scraper-pipeline"
+          "source": "nib-pricing-api",
+          "last_verified": "2026-04-24"
         },
         {
           "id": "nib-bronze-protect-hospital-plus",
@@ -275,7 +276,8 @@
             }
           },
           "factsheet_url": "https://my.nib.com.au/product-collateral/2786",
-          "source": "nib-scraper-pipeline"
+          "source": "nib-pricing-api",
+          "last_verified": "2026-04-24"
         },
         {
           "id": "nib-silver-secure-hospital-plus",
@@ -294,7 +296,8 @@
             }
           },
           "factsheet_url": "https://my.nib.com.au/product-collateral/2787",
-          "source": "nib-scraper-pipeline"
+          "source": "nib-pricing-api",
+          "last_verified": "2026-04-24"
         },
         {
           "id": "nib-mid-hospital---silver-plus",
@@ -313,7 +316,8 @@
             }
           },
           "factsheet_url": "https://my.nib.com.au/product-collateral/53",
-          "source": "nib-scraper-pipeline"
+          "source": "nib-pricing-api",
+          "last_verified": "2026-04-24"
         },
         {
           "id": "nib-silver-select-hospital-plus",
@@ -332,7 +336,8 @@
             }
           },
           "factsheet_url": "https://my.nib.com.au/product-collateral/729",
-          "source": "nib-scraper-pipeline"
+          "source": "nib-pricing-api",
+          "last_verified": "2026-04-24"
         }
       ],
       "extras": [
