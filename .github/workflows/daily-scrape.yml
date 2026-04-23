@@ -10,6 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write        # Needed to commit updated data files
+      actions: write         # Needed to trigger Pages rebuild via gh workflow run
 
     steps:
       - name: Checkout repository
@@ -52,10 +53,23 @@ jobs:
         run: python scraper/funds/nib.py
 
       - name: Commit updated data files
+        id: commit
         if: always()
         run: |
           git config user.name "New A.I.N. Bot"
           git config user.email "nikfeao@gmail.com"
           git add data/products.json data/meta.json data/nib-plans.json
-          git diff --staged --quiet && echo "No changes to commit." || git commit -m "Daily product data update $(date +%Y-%m-%d)"
-          git push
+          if git diff --staged --quiet; then
+            echo "No changes to commit."
+            echo "committed=false" >> "$GITHUB_OUTPUT"
+          else
+            git commit -m "Daily product data update $(date +%Y-%m-%d)"
+            git push
+            echo "committed=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Trigger Pages rebuild
+        if: steps.commit.outputs.committed == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: gh workflow run deploy-pages.yml --repo ${{ github.repository }}
