@@ -1,5 +1,5 @@
 {
-  "last_updated": "2026-04-24T03:35:17+10:00",
+  "last_updated": "2026-04-24T03:39:31+10:00",
   "upload_log": [],
   "sources": [
     {
@@ -45,14 +45,14 @@
     "plans_failed": 0,
     "plans_skipped": 0,
     "errors": [],
-    "last_updated": "2026-04-24T03:35:15+10:00"
+    "last_updated": "2026-04-24T03:39:29+10:00"
   },
   "funds": {
     "nib": {
       "status": "success",
       "plans_found": 5,
       "plans_failed": 0,
-      "last_updated": "2026-04-24T03:35:17+10:00",
+      "last_updated": "2026-04-24T03:39:31+10:00",
       "source": "nib-pricing-api",
       "errors": []
     }
