@@ -1,5 +1,5 @@
 {
-  "last_updated": "2026-04-24T04:02:23+10:00",
+  "last_updated": "2026-04-24T04:08:41+10:00",
   "upload_log": [],
   "sources": [
     {
@@ -45,25 +45,58 @@
     "plans_failed": 0,
     "plans_skipped": 0,
     "errors": [],
-    "last_updated": "2026-04-24T03:39:29+10:00"
+    "last_updated": "2026-04-24T04:08:34+10:00"
   },
   "funds": {
     "nib": {
       "status": "success",
       "plans_found": 5,
       "plans_failed": 0,
-      "last_updated": "2026-04-24T03:39:31+10:00",
+      "last_updated": "2026-04-24T04:08:35+10:00",
       "source": "nib-pricing-api",
       "errors": []
     },
     "bupa": {
-      "status": "success",
-      "plans_found": 8,
-      "plans_failed": 0,
-      "last_updated": "2026-04-24T04:02:23+10:00",
+      "status": "failed",
+      "plans_found": 0,
+      "plans_failed": 8,
+      "last_updated": "2026-04-24T04:08:41+10:00",
       "source": "firecrawl",
       "rebate_rate_used": 0.24608,
-      "errors": []
+      "errors": [
+        {
+          "plan": "Basic Accident Only Hospital",
+          "reason": "firecrawl: HTTP 401 from Firecrawl: {\"success\":false,\"error\":\"Unauthorized: Invalid token\"}"
+        },
+        {
+          "plan": "Basic Plus Starter Hospital",
+          "reason": "firecrawl: HTTP 401 from Firecrawl: {\"success\":false,\"error\":\"Unauthorized: Invalid token\"}"
+        },
+        {
+          "plan": "Bronze Hospital",
+          "reason": "firecrawl: HTTP 401 from Firecrawl: {\"success\":false,\"error\":\"Unauthorized: Invalid token\"}"
+        },
+        {
+          "plan": "Bronze Plus Select Hospital",
+          "reason": "firecrawl: HTTP 401 from Firecrawl: {\"success\":false,\"error\":\"Unauthorized: Invalid token\"}"
+        },
+        {
+          "plan": "Bronze Plus Advantage Hospital",
+          "reason": "firecrawl: HTTP 401 from Firecrawl: {\"success\":false,\"error\":\"Unauthorized: Invalid token\"}"
+        },
+        {
+          "plan": "Silver Plus Classic Hospital",
+          "reason": "firecrawl: HTTP 401 from Firecrawl: {\"success\":false,\"error\":\"Unauthorized: Invalid token\"}"
+        },
+        {
+          "plan": "Silver Plus Advanced Hospital",
+          "reason": "firecrawl: HTTP 401 from Firecrawl: {\"success\":false,\"error\":\"Unauthorized: Invalid token\"}"
+        },
+        {
+          "plan": "Gold Comprehensive Hospital",
+          "reason": "firecrawl: HTTP 401 from Firecrawl: {\"success\":false,\"error\":\"Unauthorized: Invalid token\"}"
+        }
+      ]
     }
   }
 }
