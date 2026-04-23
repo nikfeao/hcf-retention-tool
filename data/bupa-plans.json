@@ -20,6 +20,20 @@
       "factsheet_url": "https://www.bupa.com.au/health-insurance/cover/basic-accident-only-hospital"
     },
     {
+      "name": "Basic Plus Starter Hospital",
+      "tier": "Basic Plus",
+      "price_weekly": 27.63,
+      "price_monthly": 119.73,
+      "price_weekly_rebated": 20.83,
+      "price_monthly_rebated": 90.26,
+      "excess": "750",
+      "excess_options": [
+        "500",
+        "750"
+      ],
+      "factsheet_url": "https://www.bupa.com.au/health-insurance/cover/basic-plus-starter-hospital"
+    },
+    {
       "name": "Bronze Hospital",
       "tier": "Bronze",
       "price_weekly": 29.03,
