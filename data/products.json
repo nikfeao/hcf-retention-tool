@@ -257,7 +257,7 @@
           },
           "factsheet_url": "https://my.nib.com.au/product-collateral/2785",
           "source": "nib-pricing-api",
-          "last_verified": "2026-04-24"
+          "last_verified": "2026-04-25"
         },
         {
           "id": "nib-bronze-protect-hospital-plus",
@@ -277,7 +277,7 @@
           },
           "factsheet_url": "https://my.nib.com.au/product-collateral/2786",
           "source": "nib-pricing-api",
-          "last_verified": "2026-04-24"
+          "last_verified": "2026-04-25"
         },
         {
           "id": "nib-silver-secure-hospital-plus",
@@ -297,7 +297,7 @@
           },
           "factsheet_url": "https://my.nib.com.au/product-collateral/2787",
           "source": "nib-pricing-api",
-          "last_verified": "2026-04-24"
+          "last_verified": "2026-04-25"
         },
         {
           "id": "nib-mid-hospital---silver-plus",
@@ -317,7 +317,7 @@
           },
           "factsheet_url": "https://my.nib.com.au/product-collateral/53",
           "source": "nib-pricing-api",
-          "last_verified": "2026-04-24"
+          "last_verified": "2026-04-25"
         },
         {
           "id": "nib-silver-select-hospital-plus",
@@ -337,7 +337,7 @@
           },
           "factsheet_url": "https://my.nib.com.au/product-collateral/729",
           "source": "nib-pricing-api",
-          "last_verified": "2026-04-24"
+          "last_verified": "2026-04-25"
         }
       ],
       "extras": [
@@ -419,7 +419,7 @@
             }
           },
           "factsheet_url": "https://www.bupa.com.au/health-insurance/cover/basic-accident-only-hospital",
-          "last_verified": "2026-04-24",
+          "last_verified": "2026-04-25",
           "source": "firecrawl"
         },
         {
@@ -438,7 +438,7 @@
             }
           },
           "factsheet_url": "https://www.bupa.com.au/health-insurance/cover/basic-plus-starter-hospital",
-          "last_verified": "2026-04-24",
+          "last_verified": "2026-04-25",
           "source": "firecrawl"
         },
         {
@@ -457,7 +457,7 @@
             }
           },
           "factsheet_url": "https://www.bupa.com.au/health-insurance/cover/bronze-hospital",
-          "last_verified": "2026-04-24",
+          "last_verified": "2026-04-25",
           "source": "firecrawl"
         },
         {
@@ -476,7 +476,7 @@
             }
           },
           "factsheet_url": "https://www.bupa.com.au/health-insurance/cover/bronze-plus-select-hospital",
-          "last_verified": "2026-04-24",
+          "last_verified": "2026-04-25",
           "source": "firecrawl"
         },
         {
@@ -495,7 +495,7 @@
             }
           },
           "factsheet_url": "https://www.bupa.com.au/health-insurance/cover/bronze-plus-advantage-hospital",
-          "last_verified": "2026-04-24",
+          "last_verified": "2026-04-25",
           "source": "firecrawl"
         },
         {
@@ -514,7 +514,7 @@
             }
           },
           "factsheet_url": "https://www.bupa.com.au/health-insurance/cover/silver-plus-classic-hospital",
-          "last_verified": "2026-04-24",
+          "last_verified": "2026-04-25",
           "source": "firecrawl"
         },
         {
@@ -534,7 +534,7 @@
             }
           },
           "factsheet_url": "https://www.bupa.com.au/health-insurance/cover/silver-plus-advanced-hospital",
-          "last_verified": "2026-04-24",
+          "last_verified": "2026-04-25",
           "source": "firecrawl"
         },
         {
@@ -553,7 +553,7 @@
             }
           },
           "factsheet_url": "https://www.bupa.com.au/health-insurance/cover/gold-comprehensive-hospital",
-          "last_verified": "2026-04-24",
+          "last_verified": "2026-04-25",
           "source": "firecrawl"
         }
       ],
@@ -741,7 +741,7 @@
               "_note": "PHIS product: Medibank Silver Plus Advanced $500 — same tier, govt reference price"
             }
           },
-          "phis_last_verified": "2026-04-24",
+          "phis_last_verified": "2026-04-25",
           "source": "medibank-scraper-pipeline",
           "last_verified": "2026-04-16"
         },
@@ -789,7 +789,7 @@
               "single_parent_family": 335.85
             }
           },
-          "phis_last_verified": "2026-04-24",
+          "phis_last_verified": "2026-04-25",
           "source": "medibank-scraper-pipeline",
           "last_verified": "2026-04-16"
         }
@@ -875,7 +875,7 @@
           },
           "factsheet_url": "https://www.ahm.com.au/health-insurance/hospital-cover/core-hospital-basic-plus",
           "source": "firecrawl",
-          "last_verified": "2026-04-24"
+          "last_verified": "2026-04-25"
         },
         {
           "id": "ahm-silver-plus-500",
@@ -961,7 +961,7 @@
               "single_parent_family": 142.3
             }
           },
-          "phis_last_verified": "2026-04-24",
+          "phis_last_verified": "2026-04-25",
           "source": "privatehealth.gov.au (AHM/J120/NHBG20 — NSW confirmed)",
           "last_verified": "2026-04-17"
         },
@@ -983,7 +983,7 @@
           },
           "factsheet_url": "https://www.ahm.com.au/health-insurance/hospital-cover/starter-bronze",
           "source": "firecrawl",
-          "last_verified": "2026-04-24"
+          "last_verified": "2026-04-25"
         },
         {
           "id": "simple-bronze-plus",
@@ -1003,7 +1003,7 @@
           },
           "factsheet_url": "https://www.ahm.com.au/health-insurance/hospital-cover/simple-bronze-plus",
           "source": "firecrawl",
-          "last_verified": "2026-04-24"
+          "last_verified": "2026-04-25"
         },
         {
           "id": "core-bronze-plus",
@@ -1023,7 +1023,7 @@
           },
           "factsheet_url": "https://www.ahm.com.au/health-insurance/hospital-cover/core-bronze-plus",
           "source": "firecrawl",
-          "last_verified": "2026-04-24"
+          "last_verified": "2026-04-25"
         },
         {
           "id": "essentials-silver-plus",
@@ -1043,7 +1043,7 @@
           },
           "factsheet_url": "https://www.ahm.com.au/health-insurance/hospital-cover/essentials-silver-plus",
           "source": "firecrawl",
-          "last_verified": "2026-04-24"
+          "last_verified": "2026-04-25"
         },
         {
           "id": "core-silver-plus",
@@ -1063,7 +1063,7 @@
           },
           "factsheet_url": "https://www.ahm.com.au/health-insurance/hospital-cover/core-silver-plus",
           "source": "firecrawl",
-          "last_verified": "2026-04-24"
+          "last_verified": "2026-04-25"
         },
         {
           "id": "advanced-hospital-gold",
@@ -1083,7 +1083,7 @@
           },
           "factsheet_url": "https://www.ahm.com.au/health-insurance/hospital-cover/advanced-hospital-gold",
           "source": "firecrawl",
-          "last_verified": "2026-04-24"
+          "last_verified": "2026-04-25"
         },
         {
           "id": "ambulance-basic",
@@ -1102,7 +1102,7 @@
             }
           },
           "factsheet_url": "https://www.ahm.com.au/health-insurance/hospital-cover/ambulance-basic",
-          "last_verified": "2026-04-24",
+          "last_verified": "2026-04-25",
           "source": "firecrawl"
         }
       ],
@@ -1234,7 +1234,7 @@
               "single_parent_family": 289.05
             }
           },
-          "phis_last_verified": "2026-04-24",
+          "phis_last_verified": "2026-04-25",
           "source": "privatehealth.gov.au (AUF/J49/NBNC10 — NSW confirmed)",
           "last_verified": "2026-04-17"
         },
@@ -1270,7 +1270,7 @@
               "single_parent_family": 219.05
             }
           },
-          "phis_last_verified": "2026-04-24",
+          "phis_last_verified": "2026-04-25",
           "source": "privatehealth.gov.au (AUF/J53/NBXK2D — NSW confirmed)",
           "last_verified": "2026-04-17"
         },
@@ -1300,7 +1300,7 @@
               "single_parent_family": 173.55
             }
           },
-          "phis_last_verified": "2026-04-24",
+          "phis_last_verified": "2026-04-25",
           "source": "privatehealth.gov.au (AUF/J52/NCAS20 — NSW confirmed)",
           "last_verified": "2026-04-16"
         },
